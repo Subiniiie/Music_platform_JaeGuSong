@@ -7,6 +7,7 @@ import GameView from "../pages/game/home/game-view";
 import DrumView from "../sections/game/drum/game-drum-view";
 import KeyboardsView from "../sections/game/keyboards/game-keyboards-view";
 import VocalView from "../sections/game/vocal/game-vocal-view";
+import CommunityView from "@/pages/community/community-view";
 
 const mainRoute: RouteObject[] = [
   {
