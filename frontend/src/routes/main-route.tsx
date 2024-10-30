@@ -3,6 +3,10 @@ import paths from "../configs/paths";
 import DividerUploadView from "../pages/divider/upload-view";
 import SignInView from "../pages/auth/signin-view";
 import SignUpView from "../pages/auth/signup-view";
+import GameView from "../pages/game/home/game-view";
+import DrumView from "../sections/game/drum/game-drum-view";
+import KeyboardsView from "../sections/game/keyboards/game-keyboards-view";
+import VocalView from "../sections/game/vocal/game-vocal-view";
 
 const mainRoute: RouteObject[] = [
   {
@@ -29,9 +33,22 @@ const mainRoute: RouteObject[] = [
         // path: paths.workspace,
         // element: <WorkspaceView />, // 나중에 추가 가능
       },
+      // 게임 경로
       {
-        // path: paths.game,
-        // element: <GameView />, // 나중에 추가 가능
+        path: paths.game.drum,
+        element: <DrumView />,
+      },
+      {
+        path: paths.game.keyboards,
+        element: <KeyboardsView />,
+      },
+      {
+        path: paths.game.vocal,
+        element: <VocalView />,
+      },
+      {
+        path: paths.game.home,
+        element: <GameView />,
       },
     ],
   },

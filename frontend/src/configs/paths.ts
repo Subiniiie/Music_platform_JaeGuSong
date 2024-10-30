@@ -29,6 +29,14 @@ const paths = {
     main: "/",
   },
 
+  // game
+  game: {
+    home: `${PATH.game}`,
+    drum: `${PATH.game}/drum`,
+    keyboards: `${PATH.game}/keyboards`,
+    vocal: `${PATH.game}/vocal`,
+  },
+
   // PATH 는 크게 기능 기준으로 나누고,
   // paths 로 세부 페이지 경로 설정해뒀습니다.
   // auth 는 일반적으로 주소가 단순한게 익숙하다고 생각해서
