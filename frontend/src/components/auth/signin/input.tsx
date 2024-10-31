@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SigninFormData, SigninInputFields } from '@/configs/auth/formInputDatas';
-import { Button } from '@chakra-ui/react';
+import { Box, Button, Input as ChakraInput } from '@chakra-ui/react';
 import paths from '@/configs/paths';
 import axios from 'axios';
 
@@ -49,24 +49,24 @@ const Input: React.FC = () => {
 };
 
     return (
-      <div>
+      <Box width="100%" maxW="md" mx="auto">
         <form onSubmit={handleSubmit}>
           {SigninInputFields.map((field, index) => (
-            <div key={index}>
+            <Box key={index} mb={4}>
               <label>{field.label}</label>
-              <input
+              <ChakraInput
                 type={field.type}
                 name={field.name}
                 value={formData[field.name as keyof SigninFormData] as string || ''}
                 onChange={handleChange}
                 placeholder={field.name === 'userId' ? '아이디를 입력해주세요' : '비밀번호를 입력해주세요.'}
                 style={{ color: 'black' }}
-              ></input>
-            </div>
+              ></ChakraInput>
+            </Box>
           ))}
           <Button type='submit'>로그인</Button>
         </form>
-      </div>
+      </Box>
     );
 };
 

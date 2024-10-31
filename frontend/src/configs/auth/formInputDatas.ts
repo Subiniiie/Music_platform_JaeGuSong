@@ -25,8 +25,8 @@ export interface SignupFormData {
   export const SignupInputFields: SignupInputField[] = [
     { label: '아이디', type: 'email', name: 'userId' },
     { label: '인증 번호 입력', type: 'text', name: 'confirmNumber' },
-    { label: '비밀번호', type: 'text', name: 'password' },
-    { label: '비밀번호 확인', type: 'text', name: 'confirmPassword' },
+    { label: '비밀번호', type: 'password', name: 'password' },
+    { label: '비밀번호 확인', type: 'password', name: 'confirmPassword' },
     { label: '이름', type: 'text', name: 'userName' },
     { label: '별명', type: 'text', name: 'nickname' },
     { label: '성별', type: 'select', name: 'gender', options: ['남성', '여성', '기타'] },
@@ -50,8 +50,8 @@ export interface SigninFormData {
     name: string;
     options?: string[];
   }
-  // 회원가입할 때 필요한 데이터
+  // 로그인할 때 필요한 데이터
   export const SigninInputFields: SigninInputField[] = [
     { label: '아이디', type: 'email', name: 'userId' },
-    { label: '비밀번호', type: 'text', name: 'password' },
+    { label: '비밀번호', type: 'password', name: 'password' },
   ];

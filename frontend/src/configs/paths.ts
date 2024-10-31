@@ -31,6 +31,17 @@ const paths = {
   // community
   community: {
     main: "/",
+    create: `${PATH.community}/create`,
+    detail: (id: number) => `${PATH.community}/detail/${id}`,
+    update: (id: number) => `${PATH.community}/update/${id}`,
+  },
+
+  // game
+  game: {
+    home: `${PATH.game}/home`,
+    drum: `${PATH.game}/drum`,
+    keyboards: `${PATH.game}/keyboards`,
+    vocal: `${PATH.game}/vocal`,
   },
 
   // game

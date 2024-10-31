@@ -29,9 +29,10 @@ export default function Navbar() {
       value: "c",
       title: "미니 게임",
       text: [
-        { label: "절대음감", path: paths.game.keyboards },
-        { label: "리듬킹", path: paths.game.drum },
-        { label: "퍼펙트 싱어", path: paths.game.vocal },
+        { label: "게임 홈", path: paths.game.home },
+        // { label: "절대음감", path: paths.game.keyboards },
+        // { label: "리듬킹", path: paths.game.drum },
+        // { label: "퍼펙트 싱어", path: paths.game.vocal },
       ],
     },
   ];

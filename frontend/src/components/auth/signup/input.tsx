@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SignupFormData, SignupInputFields } from '@/configs/auth/formInputDatas';
-import { Button } from '@chakra-ui/react';
+import { Box, Button, Input as ChakraInput, Textarea } from '@chakra-ui/react';
 import paths from '@/configs/paths';
 import axios from 'axios';
 
@@ -173,55 +173,65 @@ const Input: React.FC = () => {
     
 
     return (
-        <div>
-        <form onSubmit={handleSubmit}>
-            {SignupInputFields.map((field, index) => (
-                <div key={index}>
-                    <label>{field.label}</label>
-                    {field.type === 'select' ? (
-                        <select
-                            name={field.name}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={field.name !== 'profileImage' ? (formData[field.name as keyof SignupFormData] as string || '') : undefined}
-                            style={{ color: 'black' }}
-                            >
-                            <option 
-                                value=''
+        <Box width="100%" maxW="md" mx="auto">
+            <form onSubmit={handleSubmit}>
+                {SignupInputFields.map((field, index) => (
+                    <Box key={index} mb={4}>
+                        <label>{field.label}</label>
+                        {field.type === 'select' ? (
+                            <select
+                                name={field.name}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={field.name !== 'profileImage' ? (formData[field.name as keyof SignupFormData] as string || '') : undefined}
                                 style={{ color: 'black' }}
-                            >선택</option>
-                            {field.options?.map((option, idx) => (
-                                <option
-                                    key={idx}
-                                    value={option}
+                            >
+                                <option 
+                                    value=''
                                     style={{ color: 'black' }}
                                 >
-                                    {option}
+                                    선택
                                 </option>
-                            ))}
-                        </select>
-                    ) : (
-                        <input
-                        type={field.type}
-                        name={field.name}
-                        value={field.name !== 'profileImage' ? (formData[field.name as keyof SignupFormData] as string || '') : undefined}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder={field.name === 'userId' ? 'abc@abc.com' : field.name === 'phoneNumber' ? '010-0000-0000' : ''}
-                        accept={field.type === 'file' ? 'image/*' : undefined}
-                        style={{color: 'black'}}
-                        ></input>
-                    )}
-                                        {notices[field.name] && <div style={{ color: 'red' }}>{notices[field.name]}</div>}
-                    {field.name === 'userId' ? <Button onClick={sendVerifyNumber} disabled={!verifyBtn}>인증 번호 전송</Button> : null}
-                    {field.name === 'confirmNumber' && verifyNumber ? <Button onClick={checkverifyNumber}>인증</Button> : null}
-                    {field.name === 'confirmNumber' && submitSignup ? '인증되었습니다.': null}
-                </div>
-            ))}
-            {submitSignup ? <Button type='submit'>회원가입</Button> : ''}
-        </form>
-        </div>
+                                {field.options?.map((option, idx) => (
+                                    <option
+                                        key={idx}
+                                        value={option}
+                                        style={{ color: 'black' }}
+                                    >
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <ChakraInput
+                            type={field.type}
+                            name={field.name}
+                            value={field.name !== 'profileImage' ? (formData[field.name as keyof SignupFormData] as string || '') : undefined}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            placeholder={field.name === 'userId' ? 'abc@abc.com' : field.name === 'phoneNumber' ? '010-0000-0000' : ''}
+                            accept={field.type === 'file' ? 'image/*' : undefined}
+                            style={{
+                                color: 'black',
+                                background: 'white', 
+                                borderColor: 'black', 
+                                appearance: 'none', 
+                                outline: 'none',
+                                padding: '0.5rem',
+                            }}
+                            variant="outline"
+                            />
+                        )}
+                        {notices[field.name] && <div style={{ color: 'red' }}>{notices[field.name]}</div>}
+                        {field.name === 'userId' ? <Button onClick={sendVerifyNumber} disabled={!verifyBtn}>인증 번호 전송</Button> : null}
+                        {field.name === 'confirmNumber' && verifyNumber ? <Button onClick={checkverifyNumber}>인증</Button> : null}
+                        {field.name === 'confirmNumber' && submitSignup ? '인증되었습니다.': null}
+                    </Box>
+                ))}
+                {submitSignup ? <Button type='submit'>회원가입</Button> : ''}
+            </form>
+        </Box>
     );
-    };
+};
 
 export default Input;

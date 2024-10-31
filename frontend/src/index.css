@@ -22,3 +22,7 @@
   font-family: "MiceMyungjo";
   src: url("/fonts/MICEMyungjo.ttf") format("opentype");
 }
+
+body {
+  overflow-x: hidden;
+}
