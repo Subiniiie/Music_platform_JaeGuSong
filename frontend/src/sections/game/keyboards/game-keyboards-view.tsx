@@ -27,6 +27,7 @@ const GamePiano = () => {
     options: chordOptions,
     message: chordMessage,
     playRandomChord,
+    checkChordAnswer,
     level: chordLevel,
     correctCount: chordCorrectCount,
     gameOver: chordGameOver,
@@ -251,12 +252,15 @@ const GamePiano = () => {
                   chordOptions.map((option) => (
                     <Button
                       key={option}
-                      onClick={() => checkNoteAnswer(option)}
+                      onClick={() => checkChordAnswer(option)}
                       margin="20px"
                       colorScheme="blue"
                       width="200px"
                       height="200px"
                       fontSize="32px"
+                      bg="#1c1b3f"
+                      _hover={{ bg: "#4e4b7e" }}
+                      borderRadius="20px"
                     >
                       {option}
                     </Button>

@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { FaDrum, FaMicrophone } from "react-icons/fa";
-import { GiPianoKeys } from "react-icons/gi";
-import { Box, Text, Flex, Button, Icon } from "@chakra-ui/react";
+import { Box, Text, Flex, Button } from "@chakra-ui/react";
 import GameDescriptionModal from "../../../components/game/game-description";
 
-type GameType = "piano" | "drum" | "melody" | null;
+type GameType = "keyboards" | "drum" | "vocal" | null;
 
 const Game: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -47,14 +45,14 @@ const Game: React.FC = () => {
         wrap="wrap"
       >
         <Button
-          onClick={() => openModal("piano")}
+          onClick={() => openModal("keyboards")}
           display="flex"
           flexDirection="column"
           alignItems="center"
           bg="#1c1b3f"
           color="white"
           p="20px"
-          borderRadius="10px"
+          borderRadius="20px"
           width="280px"
           height="280px"
           justifyContent="center"
@@ -62,8 +60,11 @@ const Game: React.FC = () => {
           _hover={{ bg: "#4e4b7e", transform: "scale(1.2)" }}
           fontFamily="OneMobile"
         >
-          <Icon as={GiPianoKeys} boxSize="80px" mb="10px" />
-          <Text fontSize="24px" fontWeight="bold">
+          <img
+            src="/assets/keyboards.png"
+            style={{ width: "80px", marginBottom: "10px" }}
+          />
+          <Text fontSize="32px" paddingTop="20px">
             절대 음감
           </Text>
         </Button>
@@ -75,7 +76,7 @@ const Game: React.FC = () => {
           bg="#1c1b3f"
           color="white"
           p="20px"
-          borderRadius="10px"
+          borderRadius="20px"
           width="280px"
           height="280px"
           justifyContent="center"
@@ -83,20 +84,23 @@ const Game: React.FC = () => {
           _hover={{ bg: "#4e4b7e", transform: "scale(1.2)" }}
           fontFamily="OneMobile"
         >
-          <Icon as={FaDrum} boxSize="80px" mb="10px" />
-          <Text fontSize="24px" fontWeight="bold">
+          <img
+            src="/assets/drum.png"
+            style={{ width: "80px", marginBottom: "10px" }}
+          />
+          <Text fontSize="32px" paddingTop="20px">
             리듬 킹
           </Text>
         </Button>
         <Button
-          onClick={() => openModal("melody")}
+          onClick={() => openModal("vocal")}
           display="flex"
           flexDirection="column"
           alignItems="center"
           bg="#1c1b3f"
           color="white"
           p="20px"
-          borderRadius="10px"
+          borderRadius="20px"
           width="280px"
           height="280px"
           justifyContent="center"
@@ -104,8 +108,11 @@ const Game: React.FC = () => {
           _hover={{ bg: "#4e4b7e", transform: "scale(1.2)" }}
           fontFamily="OneMobile"
         >
-          <Icon as={FaMicrophone} boxSize="80px" mb="10px" />
-          <Text fontSize="24px" fontWeight="bold">
+          <img
+            src="/assets/vocal.png"
+            style={{ width: "80px", marginBottom: "10px" }}
+          />
+          <Text fontSize="32px" paddingTop="20px">
             퍼펙트 싱어
           </Text>
         </Button>
