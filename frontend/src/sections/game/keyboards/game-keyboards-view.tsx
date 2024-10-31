@@ -42,7 +42,6 @@ const GamePiano = () => {
       flexDirection="column"
       alignItems="center"
       marginTop="60px"
-      height="100vh"
       color="white"
       padding="20px"
       fontFamily="OneMobile"

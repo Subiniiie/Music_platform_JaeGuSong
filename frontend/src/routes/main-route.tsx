@@ -8,6 +8,10 @@ import DrumView from "../sections/game/drum/game-drum-view";
 import KeyboardsView from "../sections/game/keyboards/game-keyboards-view";
 import VocalView from "../sections/game/vocal/game-vocal-view";
 // import CommunityView from "@/pages/community/community-view";
+import CommunityView from "@/pages/community/community-view";
+import WsListView from "@/pages/workspace/ws-list-view";
+import WsDetailView from "@/pages/workspace/ws-detail-view";
+
 const mainRoute: RouteObject[] = [
   {
     path: paths.auth.signIn,
@@ -30,8 +34,12 @@ const mainRoute: RouteObject[] = [
         element: <DividerUploadView />,
       },
       {
-        // path: paths.workspace,
-        // element: <WorkspaceView />, // 나중에 추가 가능
+        path: paths.workspace.list,
+        element: <WsListView />, // 나중에 추가 가능
+      },
+      {
+        path: `${paths.workspace.list}/:workspaceId`, // 워크스페이스 상세 페이지 라우트
+        element: <WsDetailView />, // 상세 페이지 컴포넌트 렌더링
       },
       // 게임 경로
       {

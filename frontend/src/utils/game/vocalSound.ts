@@ -94,5 +94,4 @@ const convertToNote = (frequency: number): string => {
   return notes[noteIndex] + octave;
 };
 
-// 함수들을 외부에서 사용할 수 있도록 내보내기
 export { initMicrophone, stopMicrophone, convertToNote };

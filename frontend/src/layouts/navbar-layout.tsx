@@ -11,8 +11,9 @@ export default function NavbarLayout() {
         width={{ base: "200px", md: "250px" }} // 최소 폭 설정
         minWidth="200px"
         bg="gray.100"
-        p={4}
+        p="4"
         boxShadow="md"
+        background="#02001F"
       >
         <Navbar />
       </Box>

@@ -23,6 +23,10 @@ const paths = {
   },
 
   // workspace
+  workspace: {
+    list: `${PATH.workspace}/list`,
+    detail: (workspaceId: number) => `${PATH.workspace}/list/${workspaceId}`, // 워크스페이스 상세 페이지
+  },
 
   // community
   community: {
