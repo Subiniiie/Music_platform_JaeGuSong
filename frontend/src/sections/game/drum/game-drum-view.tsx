@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Text, Flex } from "@chakra-ui/react";
 import useDrumGame from "@/hooks/game/drum/useDrumGame";
 import sounds from "@/utils/game/drumSound";
@@ -13,6 +12,7 @@ const GameDrum = () => {
     level,
     gameOver,
     isGameStarted,
+    currentBeat,
     handleDrumClick,
     startPatternGame,
     resetGame,
@@ -85,7 +85,7 @@ const GameDrum = () => {
                 boxShadow="inset 0 0 10px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.8)"
                 margin="10px"
                 position="relative"
-                transition="transform 0.1s, background 0.3s, box-shadow 0.3s"
+                transition="transform 0.3s, background 0.3s, box-shadow 0.3s"
                 border="4px solid #222"
                 _after={{
                   content: '""',
@@ -112,6 +112,8 @@ const GameDrum = () => {
                 }}
                 opacity={isPlayingPattern ? 0.5 : 1}
                 pointerEvents={isPlayingPattern ? "none" : "auto"}
+                borderColor={currentBeat === beat ? "#fff" : "#222"}
+                transform={currentBeat === beat ? "scale(1.1)" : "scale(1)"}
               >
                 {beat}
               </Box>
@@ -164,6 +166,8 @@ const GameDrum = () => {
                 }}
                 opacity={isPlayingPattern ? 0.5 : 1}
                 pointerEvents={isPlayingPattern ? "none" : "auto"}
+                borderColor={currentBeat === beat ? "#fff" : "#222"}
+                transform={currentBeat === beat ? "scale(1.1)" : "scale(1)"}
               >
                 {beat}
               </Box>
