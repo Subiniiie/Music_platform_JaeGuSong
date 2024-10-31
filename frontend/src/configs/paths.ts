@@ -31,7 +31,7 @@ const paths = {
 
   // game
   game: {
-    home: `${PATH.game}`,
+    home: `${PATH.game}/home`,
     drum: `${PATH.game}/drum`,
     keyboards: `${PATH.game}/keyboards`,
     vocal: `${PATH.game}/vocal`,
