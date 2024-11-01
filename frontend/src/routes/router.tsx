@@ -6,6 +6,8 @@ import AuthLayout from "@/layouts/auth-layout";
 import SignInView from "@/pages/auth/signin-view";
 import SignUpView from "@/pages/auth/signup-view";
 import NavbarLayout from "@/layouts/navbar-layout";
+import TitleLayout from "@/layouts/title-layout";
+import titleRoute from "./title-route";
 
 const router = createBrowserRouter([
   {
@@ -26,8 +28,16 @@ const router = createBrowserRouter([
       },
       {
         element: <NavbarLayout />,
-        children: mainRoute,
         errorElement: <Navigate to={paths.main} replace />,
+        children: [
+          {
+            element: <TitleLayout />,
+            children: titleRoute,
+          },
+          {
+            children: mainRoute,
+          },
+        ],
       },
     ],
   },

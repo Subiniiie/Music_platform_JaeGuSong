@@ -9,10 +9,7 @@ import paths from "@/configs/paths";
 import useAuth from "@/hooks/auth/useAuth";
 
 export default function Navbar() {
-  const {
-    goSignupPage,
-    goSignInPage
-  } = useAuth();  
+  const { goSignupPage, goSignInPage } = useAuth();
 
   const items = [
     {
@@ -59,7 +56,7 @@ export default function Navbar() {
             height="30px"
             width="80px"
             onClick={goSignInPage}
-            >
+          >
             로그인
           </Button>
           <Button
