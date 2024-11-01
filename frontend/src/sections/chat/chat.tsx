@@ -1,12 +1,18 @@
 import { useEffect, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { Button, Input, Box, Text, Flex } from "@chakra-ui/react";
+import { Button, Input, Box, Text, Flex, VStack } from "@chakra-ui/react";
 import Modal from "@/components/common/Modal";
+
+interface Message {
+  id: string;
+  userId: string;
+  msg: string;
+}
 
 const Chat = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState(() => {
+  const [messages, setMessages] = useState<Message[]>(() => {
     const savedMessages = localStorage.getItem("messages");
     return savedMessages ? JSON.parse(savedMessages) : [];
   });
@@ -15,7 +21,6 @@ const Chat = () => {
     sessionStorage.getItem("userId")
   );
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [showScrollBar, setShowScrollBar] = useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const handleChatButtonClick = () => {
@@ -64,8 +69,8 @@ const Chat = () => {
       localStorage.setItem("messages", JSON.stringify(data.messages));
     } else {
       const { id, userId, message: msg } = data;
-      const newMessage = { id, userId, msg };
-      setMessages((prevMessages) => {
+      const newMessage: Message = { id, userId, msg };
+      setMessages((prevMessages: Message[]) => {
         const updatedMessages = [...prevMessages, newMessage];
         localStorage.setItem("messages", JSON.stringify(updatedMessages));
         return updatedMessages;
@@ -110,51 +115,104 @@ const Chat = () => {
     }
   }, [messages]);
 
-  const handleScroll = () => {
-    setShowScrollBar(true);
-    clearTimeout(window.scrollTimeout);
-    window.scrollTimeout = setTimeout(() => {
-      setShowScrollBar(false);
-    }, 1000);
-  };
-
   return (
     <>
-      <Button onClick={handleChatButtonClick} disabled={modalOpen}>
-        💬
-      </Button>
-
+      <img
+        src="/assets/chat.png"
+        alt="Open Chat"
+        onClick={handleChatButtonClick}
+        style={{
+          position: "fixed",
+          bottom: "40px",
+          right: "40px",
+          cursor: "pointer",
+          width: "60px",
+          height: "60px",
+          transition: "0.3s",
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.transform = "scale(1.6)";
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
+        }}
+      />
       <Modal isOpen={modalOpen} onClose={closeModal}>
-        <Text mb={4}>현재 인원: {userCount}</Text>
-        <Box maxH="300px" overflowY="scroll" onScroll={handleScroll} mb={4}>
-          {messages.map((msg, index) => (
-            <Flex
-              key={index}
-              alignSelf={msg.userId === userId ? "flex-end" : "flex-start"}
-              p={2}
-              bg={msg.userId === userId ? "green.200" : "gray.200"}
-              borderRadius="md"
-              mb={2}
-              maxW="70%"
-            >
-              <Text>{msg.msg}</Text>
-            </Flex>
-          ))}
-          <div ref={messagesEndRef} />
-        </Box>
-        <Input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="메세지 입력"
-          mb={2}
-        />
+        <Flex
+          direction="column"
+          width="600px"
+          height="800px"
+          maxH="80vh"
+          overflow="hidden"
+        >
+          <Flex p={4}>
+            <Text fontSize="24px" fontWeight="bold" color="black">
+              현재 인원: {userCount}
+            </Text>
+          </Flex>
 
-        <Button onClick={sendMessage} disabled={!userId} mr={3}>
-          전송
-        </Button>
-        <Button onClick={clearMessages}>전체 메세지 삭제</Button>
+          <Box
+            flex="1"
+            overflowY="auto"
+            p={4}
+            bg="#f0f0f0"
+            id="messages"
+            display="flex"
+            flexDirection="column"
+            borderRadius="20px"
+          >
+            {messages.map((msg: Message) => (
+              <Flex
+                key={msg.id}
+                alignSelf={msg.userId === userId ? "flex-end" : "flex-start"}
+                p={3}
+                bg={msg.userId === userId ? "skyblue" : "#e5e5ea"}
+                borderRadius="20px"
+                mb={2}
+                color={msg.userId === userId ? "white" : "black"}
+              >
+                <Text>{msg.msg}</Text>
+              </Flex>
+            ))}
+            <div ref={messagesEndRef} />
+          </Box>
+
+          <Box padding="20px 0 0 0">
+            <Flex>
+              <Input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="메세지 입력"
+                color="black"
+                borderColor="#b0e0e6"
+                borderWidth="2px"
+                borderRadius="20px"
+                marginRight="10px"
+                _focus={{
+                  borderColor: "#007acc",
+                  boxShadow: "0 0 10px rgba(0, 122, 204, 0.5)",
+                }}
+              />
+              <Button
+                onClick={sendMessage}
+                disabled={!userId}
+                borderRadius="20px"
+                bg="skyblue"
+                _hover={{
+                  bg: "#007acc",
+                }}
+                marginRight="10px"
+              >
+                전송
+              </Button>
+              <Button onClick={clearMessages} borderRadius="20px">
+                메세지 삭제
+              </Button>
+            </Flex>
+          </Box>
+        </Flex>
       </Modal>
     </>
   );

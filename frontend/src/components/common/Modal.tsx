@@ -22,12 +22,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   };
 
   const contentStyle: React.CSSProperties = {
-    backgroundColor: "#dcdcdc",
+    backgroundColor: "white",
     padding: "30px",
     borderRadius: "30px",
     textAlign: "center",
-    width: "100%",
-    maxWidth: "500px",
+    maxWidth: "800px",
+    maxHeight: "1200px",
     position: "relative",
   };
 

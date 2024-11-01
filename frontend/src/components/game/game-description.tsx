@@ -29,10 +29,10 @@ const GameDescriptionModal: React.FC<GameDescriptionModalProps> = ({
         alignItems="center"
         justifyContent="center"
         color="white"
-        padding="40px"
+        padding="40px 80px"
         width="100%"
         maxWidth="500px"
-        bg="#dcdcdc"
+        bg="white"
         borderRadius="30px"
         position="relative"
       >
