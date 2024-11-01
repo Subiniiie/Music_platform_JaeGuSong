@@ -86,7 +86,6 @@ const Input: React.FC = () => {
 
     const sendVerifyNumber = async () => {
                 // 인증 이메일 전송하는 코드
-                console.log('보낸다', formData.userId)
         try {
             const response = await axios.post(
                 // URL 고치기
@@ -102,6 +101,22 @@ const Input: React.FC = () => {
     };
 
     const checkverifyNumber = async () => {
+        // 인증 번호 확인하는 코드
+        console.log('보낸다', formData.userId)
+        console.log('보낸다', formData.confirmNumber)
+        try {
+            const response = await axios.post(
+                // URL 고치기
+                'https://k11e106.p.ssafy.io/api/auth/email/code', 
+                {
+                    'email' : formData.userId,
+                    'code' : formData.confirmNumber
+                }
+            )
+            console.log(response.data)
+        } catch(error) {
+            console.error(error)
+        }
         setSubmitSignup(true);
         setIsStepValid(true);
     };

@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Heading , Box, Text } from '@chakra-ui/react';
 import CommunityButton from '@/components/community/community-button';
 import Reviewcontainer from '@/components/community/review-container';
+import Header from '@/components/community/header';
+import Container from '@/components/community/container';
 import paths from '@/configs/paths';
 
 const CommunityDetailView: React.FC = () => {
@@ -80,62 +82,71 @@ const CommunityDetailView: React.FC = () => {
     }
 
   return (
-    <Box margin="40px 30px">
-        <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-between"
-        >
-            <Heading as="h1" size="3xl" mb={4}>
-                제목
-            {/* {article.title} */}
-            </Heading>
-            {/* 내 워크스페이스인지 확인 */}
-            {/* {article.user_seq === myUserSeq ? (
-                <CommunityButton
-                    title='수정'
-                />
-                <CommunityButton
-                    title='삭제'
-                />
-            ) : (
-                ''
-            )}; */}
-            <Box
-                display="flex"
-                gap="2"
-            >
-                <CommunityButton
-                    title='수정'
-                    onClick={handleUpdateArticle}
-                />
-                <CommunityButton
-                    title='삭제'
-                />
-            </Box>  
-            </Box>  
-        <Text 
-            textStyle="md"
-            minHeight="320px"
-        >
-            내용 어케 받는지 확인 꺄ㅑㅑㅑㅑㅑㅑㅑㅑㅑ
-        </Text>
-        <Box
-            display="flex"
-            gap="2"
-        >
-            <CommunityButton
-                title="워크스페이스 가기"
-                onClick={goworkSpace}
-            />
-            <CommunityButton
-                title={`좋아요 ${myLikedNum.toString()}`}
-                onClick={changeMyLiked}
-                />
-                {/* {myLikedNum.toString()} */}
-        </Box>
-        <Reviewcontainer />    
-    </Box>
+    <>
+        <Header />
+        <Container>
+            <Box margin="40px 30px">
+                <Box
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="space-between"
+                >
+                    <Heading 
+                        as="h1" 
+                        size="3xl" 
+                        mb={4}
+                    >
+                        제목
+                    {/* {article.title} */}
+                    </Heading>
+                    {/* 내 워크스페이스인지 확인 */}
+                    {/* {article.user_seq === myUserSeq ? (
+                        <CommunityButton
+                            title='수정'
+                        />
+                        <CommunityButton
+                            title='삭제'
+                        />
+                    ) : (
+                        ''
+                    )}; */}
+                    <Box
+                        display="flex"
+                        gap="2"
+                    >
+                        <CommunityButton
+                            title='수정'
+                            onClick={handleUpdateArticle}
+                            />
+                        <CommunityButton
+                            title='삭제'
+                            />
+                    </Box>  
+                </Box>
+                <Text 
+                    textStyle="md"
+                    minHeight="320px"
+                >
+                    내용 어케 받는지 확인 꺄ㅑㅑㅑㅑㅑㅑㅑㅑㅑ
+                </Text>
+                <Box
+                    display="flex"
+                    gap="2"
+                >
+                    <CommunityButton
+                        title="워크스페이스 가기"
+                        onClick={goworkSpace}
+                    />
+                    <CommunityButton
+                        title={`좋아요 ${myLikedNum.toString()}`}
+                        onClick={changeMyLiked}
+                        />
+                        {/* {myLikedNum.toString()} */}
+                </Box>
+                <Reviewcontainer />    
+            </Box>
+        </Container>
+    </>
   );
 };
 
