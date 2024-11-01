@@ -46,7 +46,7 @@ const GameDrum = () => {
             fontSize="32px"
             color="white"
           >
-            점수 : {score} &nbsp; 단계: {level}
+            단계 : {level} &nbsp; 점수 : {score}
           </Flex>
           <Text
             marginTop="20px"

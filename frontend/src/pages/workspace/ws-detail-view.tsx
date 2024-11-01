@@ -3,6 +3,7 @@ import { Box, Button, Stack, Heading, Text, Flex } from "@chakra-ui/react";
 import { Slider } from "@/components/ui/slider";
 import WaveSurfer from "wavesurfer.js";
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions";
+import SessionBox from "@/sections/workspace/sessionBox";
 
 export default function WsDetailView() {
   const [waveformInstances, setWaveformInstances] = useState<WaveSurfer[]>([]);
@@ -60,12 +61,12 @@ export default function WsDetailView() {
   };
 
   return (
-    <Stack padding={4} bg="purple.900" color="white" borderRadius="md">
-      <Heading>현우 님의 워크스페이스</Heading>
+    <Stack padding={4} color="white" borderRadius="md">
       <Text>APT. _ EmptyWatermelon.mp3</Text>
       <Text fontSize="sm" color="gray.400">
         최종 저장일시: 2024-10-24 23:10
       </Text>
+      <SessionBox />
 
       {waveforms.map((track) => (
         <Box

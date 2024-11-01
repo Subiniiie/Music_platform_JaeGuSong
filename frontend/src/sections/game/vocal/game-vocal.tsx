@@ -1,130 +1,80 @@
-import { useState, useEffect } from "react";
-import useVocalGame from "@/hooks/game/vocal/useVocal";
-import { Box, Text, Flex } from "@chakra-ui/react";
-import CustomButton from "@/components/common/Button";
+import { useState } from "react";
+import { Button, Text, Box, VStack, Heading } from "@chakra-ui/react";
+import useVocal from "../../../hooks/game/vocal/useVocal";
+import { NOTES } from "../../../utils/game/vocalSound";
 
-const GameVocalGame = () => {
-  const [targetNote, setTargetNote] = useState<string>("");
-  const [level, setLevel] = useState<number>(1); // 게임 단계
-  const maxLevel = 10; // 최대 단계
-  const { message, currentNote, isGameActive, startGame } =
-    useVocalGame(targetNote);
+const VocalGame = () => {
+  const [level, setLevel] = useState<number>(1);
+  const [targetPitch, setTargetPitch] = useState<string>("C4");
+  const [status, setStatus] = useState<string>("시작하려면 발성하세요");
+  const [gameEnded, setGameEnded] = useState<boolean>(false);
 
-  // 랜덤 목표 음 생성 함수
-  const generateRandomNote = () => {
-    const notes = [
-      "C4",
-      "C#4",
-      "D4",
-      "D#4",
-      "E4",
-      "F4",
-      "F#4",
-      "G4",
-      "G#4",
-      "A4",
-      "A#4",
-      "B4",
-      "C5",
-      "C#5",
-      "D5",
-      "D#5",
-      "E5",
-      "F5",
-      "F#5",
-      "G5",
-      "G#5",
-      "A5",
-      "A#5",
-      "B5",
-    ];
-    return notes[Math.floor(Math.random() * notes.length)];
+  const LEVEL_TARGET_PITCHES = [
+    "C4",
+    "D4",
+    "E4",
+    "F4",
+    "G4",
+    "A4",
+    "B4",
+    "C5",
+    "D5",
+    "E5",
+  ];
+
+  const nextLevel = () => {
+    const newLevel = level + 1;
+    if (newLevel > 10) {
+      setGameEnded(true);
+      return;
+    }
+    setLevel(newLevel);
+    setTargetPitch(LEVEL_TARGET_PITCHES[newLevel - 1]);
+    setStatus("발성 대기 중...");
   };
 
-  useEffect(() => {
-    if (isGameActive && level <= maxLevel) {
-      setTargetNote(generateRandomNote());
-    }
-  }, [isGameActive, level]);
-
-  const handleMessageUpdate = () => {
-    if (currentNote) {
-      if (currentNote === targetNote) {
-        setLevel((prevLevel) => prevLevel + 1); // 다음 단계로 진행
-        if (level < maxLevel) {
-          setTargetNote(generateRandomNote()); // 다음 목표 음 생성
-        } else {
-          setLevel(1); // 게임이 끝나면 단계 초기화
-        }
-      } else {
-        if (currentNote < targetNote) {
-          setMessage("더 높게!");
-        } else {
-          setMessage("더 낮게!");
-        }
-      }
-    }
+  const resetGame = () => {
+    setLevel(1);
+    setTargetPitch(LEVEL_TARGET_PITCHES[0]);
+    setStatus("시작하려면 발성하세요");
+    setGameEnded(false);
   };
 
-  useEffect(() => {
-    handleMessageUpdate();
-  }, [currentNote]);
+  const targetFrequency: number =
+    440 * Math.pow(2, (NOTES.indexOf(targetPitch.slice(0, -1)) - 9) / 12);
+
+  const { userFrequency } = useVocal(targetFrequency, () => {
+    // 사용자 발성이 목표 음보다 높으면 다음 단계로 이동
+    if (userFrequency && userFrequency > targetFrequency) {
+      nextLevel();
+    }
+  });
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      backgroundColor="#02001f"
-      color="white"
-      fontFamily="OneMobile"
-      marginTop="60px"
+    <VStack
+      spacing={6}
+      p={8}
+      border="1px solid #ddd"
+      borderRadius="10px"
+      maxW="400px"
+      mx="auto"
+      mt="20px"
     >
-      <Text
-        fontSize="64px"
-        textAlign="center"
-        color="#c796ff"
-        marginBottom="50px"
-      >
-        퍼펙트 싱어
-      </Text>
-
-      <Text marginY="20px" fontSize="24px">
-        미션: {targetNote} 음 맞추기
-      </Text>
-
-      <Text fontSize="28px" marginY="20px">
-        {currentNote ? `현재 음정: ${currentNote}` : "음성을 감지 중..."}
-      </Text>
-
-      <Flex
-        justifyContent="center"
-        marginTop="0"
-        position="fixed"
-        bottom="20px"
-        right="20px"
-      >
-        <CustomButton onClick={startGame}>
-          {isGameActive ? "게임 끝" : "게임 시작"}
-        </CustomButton>
-      </Flex>
-
-      <Text
-        fontSize="20px"
-        marginTop="20px"
-        className={message === "Perfect!" ? "perfect" : ""}
-        color={message === "Perfect!" ? "#1e90ff" : "white"}
-      >
-        {currentNote && message}
-      </Text>
-
-      {level > maxLevel && (
-        <Text fontSize="20px" marginTop="20px" color="gold">
-          게임 완료! 축하합니다!
+      <Heading size="md">보컬 게임 - 레벨 {level}</Heading>
+      <Box>
+        <Text fontSize="lg" fontWeight="bold">
+          목표 음: {targetPitch} ({targetFrequency.toFixed(0)} Hz)
         </Text>
+        <Text color="teal.500" fontSize="xl">
+          {status}
+        </Text>
+      </Box>
+      {userFrequency && (
+        <Text>현재 감지된 주파수: {Math.round(userFrequency)} Hz</Text>
       )}
-    </Box>
+      {gameEnded && <Button onClick={resetGame}>게임 다시 시작하기</Button>}
+    </VStack>
   );
 };
 
-export default GameVocalGame;
+export default VocalGame;
