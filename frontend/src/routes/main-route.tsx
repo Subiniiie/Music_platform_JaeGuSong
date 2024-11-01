@@ -5,9 +5,9 @@ import DividerUploadView from "../pages/divider/upload-view";
 import SignInView from "../pages/auth/signin-view";
 import SignUpView from "../pages/auth/signup-view";
 import GameView from "../pages/game/home/game-view";
-import DrumView from "../sections/game/drum/game-drum-view";
-import KeyboardsView from "../sections/game/keyboards/game-keyboards-view";
-import VocalView from "../sections/game/vocal/game-vocal-view";
+import DrumView from "../sections/game/drum/game-drum";
+import KeyboardsView from "../sections/game/keyboards/game-keyboards";
+import VocalView from "../sections/game/vocal/game-vocal";
 // import CommunityView from "@/pages/community/community-view";
 import CommunityView from "@/pages/community/community-view";
 import CommunityMainView from "@/pages/community/community-main-view";
@@ -31,12 +31,12 @@ const mainRoute: RouteObject[] = [
     // 메인 경로로 설정할 페이지는 나중에 element를 지정할 수 있음
     children: [
       {
-        path: 'community',
+        path: "community",
         element: <CommunityView />, // 나중에 추가 가능
         children: [
           {
-            path: '',
-            element: <CommunityMainView />
+            path: "",
+            element: <CommunityMainView />,
           },
           {
             path: "create",
@@ -50,10 +50,10 @@ const mainRoute: RouteObject[] = [
             path: "update/:id",
             element: <CommunityUpdateView />,
           },
-        ]
+        ],
       },
       {
-        path: 'community',
+        path: "community",
         element: <Navigate to={`${paths.main}`} replace />,
       },
       {
