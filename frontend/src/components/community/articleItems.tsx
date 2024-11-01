@@ -18,7 +18,14 @@ const ArticleItems: React.FC<ArticleItemsProps> = ({ article }) => {
   };
 
   return (
-    <Box onClick={goDetail}>
+    <Box 
+      onClick={goDetail}
+      display="flex"
+      alignItems="center"
+      height="50px" 
+      paddingLeft="10px" 
+      cursor="pointer"
+    >
       <Text textStyle="xl">{article.title}</Text>
     </Box>
   );

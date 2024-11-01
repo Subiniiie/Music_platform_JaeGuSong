@@ -9,6 +9,7 @@ const InputContainer: React.FC = () => {
       flexDirection="column" 
       alignItems="center" 
       minH="100vh"
+      minW="900px"
       marginTop="20px"
     >
       <Heading mb={4}>게시물 작성</Heading>

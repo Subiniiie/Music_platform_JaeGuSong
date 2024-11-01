@@ -79,40 +79,59 @@ const CommunityDetailView: React.FC = () => {
 
   return (
     <Box margin="40px 30px">
-        <Heading as="h1" size="xl" mb={4}>
-            제목
-        {/* {article.title} */}
-        </Heading>
-        {/* 내 워크스페이스인지 확인 */}
-        {/* {article.user_seq === myUserSeq ? (
-            <CommunityButton
-                title='수정'
-            />
-            <CommunityButton
-                title='삭제'
-            />
-        ) : (
-            ''
-        )}; */}
-        <CommunityButton
-            title='수정'
-            onClick={handleUpdateArticle}
-        />
-        <CommunityButton
-            title='삭제'
-        />
-        <Text textStyle="md">
-            내용 어케 받는지 확인
+        <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="space-between"
+        >
+            <Heading as="h1" size="3xl" mb={4}>
+                제목
+            {/* {article.title} */}
+            </Heading>
+            {/* 내 워크스페이스인지 확인 */}
+            {/* {article.user_seq === myUserSeq ? (
+                <CommunityButton
+                    title='수정'
+                />
+                <CommunityButton
+                    title='삭제'
+                />
+            ) : (
+                ''
+            )}; */}
+            <Box
+                display="flex"
+                gap="2"
+            >
+                <CommunityButton
+                    title='수정'
+                    onClick={handleUpdateArticle}
+                />
+                <CommunityButton
+                    title='삭제'
+                />
+            </Box>  
+            </Box>  
+        <Text 
+            textStyle="md"
+            minHeight="350px"
+        >
+            내용 어케 받는지 확인 꺄ㅑㅑㅑㅑㅑㅑㅑㅑㅑ
         </Text>
-        <CommunityButton
-            title='워크스페이스 가기'
-            onClick={goworkSpace}
-        />
-        <CommunityButton
-            title={`좋아요 개수 ${myLikedNum.toString()}`}
-            onClick={changeMyLiked}
+        <Box
+            display="flex"
+            gap="2"
+        >
+            <CommunityButton
+                title="워크스페이스 가기"
+                onClick={goworkSpace}
             />
-            {/* {myLikedNum.toString()} */}
+            <CommunityButton
+                title={`좋아요 ${myLikedNum.toString()}`}
+                onClick={changeMyLiked}
+                />
+                {/* {myLikedNum.toString()} */}
+        </Box>    
     </Box>
   );
 };

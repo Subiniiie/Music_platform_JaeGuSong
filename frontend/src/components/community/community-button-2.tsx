@@ -6,11 +6,11 @@ interface CommunityButtonProps {
     onClick?: () => void;
 }
 
-const CommunityButton: React.FC<CommunityButtonProps> = ({title, onClick}) => {
+const CommunityButton2: React.FC<CommunityButtonProps> = ({title, onClick}) => {
   return (
     <Button
-      border="solid 2px #9000FF"
-      borderRadius="15px"
+    backgroundColor="transparent" 
+    _hover={{ transform: "translateY(-2px)", bg: "transparent" }}
       height="30px"
       width="auto"
         onClick={onClick} 
@@ -20,4 +20,4 @@ const CommunityButton: React.FC<CommunityButtonProps> = ({title, onClick}) => {
   );
 };
 
-export default CommunityButton;
+export default CommunityButton2;

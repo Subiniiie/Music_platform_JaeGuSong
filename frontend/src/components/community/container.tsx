@@ -10,11 +10,11 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
   return (
     <Box
         position="fixed"
-        border="2px solid #0d47a1"
+        border="2px solid #9000FF"
         borderRadius="8px"
         width="calc(100% - 280px)"
         minHeight="100vh"
-        marginTop="80px"
+        marginTop="130px"
         marginRight="20px"
         overflowY="auto"
     >

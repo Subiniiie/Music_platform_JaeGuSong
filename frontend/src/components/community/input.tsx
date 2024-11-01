@@ -77,7 +77,7 @@ const Input: React.FC = () => {
                                 color="black"
                                 size="lg"
                                 resize="vertical"
-                                height="300px" 
+                                height="180px" 
                             />
                         ) : (
                             <ChakraInput
@@ -92,7 +92,15 @@ const Input: React.FC = () => {
                         )}
                     </Box>
                 ))}
-                <Button type="submit">제출</Button>
+                <Button 
+                    type="submit"
+                    border="solid 2px #9000FF"
+                    borderRadius="15px"
+                    height="30px"
+                    width="auto"
+                >
+                    제출
+                </Button>
             </form>
         </Box>
     );

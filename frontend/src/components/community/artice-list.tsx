@@ -43,11 +43,14 @@ const ArticleList: React.FC = () => {
   }, [])
 
   return (
-    <Stack gap="10">
+    <Stack 
+      marginTop="10px"
+    >
       {articles.map((article) => (
         <Separator
           key={article.board_seq}
           size="xs" 
+          borderColor="#c5e4f3"
         >
           <ArticleItems article={article} />
         </Separator>

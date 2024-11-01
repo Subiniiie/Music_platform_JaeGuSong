@@ -27,11 +27,20 @@ const Header: React.FC = () => {
         position="fixed"
         top="0"
         left="250px"
-        width="calc(100% - 250px)"  
+        width="calc(100% - 250px)" 
         padding="4"
     >
-      유저 정보 받아올거임
-      <Box>
+      <Box
+        height="70px"
+      >
+        유저 정보 받아올거임
+      </Box>        
+      <Box 
+        marginTop="20px"
+        display="flex"
+        justifyContent="flex-end"
+        gap="5px"
+      >
         <CommunityButton 
           title='글쓰기'
           onClick={goCreateArticle}

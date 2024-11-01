@@ -31,12 +31,12 @@ const mainRoute: RouteObject[] = [
     // 메인 경로로 설정할 페이지는 나중에 element를 지정할 수 있음
     children: [
       {
-        path: "community",
+        path: 'community',
         element: <CommunityView />, // 나중에 추가 가능
         children: [
           {
-            path: "",
-            element: <CommunityMainView />,
+            path: '',
+            element: <CommunityMainView />
           },
           {
             path: "create",
@@ -50,10 +50,10 @@ const mainRoute: RouteObject[] = [
             path: "update/:id",
             element: <CommunityUpdateView />,
           },
-        ],
+        ]
       },
       {
-        path: "community",
+        path: 'community',
         element: <Navigate to={`${paths.main}`} replace />,
       },
       {
