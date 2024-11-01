@@ -183,7 +183,7 @@ const GamePiano = () => {
               {octaveSelected && (
                 <>
                   <Text fontSize="32px" textAlign="center" color="white">
-                    점수: {noteCorrectCount * 10} &nbsp; 단계: {noteLevel}
+                    단계: {noteLevel} &nbsp; 점수: {noteCorrectCount * 10}
                   </Text>
                   <Text
                     fontSize="30px"
