@@ -6,10 +6,10 @@ import { Outlet } from 'react-router-dom';
 const CommunityView: React.FC = () => {
   return (
     <div style={{ color: 'white', fontFamily: "MiceGothicBold" }}>
-      <Header />
-      <Container>
+      {/* <Header />
+      <Container> */}
         <Outlet />
-      </Container>
+      {/* </Container> */}
     </div>
     );
 };
