@@ -137,6 +137,7 @@ const Chat = () => {
           e.currentTarget.style.transform = "scale(1)";
         }}
       />
+
       <Modal isOpen={modalOpen} onClose={closeModal}>
         <Flex
           direction="column"
