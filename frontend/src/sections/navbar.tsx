@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, Link, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Link, Stack, Text } from "@chakra-ui/react";
 import {
   AccordionItem,
   AccordionItemContent,
@@ -6,15 +6,21 @@ import {
   AccordionRoot,
 } from "@/components/ui/accordion";
 import paths from "@/configs/paths";
+import useAuth from "@/hooks/auth/useAuth";
 
 export default function Navbar() {
+  const {
+    goSignupPage,
+    goSignInPage
+  } = useAuth();  
+
   const items = [
     {
       value: "a",
       title: "커뮤니티",
       text: [
         { label: "검색", path: paths.search },
-        { label: "내 피드", path: paths.feed },
+        { label: "내 피드", path: paths.community.main },
       ],
     },
     {
@@ -52,7 +58,8 @@ export default function Navbar() {
             borderRadius="15px"
             height="30px"
             width="80px"
-          >
+            onClick={goSignInPage}
+            >
             로그인
           </Button>
           <Button
@@ -60,6 +67,7 @@ export default function Navbar() {
             borderRadius="15px"
             height="30px"
             width="80px"
+            onClick={goSignupPage}
           >
             회원가입
           </Button>
@@ -69,7 +77,7 @@ export default function Navbar() {
         {items.map((item, index) => (
           <AccordionItem key={index} value={item.value} paddingY="1">
             <AccordionItemTrigger color="white">
-              {item.title}
+              <Text fontSize="lg">{item.title}</Text>
             </AccordionItemTrigger>
             <AccordionItemContent color="white">
               {item.text.map((linkItem, i) => (
@@ -80,7 +88,7 @@ export default function Navbar() {
                   display="block"
                   paddingY="1"
                 >
-                  {linkItem.label}
+                  <Text fontSize="sm">{linkItem.label}</Text>
                 </Link>
               ))}
             </AccordionItemContent>

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Heading , Box, Text } from '@chakra-ui/react';
 import CommunityButton from '@/components/community/community-button';
+import Reviewcontainer from '@/components/community/review-container';
 import paths from '@/configs/paths';
 
 const CommunityDetailView: React.FC = () => {
@@ -47,7 +48,8 @@ const CommunityDetailView: React.FC = () => {
             return;  // id가 undefined인 경우 함수 종료
         }
         const numericId = Number(id);
-        navigate(paths.community.update(numericId));
+        // 워크 스페이스 url
+        // navigate(paths.community.update(numericId));
         // 토큰 가져오기
 
         // 이걸로 workspace seq를 가지고 와서
@@ -114,7 +116,7 @@ const CommunityDetailView: React.FC = () => {
             </Box>  
         <Text 
             textStyle="md"
-            minHeight="350px"
+            minHeight="320px"
         >
             내용 어케 받는지 확인 꺄ㅑㅑㅑㅑㅑㅑㅑㅑㅑ
         </Text>
@@ -131,7 +133,8 @@ const CommunityDetailView: React.FC = () => {
                 onClick={changeMyLiked}
                 />
                 {/* {myLikedNum.toString()} */}
-        </Box>    
+        </Box>
+        <Reviewcontainer />    
     </Box>
   );
 };
