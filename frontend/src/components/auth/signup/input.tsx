@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { SignupFormData, SignupInputFields } from '@/configs/auth/formInputDatas';
 import { Box, Button, Input as ChakraInput } from '@chakra-ui/react';
 import axios from 'axios';
+import paths from '@/configs/paths';
 
 const exptext = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
 const phoneRule = /^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
@@ -34,8 +35,19 @@ const Input: React.FC = () => {
     const [currentStep, setCurrentStep] = useState<number>(0);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+        const { name, value, type } = e.target;
+
+        if (type === 'file' && e.target instanceof HTMLInputElement) {
+            const files = e.target.files; // 파일 입력에서 files를 가져옴
+            if (files && files.length > 0) {
+                setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    [name]: files[0] // 첫 번째 파일만 사용
+                }));
+            }
+        } else {
+            setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+        }
 
         let message = '';
         let stepValid = isStepValid;
@@ -123,7 +135,46 @@ const Input: React.FC = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        navigate('/main');
+
+        console.log('formData:', formData)
+           
+        const formDataToSubmit = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+            if (value) formDataToSubmit.append(key, value instanceof File ? value : String(value));
+        })
+        let newGender = '';
+
+        if (formData.gender === '남성') {
+            newGender = 'M'
+        } else if (formData.gender === '여성') {
+            newGender = 'F'
+        } else {
+            newGender = 'E'
+        }
+        // 백한테 회원가입 정보 보내기
+        try {
+            const response = await axios.post(
+                // URL 고치기
+                'https://k11e106.p.ssafy.io/api/auth/join',
+                {
+                    "email" : formData.userId,
+                    "password" : formData.password,
+                    "name" : formData.userName,
+                    "nickname" : formData.nickname,
+                    "gender" : formData.gender,
+                    "birth" : formData.birthday,
+                    "region" : formData.region,
+                    "position" :formData.position,
+                    "genre" : formData.genre,
+                    "profileImage" : formData.profileImage
+                }
+            );
+               navigate(paths.main)
+            console.log('나 성공!', response.data)
+        } catch(error) {
+            console.error(error.response.data)
+        }
+
     };
 
     const handleNextStep = () => {
@@ -150,6 +201,13 @@ const Input: React.FC = () => {
             setCurrentStep(currentStep - 1);
             setIsStepValid(true);
         }
+    };
+
+    const handleFileChange = (file: File) => {
+        setFormData({
+            ...formData,
+            [SignupInputFields[currentStep + 2].name]: file,
+        });
     };
 
     return (
@@ -218,48 +276,63 @@ const Input: React.FC = () => {
                     </>
                 )}
 
-                {currentStep > 1 && (
-                    <Box mb={4}>
-                        <label>{SignupInputFields[currentStep + 2].label}</label>
-                        {SignupInputFields[currentStep + 2].type === 'select' ? (
-                            <select
-                                name={SignupInputFields[currentStep + 2].name}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={formData[SignupInputFields[currentStep + 2].name as keyof SignupFormData] || ''}
-                                style={{ color: 'black', background: 'white', borderColor: 'black', padding: '0.5rem' }}
-                            >
-                                {SignupInputFields[currentStep + 2].options?.map((option, idx) => (
-                                    <option key={idx} value={option} style={{ color: 'black' }}>
-                                        {option}
-                                    </option>
-                                ))}
-                            </select>
-                        ) : (
-                            <ChakraInput
-                                type={SignupInputFields[currentStep + 2].type}
-                                name={SignupInputFields[currentStep + 2].name}
-                                value={formData[SignupInputFields[currentStep + 2].name as keyof SignupFormData] || ''}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                placeholder={SignupInputFields[currentStep + 2].name === 'phoneNumber' ? '010-0000-0000' : undefined}
-                                style={{ color: 'black', background: 'white', borderColor: 'black', padding: '0.5rem' }}
-                            />
-                        )}
-                        {notices[SignupInputFields[currentStep + 2].name] && (
-                            <div style={{ color: 'red' }}>{notices[SignupInputFields[currentStep + 2].name]}</div>
-                        )}
-                    </Box>
-                )}
+{currentStep > 1 && SignupInputFields[currentStep + 2] && (
+    <Box mb={4}>
+        <label>{SignupInputFields[currentStep + 2].label}</label>
+        {SignupInputFields[currentStep + 2].type === 'select' ? (
+            <select
+                name={SignupInputFields[currentStep + 2].name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={formData[SignupInputFields[currentStep + 2].name as keyof SignupFormData] || ''}
+                style={{ color: 'black', background: 'white', borderColor: 'black', padding: '0.5rem' }}
+            >
+                <option>선택</option>
+                {SignupInputFields[currentStep + 2].options?.map((option, idx) => (
+                    <option key={idx} value={option} style={{ color: 'black' }}>
+                        {option}
+                    </option>
+                ))}
+            </select>
+        ) : SignupInputFields[currentStep + 2].type === 'file' ? (
+            <input
+                type="file"
+                name={SignupInputFields[currentStep + 2].name}
+                onChange={(e) => {
+                    if (e.target.files) {
+                        handleFileChange(e.target.files[0]);
+                    }
+                }}
+                style={{ color: 'black', background: 'white', borderColor: 'black', padding: '0.5rem' }}
+            />
+        ) : (
+            <ChakraInput
+                type={SignupInputFields[currentStep + 2].type}
+                name={SignupInputFields[currentStep + 2].name}
+                value={formData[SignupInputFields[currentStep + 2].name as keyof SignupFormData] || ''}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder={SignupInputFields[currentStep + 2].name === 'phoneNumber' ? '010-0000-0000' : undefined}
+                style={{ color: 'black', background: 'white', borderColor: 'black', padding: '0.5rem' }}
+            />
+        )}
+        {notices[SignupInputFields[currentStep + 2].name] && (
+            <div style={{ color: 'red' }}>{notices[SignupInputFields[currentStep + 2].name]}</div>
+        )}
+    </Box>
+)}
+
 
                 <Box display="flex" justifyContent="space-between" mt={4}>
                     {currentStep > 0 && <Button onClick={handlePrevStep}>이전</Button>}
-                    <Button 
+                    {currentStep >= 0 && currentStep < 11 && <Button 
                         onClick={handleNextStep} 
                         isDisabled={!isStepValid}
                     >
                         다음
                     </Button>
+                    }
+                    {currentStep == 11 && <Button type='submit'>회원가입</Button>}
                 </Box>
             </form>
         </Box>
