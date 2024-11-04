@@ -1,79 +1,82 @@
-import { useState } from "react";
-import { Button, Text, Box, VStack, Heading } from "@chakra-ui/react";
+import { Text, Box } from "@chakra-ui/react";
+import { useVocalGame } from "../../../hooks/game/vocal/useVocalGame";
 import useVocal from "../../../hooks/game/vocal/useVocal";
-import { NOTES } from "../../../utils/game/vocalSound";
+import CustomButton from "@/components/common/Button";
 
 const VocalGame = () => {
-  const [level, setLevel] = useState<number>(1);
-  const [targetPitch, setTargetPitch] = useState<string>("C4");
-  const [status, setStatus] = useState<string>("시작하려면 발성하세요");
-  const [gameEnded, setGameEnded] = useState<boolean>(false);
+  const {
+    level,
+    targetPitch,
+    message,
+    gameOver,
+    isMicActive,
+    targetFrequency,
+    nextLevel,
+    resetGame,
+    handleMicToggle,
+  } = useVocalGame();
 
-  const LEVEL_TARGET_PITCHES = [
-    "C4",
-    "D4",
-    "E4",
-    "F4",
-    "G4",
-    "A4",
-    "B4",
-    "C5",
-    "D5",
-    "E5",
-  ];
-
-  const nextLevel = () => {
-    const newLevel = level + 1;
-    if (newLevel > 10) {
-      setGameEnded(true);
-      return;
-    }
-    setLevel(newLevel);
-    setTargetPitch(LEVEL_TARGET_PITCHES[newLevel - 1]);
-    setStatus("발성 대기 중...");
-  };
-
-  const resetGame = () => {
-    setLevel(1);
-    setTargetPitch(LEVEL_TARGET_PITCHES[0]);
-    setStatus("시작하려면 발성하세요");
-    setGameEnded(false);
-  };
-
-  const targetFrequency: number =
-    440 * Math.pow(2, (NOTES.indexOf(targetPitch.slice(0, -1)) - 9) / 12);
-
-  const { userFrequency } = useVocal(targetFrequency, () => {
-    // 사용자 발성이 목표 음보다 높으면 다음 단계로 이동
-    if (userFrequency && userFrequency > targetFrequency) {
-      nextLevel();
-    }
-  });
+  const { userFrequency } = useVocal(
+    isMicActive ? targetFrequency : null,
+    isMicActive,
+    nextLevel
+  );
 
   return (
-    <VStack
-      spacing={6}
-      p={8}
-      border="1px solid #ddd"
-      borderRadius="10px"
-      maxW="400px"
-      mx="auto"
-      mt="20px"
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      marginTop="60px"
+      padding="20px"
+      fontFamily="OneMobile"
+      color="white"
     >
-      <Heading size="md">보컬 게임 - 레벨 {level}</Heading>
+      <Text
+        fontSize="72px"
+        fontWeight="bold"
+        color="#c796ff"
+        marginBottom="50px"
+        position="relative"
+      >
+        퍼펙트 싱어
+      </Text>
+
       <Box>
-        <Text fontSize="lg" fontWeight="bold">
-          목표 음: {targetPitch} ({targetFrequency.toFixed(0)} Hz)
+        <Text color="white" fontSize="32px" textAlign="center">
+          단계: {level}
         </Text>
-        <Text color="teal.500" fontSize="xl">
-          {status}
-        </Text>
+
+        <Box textAlign="center">
+          <Text fontSize="2xl" fontWeight="bold" color="#ffcc99">
+            목표 음: {targetPitch} ({targetFrequency.toFixed(0)} Hz)
+          </Text>
+          <Text color="teal.300" fontSize="lg" mt={2}>
+            {message}
+          </Text>
+        </Box>
+
+        {userFrequency && isMicActive && (
+          <Text fontSize="xl" color="yellow.300">
+            현재 감지된 주파수: {Math.round(userFrequency)} Hz
+          </Text>
+        )}
+
+        <CustomButton onClick={isMicActive ? resetGame : handleMicToggle}>
+          {isMicActive
+            ? "마이크 끄기"
+            : gameOver
+            ? "게임 다시 시작하기"
+            : "마이크 켜기"}
+        </CustomButton>
+
+        {!gameOver && !isMicActive && (
+          <Text fontSize="sm" color="gray.400">
+            마이크를 켜고 목표 음을 달성하면 자동으로 다음 레벨로 이동합니다.
+          </Text>
+        )}
       </Box>
-      {userFrequency && (
-        <Text>현재 감지된 주파수: {Math.round(userFrequency)} Hz</Text>
-      )}
-      {gameEnded && <Button onClick={resetGame}>게임 다시 시작하기</Button>}
-    </VStack>
+    </Box>
   );
 };
 

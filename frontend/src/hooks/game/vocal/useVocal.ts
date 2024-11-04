@@ -1,77 +1,80 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const useVocal = (targetFrequency: number, onAboveTarget: () => void) => {
+interface WindowWithWebAudio extends Window {
+  webkitAudioContext?: typeof AudioContext;
+}
+
+const useVocal = (
+  targetFrequency: number | null,
+  isMicActive: boolean,
+  onTargetReached: () => void
+) => {
   const [userFrequency, setUserFrequency] = useState<number | null>(null);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
 
   useEffect(() => {
-    let analyser: AnalyserNode | null = null;
-    let dataArray: Float32Array | null = null;
-    let mediaStream: MediaStream | null = null;
+    const startDetection = async () => {
+      if (!isMicActive || targetFrequency === null) return;
 
-    const detectPitch = () => {
-      if (!audioContext || !analyser || !dataArray) return;
+      const AudioContext =
+        window.AudioContext ||
+        (window as WindowWithWebAudio).webkitAudioContext;
+      const newAudioContext = new AudioContext();
+      setAudioContext(newAudioContext); // audioContext를 상태로 저장합니다.
+      const analyser = newAudioContext.createAnalyser();
 
-      analyser.getFloatFrequencyData(dataArray);
-      const maxIndex = dataArray.reduce(
-        (iMax, x, i, arr) => (x > arr[iMax] ? i : iMax),
-        0
-      );
-      const detectedFrequency =
-        (audioContext.sampleRate * maxIndex) / analyser.fftSize;
-      setUserFrequency(detectedFrequency);
-      if (detectedFrequency > targetFrequency) {
-        onAboveTarget(); // 목표 주파수를 초과하면 콜백 호출
-      }
-    };
+      // 사용자 미디어를 가져오는 부분
+      const microphone = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
 
-    const initAudio = async () => {
-      if (audioContext && audioContext.state === "closed") {
-        setAudioContext(
-          new (window.AudioContext || (window as any).webkitAudioContext)()
-        );
-      } else if (!audioContext) {
-        const newAudioContext = new (window.AudioContext ||
-          (window as any).webkitAudioContext)();
-        setAudioContext(newAudioContext);
-      }
+      const source = newAudioContext.createMediaStreamSource(microphone);
+      source.connect(analyser);
+      analyser.fftSize = 2048;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
 
-      // 안전하게 currentAudioContext를 설정
-      const currentAudioContext = audioContext;
+      const detectFrequency = () => {
+        analyser.getByteFrequencyData(dataArray);
 
-      if (currentAudioContext) {
-        // null 체크 추가
-        analyser = currentAudioContext.createAnalyser();
-        analyser.fftSize = 2048;
-        dataArray = new Float32Array(analyser.frequencyBinCount);
-
-        try {
-          mediaStream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-          });
-          const source =
-            currentAudioContext.createMediaStreamSource(mediaStream);
-          source.connect(analyser);
-        } catch (error) {
-          console.error(error);
+        let maxIndex = 0;
+        for (let i = 1; i < bufferLength; i++) {
+          if (dataArray[i] > dataArray[maxIndex]) {
+            maxIndex = i;
+          }
         }
 
-        const interval = setInterval(detectPitch, 1500);
-        return () => {
-          clearInterval(interval);
-          mediaStream?.getTracks().forEach((track) => track.stop());
-        };
+        const nyquist = newAudioContext.sampleRate / 2;
+        const frequency = (maxIndex * nyquist) / bufferLength;
+
+        setUserFrequency(frequency);
+
+        // 주파수가 목표 주파수 ±30 Hz 내에 있을 때 목표 도달 처리
+        if (
+          frequency >= targetFrequency - 30 &&
+          frequency <= targetFrequency + 30
+        ) {
+          onTargetReached();
+        }
+
+        // 1초마다 주파수 감지
+        setTimeout(detectFrequency, 500);
+      };
+
+      detectFrequency();
+    };
+
+    startDetection();
+
+    // cleanup function to stop audio context and microphone
+    return () => {
+      if (audioContext) {
+        audioContext.close(); // 상태로 저장된 audioContext를 클린업에서 사용합니다.
       }
     };
+  }, [isMicActive, targetFrequency]);
 
-    initAudio();
-
-    return () => {
-      mediaStream?.getTracks().forEach((track) => track.stop());
-    };
-  }, [targetFrequency, onAboveTarget, audioContext]);
-
-  return { userFrequency }; // 감지된 주파수 반환
+  return { userFrequency };
 };
 
 export default useVocal;
