@@ -7,7 +7,7 @@ import axios, { AxiosError} from 'axios';
 
 const Input: React.FC = () => {
   const navigate = useNavigate();
-
+  const API_URL =import.meta.env.VITE_API_URL;
   const [ formData, setFormData] = useState<SigninFormData>({
     userId: '',
     password: ''
@@ -26,30 +26,28 @@ const Input: React.FC = () => {
     })
 
     // 백한테 로그인 정보 보내기
-    console.log('로그인하자', formData.userId, formData.password)
     try {
+      console.log('로그인할거야', formData)
       const response = await axios.post(
-        'https://k11e106.p.ssafy.io/api/auth/login', // 쿼리 파라미터는 URL에 추가
+        `${API_URL}/api/auth/login`,
         null,
         {
+            headers: {
+                'Content-Type': 'application/json'
+            },
             params: {
                 email: formData.userId,
-                password: formData.password,
+                password: formData.password
             }
         }
     );
-    console.log('로그인 시도', response.data)
     navigate(paths.community.main)
-    console.log('로그인 성공 response', response)
-    console.log('로그인 성공', response.data)
-    // const { accessToken, refreshToken } = response.data;
-
-    // 로컬 스토리지에 저장
-    // localStorage.setItem('accessToken', accessToken);
-    // localStorage.setItem('refreshToken', refreshToken);
+    console.log('로그인 성공', response)
+    // dto 정보 받는 api 요청하기!!!!!!!!
+    
     } catch (error) {
       const axiosError = error as AxiosError;
-
+      console.warn(error)
       console.log('error')
       if (axiosError.response) {
           // 에러 응답이 있을 경우

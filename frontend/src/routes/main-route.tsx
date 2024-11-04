@@ -11,6 +11,7 @@ import GameView from "../pages/game/home/game-view";
 import DrumView from "../sections/game/drum/game-drum";
 import KeyboardsView from "../sections/game/keyboards/game-keyboards";
 import VocalView from "../sections/game/vocal/game-vocal";
+import MyPageView from "@/pages/setting/mypage-view";
 
 const mainRoute: RouteObject[] = [
   {
@@ -28,7 +29,7 @@ const mainRoute: RouteObject[] = [
     children: [
       {
         path: "",
-        element: <CommunityMainView />,
+        element: <CommunityView />,
       },
       {
         path: "community",
@@ -69,6 +70,11 @@ const mainRoute: RouteObject[] = [
         path: paths.game.home,
         element: <GameView />,
       },
+      // 마이페이지 경로
+      {
+        path: paths.setting.mypage,
+        element: <MyPageView />
+      }
     ],
   },
 ];

@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Separator, Stack  } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
+import { Separator, Stack  } from '@chakra-ui/react';
 import ArticleItems from './articleItems';
-
+import useCommunityMain from '@/hooks/community/useCommunityMain';
 const ArticleList: React.FC = () => {
+  const {
+    getArticleList
+  } = useCommunityMain();
+
   const articles = [
     { board_seq: 1,
       user_seq: 1,
@@ -28,17 +32,6 @@ const ArticleList: React.FC = () => {
 
   //게시물이 새로 생성될 때마다 목록 요청
   useEffect(() => {
-    const getArticleList = async () => {
-      // 토큰 가져오기
-      // try {
-      //   const response = await axios.get(`${API_URL}/api/boards/{userSeq}`),
-      //   headers: {
-      //     access: `${token}`
-      //   },
-      // } catch(error) {
-      //   console.error(error)
-      // }
-    }  
     getArticleList();
   }, [])
 

@@ -7,8 +7,12 @@ import Reviewcontainer from "@/components/community/review-container";
 import Header from "@/components/community/header";
 import Container from "@/components/community/container";
 import paths from "@/configs/paths";
+import Modal from "@/components/common/Modal";
+import useCommunityDetail from "@/hooks/community/useCommunityDetail";
 
 const CommunityDetailView: React.FC = () => {
+  const { openDeleteModal, setOpenDeleteModal, deleteArticle } =
+    useCommunityDetail();
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [myLikedNum, setMyLikeNum] = useState<number>(0);
   const { id } = useParams<{ id: string }>();
@@ -108,7 +112,10 @@ const CommunityDetailView: React.FC = () => {
                     )}; */}
             <Box display="flex" gap="2">
               <CommunityButton title="수정" onClick={handleUpdateArticle} />
-              <CommunityButton title="삭제" />
+              <CommunityButton
+                title="삭제"
+                onClick={() => setOpenDeleteModal(true)}
+              />
             </Box>
           </Box>
           <Text textStyle="md" minHeight="320px">
@@ -123,7 +130,48 @@ const CommunityDetailView: React.FC = () => {
             {/* {myLikedNum.toString()} */}
           </Box>
           <Reviewcontainer />
+          {openDeleteModal && (
+            <Modal
+              isOpen={openDeleteModal}
+              onClose={() => setOpenDeleteModal(false)}
+            >
+              <Box padding=" 5px 20px">
+                <Text color="black" margin="40px">
+                  정말 이 게시물을 삭제하시겠습니까?
+                </Text>
+                <Box
+                  margin="10px"
+                  display="flex"
+                  justifyContent="center"
+                  gap="10px"
+                >
+                  <CommunityButton
+                    title="삭제"
+                    onClick={() => deleteArticle(Number(id))}
+                  />
+                  <CommunityButton
+                    title="취소"
+                    onClick={() => setOpenDeleteModal(false)}
+                  />
+                </Box>
+              </Box>
+            </Modal>
+          )}
         </Box>
+        {/* </Box> */}
+        <Text textStyle="md" minHeight="320px">
+          내용 어케 받는지 확인 꺄ㅑㅑㅑㅑㅑㅑㅑㅑㅑ
+        </Text>
+        <Box display="flex" gap="2">
+          <CommunityButton title="워크스페이스 가기" onClick={goworkSpace} />
+          <CommunityButton
+            title={`좋아요 ${myLikedNum.toString()}`}
+            onClick={changeMyLiked}
+          />
+          {/* {myLikedNum.toString()} */}
+        </Box>
+        <Reviewcontainer />
+        {/* </Box> */}
       </Container>
     </>
   );
