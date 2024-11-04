@@ -1,66 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NOTES } from "../../../utils/game/vocalSound";
 
-const LEVEL_TARGET_PITCHES = [
-  "C4",
-  "D4",
-  "E4",
-  "F4",
-  "G4",
-  "A4",
-  "B4",
-  "C5",
-  "D5",
-  "E5",
-];
-
-export const useVocalGame = () => {
-  const [level, setLevel] = useState<number>(1);
-  const [targetPitch, setTargetPitch] = useState<string>("C4");
+export const useVocalGame = (isMatched: boolean) => {
+  const [level, setLevel] = useState<number>(0);
+  console.log(level);
+  const [targetPitch, setTargetPitch] = useState<number>(NOTES[0]);
   const [message, setMessage] = useState<string>("시작하려면 마이크를 켜세요");
   const [gameOver, setGameOver] = useState<boolean>(false);
-  console.log(gameOver);
-  const [isMicActive, setIsMicActive] = useState<boolean>(false);
 
-  const targetFrequency: number =
-    440 * Math.pow(2, (NOTES.indexOf(targetPitch.slice(0, -1)) - 9) / 12);
-
-  const nextLevel = () => {
-    const newLevel = level + 1;
-    if (newLevel > LEVEL_TARGET_PITCHES.length) {
-      setGameOver(true);
-      setMessage("게임 종료! 다시 시작하려면 버튼을 눌러주세요.");
-      return;
+  // isMatched가 변경될 때마다 다음 레벨로 진행
+  useEffect(() => {
+    if (isMatched) {
+      handleNextLevel();
     }
-    setLevel(newLevel);
-    setTargetPitch(LEVEL_TARGET_PITCHES[newLevel - 1]);
-    setMessage("발성 대기 중...");
-  };
+  }, [isMatched]);
 
-  const resetGame = () => {
-    setLevel(1);
-    setTargetPitch(LEVEL_TARGET_PITCHES[0]);
-    setMessage("시작하려면 마이크를 켜세요");
-    setGameOver(false);
-    setIsMicActive(false);
-  };
-
-  const handleMicToggle = () => {
-    if (gameOver) {
-      resetGame();
+  // 다음 레벨로 진행
+  const handleNextLevel = () => {
+    if (level < NOTES.length - 1) {
+      setLevel((prev) => prev + 1);
+      setTargetPitch(NOTES[level + 1]);
+      setMessage("");
     } else {
-      setIsMicActive((prev) => {
-        const newMicActive = !prev;
-        if (newMicActive) {
-          setLevel(1);
-          setMessage("마이크가 활성화되었습니다. 발성하세요");
-          setTargetPitch(LEVEL_TARGET_PITCHES[0]);
-        } else {
-          setMessage("마이크가 비활성화되었습니다.");
-        }
-        return newMicActive;
-      });
+      setGameOver(true);
+      setMessage("게임 클리어! ");
     }
+  };
+
+  // 게임 초기화
+  const resetGame = () => {
+    setLevel(0);
+    setTargetPitch(NOTES[0]);
+    setMessage("");
+    setGameOver(false);
   };
 
   return {
@@ -68,10 +40,7 @@ export const useVocalGame = () => {
     targetPitch,
     message,
     gameOver,
-    isMicActive,
-    targetFrequency,
-    nextLevel,
+    handleNextLevel,
     resetGame,
-    handleMicToggle,
   };
 };

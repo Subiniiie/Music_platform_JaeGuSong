@@ -1,26 +1,40 @@
+import React, { useEffect, useState } from "react";
 import { Text, Box } from "@chakra-ui/react";
-import { useVocalGame } from "../../../hooks/game/vocal/useVocalGame";
+import VocalGauge from "../../../components/game/vocal-gauge";
 import useVocal from "../../../hooks/game/vocal/useVocal";
+import { NOTES } from "../../../utils/game/vocalSound";
 import CustomButton from "@/components/common/Button";
+import { useVocalGame } from "../../../hooks/game/vocal/useVocalGame";
 
-const VocalGame = () => {
+const VocalGame: React.FC = () => {
+  const [isListening, setIsListening] = useState(false);
+  const [targetPitch, setTargetPitch] = useState<number>(NOTES[0]);
+  console.log(targetPitch);
+  const { level, message, gameOver, handleNextLevel, resetGame } =
+    useVocalGame(isListening);
+
   const {
-    level,
-    targetPitch,
-    message,
-    gameOver,
-    isMicActive,
-    targetFrequency,
-    nextLevel,
-    resetGame,
-    handleMicToggle,
-  } = useVocalGame();
+    ballHeight,
+    isMatched,
+    userFrequency,
+    startListening,
+    stopListening,
+  } = useVocal(targetPitch);
 
-  const { userFrequency } = useVocal(
-    isMicActive ? targetFrequency : null,
-    isMicActive,
-    nextLevel
-  );
+  const toggleListening = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+    setIsListening(!isListening);
+  };
+
+  useEffect(() => {
+    if (isMatched) {
+      handleNextLevel(); // 주파수가 일치하면 다음 단계로 넘어가기
+    }
+  }, [isMatched, handleNextLevel]); // isMatched와 handleNextLevel을 의존성 배열에 추가
 
   return (
     <Box
@@ -28,54 +42,35 @@ const VocalGame = () => {
       flexDirection="column"
       alignItems="center"
       marginTop="60px"
+      color="white"
       padding="20px"
       fontFamily="OneMobile"
-      color="white"
     >
       <Text
-        fontSize="72px"
-        fontWeight="bold"
+        fontSize="64px"
+        textAlign="center"
         color="#c796ff"
-        marginBottom="50px"
         position="relative"
+        marginBottom="50px"
       >
-        퍼펙트 싱어
+        도레미 게임
       </Text>
-
-      <Box>
-        <Text color="white" fontSize="32px" textAlign="center">
-          단계: {level}
-        </Text>
-
-        <Box textAlign="center">
-          <Text fontSize="2xl" fontWeight="bold" color="#ffcc99">
-            목표 음: {targetPitch} ({targetFrequency.toFixed(0)} Hz)
-          </Text>
-          <Text color="teal.300" fontSize="lg" mt={2}>
-            {message}
-          </Text>
-        </Box>
-
-        {userFrequency && isMicActive && (
-          <Text fontSize="xl" color="yellow.300">
-            현재 감지된 주파수: {Math.round(userFrequency)} Hz
-          </Text>
-        )}
-
-        <CustomButton onClick={isMicActive ? resetGame : handleMicToggle}>
-          {isMicActive
-            ? "마이크 끄기"
-            : gameOver
-            ? "게임 다시 시작하기"
-            : "마이크 켜기"}
+      <Text>현재 단계: {level}</Text>
+      <Text>{message}</Text>
+      <CustomButton onClick={toggleListening}>
+        {isListening ? "중지" : "시작"}
+      </CustomButton>
+      <VocalGauge
+        frequency={userFrequency}
+        targetFrequency={targetPitch}
+        isMatched={isMatched}
+        ballHeight={ballHeight}
+      />
+      {gameOver && (
+        <CustomButton colorScheme="red" onClick={resetGame}>
+          게임 다시 시작하기
         </CustomButton>
-
-        {!gameOver && !isMicActive && (
-          <Text fontSize="sm" color="gray.400">
-            마이크를 켜고 목표 음을 달성하면 자동으로 다음 레벨로 이동합니다.
-          </Text>
-        )}
-      </Box>
+      )}
     </Box>
   );
 };

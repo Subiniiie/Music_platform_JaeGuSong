@@ -28,7 +28,7 @@ const router = createBrowserRouter([
       },
       {
         element: <NavbarLayout />,
-        errorElement: <Navigate to={paths.main} replace />,
+        // errorElement: <Navigate to={paths.main} replace />,
         children: [
           {
             element: <TitleLayout />,
