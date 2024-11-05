@@ -1,18 +1,13 @@
 import { Box, Center } from "@chakra-ui/react";
 
 const VocalGauge = ({
+  frequency,
   targetFrequency,
   isMatched,
   ballHeight,
   isStarted,
-}: {
-  frequency: number;
-  targetFrequency: number;
-  isMatched: boolean;
-  ballHeight: number;
-  isStarted: boolean;
 }) => {
-  const holePosition = (targetFrequency / 493.88) * 100;
+  const holePosition = (targetFrequency / 493.88) * 100; // 최대 주파수에 대한 위치 계산
 
   return (
     <Box
@@ -30,7 +25,6 @@ const VocalGauge = ({
       mt={6}
       overflow="hidden"
       boxShadow="10px 10px 25px rgba(0, 0, 0, 0.2)"
-      transform="perspective(600px) rotateX(10deg)"
     >
       {isStarted && (
         <Box
@@ -57,10 +51,8 @@ const VocalGauge = ({
         bg="white"
         borderRadius="full"
         border="4px solid black"
-        borderColor={isMatched ? "white" : "black"}
         transition="border-color 0.3s ease"
-        boxShadow="inset 2px 2px 8px rgba(0, 0, 0, 0.5)"
-      ></Center>
+      />
     </Box>
   );
 };

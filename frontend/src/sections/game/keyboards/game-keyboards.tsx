@@ -46,23 +46,25 @@ const GamePiano = () => {
       padding="20px"
       fontFamily="OneMobile"
     >
-      <Text
-        fontSize="64px"
-        textAlign="center"
-        color="#c796ff"
-        position="relative"
-        marginBottom="50px"
-      >
-        절대 음감
-        <Image
-          src="/assets/note.png"
-          position="absolute"
-          top="-40px"
-          left="80%"
-          width="100px"
-          zIndex="1"
-        />
-      </Text>
+      {mode === null && (
+        <Text
+          fontSize="64px"
+          textAlign="center"
+          color="#c796ff"
+          position="relative"
+          marginBottom="50px"
+        >
+          절대 음감
+          <Image
+            src="/assets/note.png"
+            position="absolute"
+            top="-40px"
+            left="80%"
+            width="100px"
+            zIndex="1"
+          />
+        </Text>
+      )}
 
       {mode === "note" && noteGameOver ? (
         <>
