@@ -142,7 +142,7 @@ const GamePiano = () => {
               {!octaveSelected && (
                 <Flex justifyContent="center" marginTop="20px">
                   <Button
-                    onClick={() => selectOctave("1옥타브")}
+                    onClick={() => selectOctave("4옥타브")}
                     margin="20px"
                     width="280px"
                     height="280px"
@@ -151,10 +151,10 @@ const GamePiano = () => {
                     _hover={{ bg: "#4e4b7e" }}
                     borderRadius="20px"
                   >
-                    1옥타브
+                    4옥타브
                   </Button>
                   <Button
-                    onClick={() => selectOctave("2옥타브")}
+                    onClick={() => selectOctave("5옥타브")}
                     margin="20px"
                     width="280px"
                     height="280px"
@@ -163,10 +163,10 @@ const GamePiano = () => {
                     _hover={{ bg: "#4e4b7e" }}
                     borderRadius="20px"
                   >
-                    2옥타브
+                    5옥타브
                   </Button>
                   <Button
-                    onClick={() => selectOctave("3옥타브")}
+                    onClick={() => selectOctave("6옥타브")}
                     margin="20px"
                     width="280px"
                     height="280px"
@@ -175,7 +175,7 @@ const GamePiano = () => {
                     _hover={{ bg: "#4e4b7e" }}
                     borderRadius="20px"
                   >
-                    3옥타브
+                    6옥타브
                   </Button>
                 </Flex>
               )}
