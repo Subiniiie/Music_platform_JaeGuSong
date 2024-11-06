@@ -28,7 +28,7 @@ export default function TitleLayout() {
         borderBottom="none" // 하단 테두리 제거
         display="flex"
         alignItems="stretch"
-        justifyContent="center"
+        // justifyContent="center"
       >
         <Outlet />
       </Stack>
