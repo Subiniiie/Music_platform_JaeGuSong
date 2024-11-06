@@ -32,7 +32,7 @@ const VocalGame: React.FC = () => {
     >
       {!isListening && (
         <Text fontSize="72px" textAlign="center" color="#f0aaff">
-          음표 피하기 게임
+          음표 피하기
         </Text>
       )}
 

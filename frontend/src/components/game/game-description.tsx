@@ -98,35 +98,38 @@ const GameDescriptionModal: React.FC<GameDescriptionModalProps> = ({
           {selectedGame === "vocal" && (
             <>
               <span style={{ display: "block", marginTop: "3px" }}>
-                도레미 게임은 목표 음에 대해 정확한 음을 발성하여
+                "음표 피하기"는 목소리 주파수를 이용해
               </span>
               <span style={{ display: "block", marginTop: "3px" }}>
-                플레이어가 정해진 목표에 도달할 수 있도록 돕는
+                위에서 내려오는 음표를 피하는 게임입니다.
               </span>
               <span style={{ display: "block", marginTop: "3px" }}>
-                흥미로운 게임입니다.
+                음표에 닿지 않게 발성을 하면서
               </span>
               <span style={{ display: "block", marginTop: "3px" }}>
-                이 게임은 각 음을 정확하게 찾아내는 데
+                음악적 감각을 발전시킬 기회를 제공합니다.
               </span>
               <span style={{ display: "block", marginTop: "3px" }}>
-                중점을 두고 있으며,
-              </span>
-              <span style={{ display: "block", marginTop: "3px" }}>
-                자신의 음악적 감각을 발전시킬 수 있는 기회를 제공합니다.
-              </span>
-              <span style={{ display: "block", marginTop: "3px" }}>
-                음악적 재능을 더욱 빛낼 수 있는 경험을 하게 될 것입니다.
+                당신의 음악적 재능을 빛내 보세요!
               </span>
             </>
           )}
         </Text>
 
-        <Box display="flex" justifyContent="flex-end" width="100%">
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          width="100%"
+          position="relative"
+          marginTop="20px"
+        >
           <Button
             onClick={navigateToGame}
             borderRadius="10px"
             fontFamily="OneMobile"
+            position="absolute"
+            bottom="-30px"
+            right="-60px"
           >
             게임 하러 가기
           </Button>
