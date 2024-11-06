@@ -142,7 +142,7 @@ const GamePiano = () => {
               </Text>
 
               {!octaveSelected && (
-                <Flex justifyContent="center" marginTop="20px">
+                <Flex justifyContent="center" marginTop="100px">
                   <Button
                     onClick={() => selectOctave("4옥타브")}
                     margin="20px"
@@ -184,7 +184,12 @@ const GamePiano = () => {
 
               {octaveSelected && (
                 <>
-                  <Text fontSize="32px" textAlign="center" color="white">
+                  <Text
+                    fontSize="32px"
+                    textAlign="center"
+                    color="white"
+                    marginTop="50px"
+                  >
                     단계: {noteLevel} &nbsp; 점수: {noteCorrectCount * 10}
                   </Text>
                   <Text
@@ -234,7 +239,12 @@ const GamePiano = () => {
 
           {mode === "chord" && (
             <Box>
-              <Text fontSize="32px" textAlign="center" color="white">
+              <Text
+                fontSize="32px"
+                textAlign="center"
+                color="white"
+                marginTop="50px"
+              >
                 점수: {chordCorrectCount * 10} &nbsp; 단계: {chordLevel}
               </Text>
 

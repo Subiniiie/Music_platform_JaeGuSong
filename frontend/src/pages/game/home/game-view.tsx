@@ -113,7 +113,7 @@ const Game: React.FC = () => {
             style={{ width: "80px", marginBottom: "10px" }}
           />
           <Text fontSize="32px" paddingTop="20px">
-            도레미 게임
+            음표 피하기
           </Text>
         </Button>
       </Flex>

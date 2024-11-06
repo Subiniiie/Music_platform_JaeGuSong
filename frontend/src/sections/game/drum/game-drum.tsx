@@ -47,6 +47,7 @@ const GameDrum = () => {
             marginBottom="20px"
             fontSize="32px"
             color="white"
+            marginTop="50px"
           >
             단계 : {level} &nbsp; 점수 : {score}
           </Flex>
