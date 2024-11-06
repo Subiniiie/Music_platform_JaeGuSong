@@ -113,7 +113,7 @@ const Game: React.FC = () => {
             style={{ width: "80px", marginBottom: "10px" }}
           />
           <Text fontSize="32px" paddingTop="20px">
-            퍼펙트 싱어
+            음표 피하기
           </Text>
         </Button>
       </Flex>

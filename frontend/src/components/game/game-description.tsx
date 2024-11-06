@@ -98,7 +98,7 @@ const GameDescriptionModal: React.FC<GameDescriptionModalProps> = ({
           {selectedGame === "vocal" && (
             <>
               <span style={{ display: "block", marginTop: "3px" }}>
-                퍼펙트 스코어는 노래에 대해 정확한 음을 발음하여
+                도레미 게임은 목표 음에 대해 정확한 음을 발성하여
               </span>
               <span style={{ display: "block", marginTop: "3px" }}>
                 플레이어가 정해진 목표에 도달할 수 있도록 돕는
@@ -113,10 +113,7 @@ const GameDescriptionModal: React.FC<GameDescriptionModalProps> = ({
                 중점을 두고 있으며,
               </span>
               <span style={{ display: "block", marginTop: "3px" }}>
-                자신의 음성과 음악적 감각을 발전시킬 수 있는 기회를 제공합니다.
-              </span>
-              <span style={{ display: "block", marginTop: "3px" }}>
-                다양한 레벨과 난이도를 통해 도전할 수 있으며,
+                자신의 음악적 감각을 발전시킬 수 있는 기회를 제공합니다.
               </span>
               <span style={{ display: "block", marginTop: "3px" }}>
                 음악적 재능을 더욱 빛낼 수 있는 경험을 하게 될 것입니다.

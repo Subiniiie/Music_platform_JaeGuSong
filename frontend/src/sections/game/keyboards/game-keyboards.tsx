@@ -46,23 +46,25 @@ const GamePiano = () => {
       padding="20px"
       fontFamily="OneMobile"
     >
-      <Text
-        fontSize="64px"
-        textAlign="center"
-        color="#c796ff"
-        position="relative"
-        marginBottom="50px"
-      >
-        절대 음감
-        <Image
-          src="/assets/note.png"
-          position="absolute"
-          top="-40px"
-          left="80%"
-          width="100px"
-          zIndex="1"
-        />
-      </Text>
+      {mode === null && (
+        <Text
+          fontSize="64px"
+          textAlign="center"
+          color="#c796ff"
+          position="relative"
+          marginBottom="50px"
+        >
+          절대 음감
+          <Image
+            src="/assets/note.png"
+            position="absolute"
+            top="-40px"
+            left="80%"
+            width="100px"
+            zIndex="1"
+          />
+        </Text>
+      )}
 
       {mode === "note" && noteGameOver ? (
         <>
@@ -140,9 +142,9 @@ const GamePiano = () => {
               </Text>
 
               {!octaveSelected && (
-                <Flex justifyContent="center" marginTop="20px">
+                <Flex justifyContent="center" marginTop="100px">
                   <Button
-                    onClick={() => selectOctave("1옥타브")}
+                    onClick={() => selectOctave("4옥타브")}
                     margin="20px"
                     width="280px"
                     height="280px"
@@ -151,10 +153,10 @@ const GamePiano = () => {
                     _hover={{ bg: "#4e4b7e" }}
                     borderRadius="20px"
                   >
-                    1옥타브
+                    4옥타브
                   </Button>
                   <Button
-                    onClick={() => selectOctave("2옥타브")}
+                    onClick={() => selectOctave("5옥타브")}
                     margin="20px"
                     width="280px"
                     height="280px"
@@ -163,10 +165,10 @@ const GamePiano = () => {
                     _hover={{ bg: "#4e4b7e" }}
                     borderRadius="20px"
                   >
-                    2옥타브
+                    5옥타브
                   </Button>
                   <Button
-                    onClick={() => selectOctave("3옥타브")}
+                    onClick={() => selectOctave("6옥타브")}
                     margin="20px"
                     width="280px"
                     height="280px"
@@ -175,14 +177,19 @@ const GamePiano = () => {
                     _hover={{ bg: "#4e4b7e" }}
                     borderRadius="20px"
                   >
-                    3옥타브
+                    6옥타브
                   </Button>
                 </Flex>
               )}
 
               {octaveSelected && (
                 <>
-                  <Text fontSize="32px" textAlign="center" color="white">
+                  <Text
+                    fontSize="32px"
+                    textAlign="center"
+                    color="white"
+                    marginTop="50px"
+                  >
                     단계: {noteLevel} &nbsp; 점수: {noteCorrectCount * 10}
                   </Text>
                   <Text
@@ -232,7 +239,12 @@ const GamePiano = () => {
 
           {mode === "chord" && (
             <Box>
-              <Text fontSize="32px" textAlign="center" color="white">
+              <Text
+                fontSize="32px"
+                textAlign="center"
+                color="white"
+                marginTop="50px"
+              >
                 점수: {chordCorrectCount * 10} &nbsp; 단계: {chordLevel}
               </Text>
 

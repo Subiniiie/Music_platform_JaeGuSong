@@ -29,14 +29,16 @@ const GameDrum = () => {
       padding="20px"
       fontFamily="OneMobile"
     >
-      <Text
-        fontSize="64px"
-        textAlign="center"
-        marginBottom="50px"
-        color="#c796ff"
-      >
-        리듬 킹
-      </Text>
+      {!isGameStarted && (
+        <Text
+          fontSize="64px"
+          textAlign="center"
+          marginBottom="50px"
+          color="#c796ff"
+        >
+          리듬 킹
+        </Text>
+      )}
       {isGameStarted && (
         <>
           <Flex
@@ -45,6 +47,7 @@ const GameDrum = () => {
             marginBottom="20px"
             fontSize="32px"
             color="white"
+            marginTop="50px"
           >
             단계 : {level} &nbsp; 점수 : {score}
           </Flex>

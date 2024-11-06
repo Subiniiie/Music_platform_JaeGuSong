@@ -1,12 +1,12 @@
 import React from "react";
+import { Text } from "@chakra-ui/react";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+const CrewMemeberListModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const overlayStyle: React.CSSProperties = {
@@ -19,7 +19,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 15,
+    zIndex: 10,
   };
 
   const contentStyle: React.CSSProperties = {
@@ -27,7 +27,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     padding: "30px",
     borderRadius: "30px",
     textAlign: "center",
+    width: "450px",
     maxWidth: "800px",
+    height: "600px",
     maxHeight: "1200px",
     position: "relative",
   };
@@ -46,13 +48,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   return (
     <div style={overlayStyle} onClick={onClose}>
       <div style={contentStyle} onClick={(e) => e.stopPropagation()}>
-        {children}
         <button style={closeButtonStyle} onClick={onClose}>
           X
         </button>
+        <Text color="black">크루원</Text>
       </div>
     </div>
   );
 };
 
-export default Modal;
+export default CrewMemeberListModal;

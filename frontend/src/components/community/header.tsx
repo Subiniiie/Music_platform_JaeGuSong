@@ -4,7 +4,6 @@ import { Box } from '@chakra-ui/react';
 import CommunityButton from './community-button';
 import { useNavigate } from 'react-router-dom';
 import paths from '@/configs/paths';
-import CommunityCreateView from '@/pages/community/community-create-view';
 
 const Header: React.FC = () => {
     const navigate = useNavigate();
@@ -44,9 +43,10 @@ const Header: React.FC = () => {
         <CommunityButton 
           title='글쓰기'
           onClick={goCreateArticle}
-        />
+          />
         <CommunityButton
           title='음원피드 올리기'
+          onClick={goCreateArticle}
         />
       </Box>        
     </Box>
