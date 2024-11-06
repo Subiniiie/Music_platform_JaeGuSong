@@ -59,7 +59,7 @@ const VocalGame: React.FC = () => {
             <Box
               key={index}
               position="absolute"
-              bottom={`${obstacle.height}px`}
+              bottom={`${obstacle.height + 20}px`}
               left={`${obstacle.position}px`}
               width="50px"
               height="50px"
@@ -85,6 +85,24 @@ const VocalGame: React.FC = () => {
       <CustomButton onClick={toggleListening}>
         {gameOver ? "게임 다시 시작하기" : isListening ? "중지" : "시작"}
       </CustomButton>
+
+      <Box
+        position="absolute"
+        bottom="10px"
+        width="100%"
+        display="flex"
+        backgroundColor="white"
+        marginBottom="20px"
+        borderRadius="10px"
+        justifyContent="space-between"
+      >
+        <Text fontSize="14px" color="black" paddingLeft="20px">
+          Low
+        </Text>
+        <Text fontSize="14px" color="black" paddingRight="20px">
+          High
+        </Text>
+      </Box>
     </Box>
   );
 };
