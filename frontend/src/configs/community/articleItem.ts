@@ -1,12 +1,13 @@
 export interface ArticleItem {
-    board_seq: number;
-    user_seq: number;
-    user_nickname: string;
-    user_profile_image: string;
-    title: string;
+    seq: number;             
+    title: string;                
     state: string;
-    likeNum: number;
-    isLiked: string;
-    // thumbnail: File;
-    thumbnail: string;
-};
+    content?: string;              
+    comments?: any[];
+    sources?: string[];
+    artistDto?: {       
+        seq: number;              
+        profileImage: string;  
+        nickname: string; 
+    };
+}

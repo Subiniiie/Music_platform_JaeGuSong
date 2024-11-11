@@ -15,9 +15,8 @@ export default function UpdateContainer() {
     if (id) { 
       const articleId = parseInt(id);
       fetchArticleDetail(articleId);
-
     }
-  }, [id, fetchArticleDetail]);
+  }, [id]);
 
   return (
     <Box>

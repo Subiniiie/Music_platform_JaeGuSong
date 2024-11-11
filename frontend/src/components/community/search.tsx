@@ -5,7 +5,7 @@ import useCommunityMain from '@/hooks/community/useCommunityMain';
 interface SearchModalProps {
     isOpen: boolean;
     onClose: () => void;
-    handleChangeSearch: (event: React.FormEvent) => void; 
+    // handleChangeSearch: (event: React.FormEvent) => void; 
 }
 
 const Search: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
@@ -38,6 +38,7 @@ const Search: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
     textAlign: "center",
     width: "600px",
     maxWidth: "800px",
+    height: "600px",
     maxHeight: "1200px",
     position: "relative",
     };

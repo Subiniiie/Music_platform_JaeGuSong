@@ -1,0 +1,14 @@
+networks:
+  mimlnetwork:
+    external: true
+
+services:
+  mimlfront:
+    container_name: mimlfront
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173  # Nginx의 80 포트를 외부에 노출
+    networks:
+      - mimlnetwork

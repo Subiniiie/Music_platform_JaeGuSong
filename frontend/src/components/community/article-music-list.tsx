@@ -1,96 +1,75 @@
-import React from 'react';
-import { Box, Button, Flex } from "@chakra-ui/react"
-import useCommunityMusic from '@/hooks/community/useCommunityMusic';
+import React, { useState, useEffect } from 'react';
+import { Box, Grid, GridItem } from "@chakra-ui/react";
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import MusicArticleItems from './musicArticleItems';
+
+export interface MyMusicFeedList {
+  name: string;
+  originSinger: string;
+  originTitle: string;
+  state: string;
+  tuhmbnail: string;
+  workspaceSeq: number;
+}
 
 const ArticleMusicList: React.FC = () => {
-    const {
-        goMusicFeedDetail
-    } = useCommunityMusic();
+  const API_URL = import.meta.env.VITE_API_URL;
+  const { id } = useParams();
 
-    const musicArticles = [
-        { board_seq: 1,
-          user_seq: 1,
-          user_nickname: '수빈',
-          user_profile_image: '/profileImage.png',
-          title: '제목1',
-          state: 'PUBLIC',
-          likeNum: 3,
-          isLiked: 'YET',
-          thumbnail: '이미지를 그대로 내려보내줄거야??'
-        },
-        { board_seq: 2,
-          user_seq: 2,
-          user_nickname: '수빈',
-          user_profile_image: '/profileImage.png',
-          title: '제목2',
-          state: 'PUBLIC',
-          likeNum: 3,
-          isLiked: 'YET',
-          thumbnail: '이미지를 그대로 내려보내줄거야??'
-        },
-        { board_seq: 3,
-          user_seq: 2,
-          user_nickname: '수빈',
-          user_profile_image: '/profileImage.png',
-          title: '제목2',
-          state: 'PUBLIC',
-          likeNum: 3,
-          isLiked: 'YET',
-          thumbnail: '이미지를 그대로 내려보내줄거야??'
-        },
-        { board_seq: 4,
-          user_seq: 2,
-          user_nickname: '수빈',
-          user_profile_image: '/profileImage.png',
-          title: '제목2',
-          state: 'PUBLIC',
-          likeNum: 3,
-          isLiked: 'YET',
-          thumbnail: '이미지를 그대로 내려보내줄거야??'
-        },
-      ]
+  const [ myMusicFeedList, setMyMusicFeedList ] = useState<MyMusicFeedList[]>([]);
+
+  useEffect(() => {
+    const getMusicFeed = async () => {
+      const authStorage = localStorage.getItem("auth-storage");
+      const storedToken = localStorage.getItem('jwtToken');
+      let artistSeq: number | null = null;
+
+      if (authStorage) {
+        try {
+          const parsedData = JSON.parse(authStorage);
+          artistSeq = parsedData?.state?.artistSeq || null;
+        } catch (error) {
+          console.error("Failed to parse auth-storage:", error);
+        }
+      };
+
+      if (id !== undefined) {
+        artistSeq = parseInt(id)
+      };
+
+      try {
+        const response = await axios.get(`${API_URL}/api/artists/${artistSeq}/workspaces`, {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        });
+        setMyMusicFeedList(response.data);
+      } catch(error) {
+        console.warn(error);
+      }
+    };
+    getMusicFeed();
+  }, []);
+
   return (
-    <Box                
-        height="800px"
-        overflowY="auto"
-        css={{
-            '&::-webkit-scrollbar': {
-                width: '8px',
-            },
-            '&::-webkit-scrollbar-thumb': {
-                background: '#e3f2f9',
-                borderRadius: '20px',
-            },
-            '&::-webkit-scrollbar-track': {
-                background: '#02001F',
-                borderRadius: '20px',
-            },
-        }}
-    >
-    <Flex
-    wrap="wrap" 
-    margin="60px 200px"
-    gap="30px"
-
->
-    {musicArticles.map((article) => (
-        <Button
-            key={article.board_seq}
-            size="xs"
-            variant="outline" 
-            borderColor="#c5e4f3"
-            width="300px"
-            height="350px"
-            color="white"
-            onClick={() => goMusicFeedDetail(article)}
-        >
-            {article.title}
-        </Button>
-    ))}
-</Flex>
-</Box>
+    <Box marginBottom="200px">
+      <Grid
+        templateColumns="repeat(3, 1fr)" 
+        gap="2"
+        margin="60px"
+        marginLeft="90px"
+      >
+        { myMusicFeedList &&
+          myMusicFeedList.map((myMusic, index) => (
+            <GridItem key={index}> 
+              <MusicArticleItems myMusic={myMusic} />
+            </GridItem>
+          ))
+        }
+      </Grid>
+    </Box>
   );
-
 };
 
 export default ArticleMusicList;

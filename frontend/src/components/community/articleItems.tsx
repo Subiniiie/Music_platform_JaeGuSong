@@ -5,15 +5,16 @@ import { useNavigate } from "react-router-dom";
 import paths from "@/configs/paths";
 
 interface ArticleItemsProps {
-  article: ArticleItem;
+  boardSeq: number;  // 숫자로 articleSeq를 받음
 }
 
-const ArticleItems: React.FC<ArticleItemsProps> = ({ article }) => {
+
+const ArticleItems: React.FC<ArticleItemsProps> = ({ boardSeq }) => {
   const navigate = useNavigate();
 
   const goDetail = () => {
-    console.log("Navigating to:", paths.community.detail(article.board_seq));
-    navigate(paths.community.detail(article.board_seq));
+    console.log("Navigating to:", paths.community.detail(boardSeq));
+    navigate(paths.community.detail(boardSeq));
     console.log("갔다왔다");
   };
 
@@ -26,7 +27,8 @@ const ArticleItems: React.FC<ArticleItemsProps> = ({ article }) => {
       paddingLeft="10px"
       cursor="pointer"
     >
-      <Text textStyle="xl">{article.title}</Text>
+      {/* <Text textStyle="xl">{article.title}</Text> */}
+      <Text textStyle="xl">제목</Text>
     </Box>
   );
 };

@@ -1,134 +1,90 @@
-import { Stack, Flex, Button, Input } from "@chakra-ui/react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // react-router-dom에서 useNavigate 가져오기
-import Filter from "@/sections/workspace/filter";
+import { Box, Stack, Flex } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import Search from "@/sections/workspace/search";
-import {
-  PopoverArrow,
-  PopoverBody,
-  PopoverContent,
-  PopoverRoot,
-  PopoverTitle,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { toaster } from "@/components/ui/toaster";
 import CardList from "@/sections/workspace/cardList";
+import WsCreateButton from "@/sections/workspace/wsCreateButton";
+import { useNavigate } from "react-router-dom";
+import paths from "@/configs/paths";
+import useAuthStore from "@/stores/authStore";
+import WsPagination from "@/sections/workspace/wsPagination";
 
 export default function WsListView() {
   const navigate = useNavigate();
-  const [workspaceName, setWorkspaceName] = useState("");
-  const [originTitle, setOriginTitle] = useState("");
-  const [originSinger, setOriginSinger] = useState("");
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  const handleCreateWorkspace = async () => {
+  // zustand에서 artistSeq 불러오기
+  const artistSeq = useAuthStore((state) => state.artistSeq);
+
+  // 워크스페이스 리스트 상태 관리
+  const [wsList, setWsList] = useState([]);
+
+  // 워크스페이스 생성 후 navigate 처리를 위한 콜백 함수
+  const handleWorkspaceCreated = (workspaceId) => {
+    navigate(paths.workspace.detail(workspaceId));
+  };
+
+  // wsList를 얻기 위한 API 호출 함수
+  const fetchWsList = async (page = 0) => {
     try {
-      const response = await fetch(
-        "http://k11e106.p.ssafy.io/api/artists/{artistSeq}/workspaces",
+      console.log("워크스페이스 리스트 GET API 요청 보낼게");
+
+      const storedToken = localStorage.getItem("jwtToken");
+      console.log("storedToken :", storedToken);
+      console.log("artistSeq :", artistSeq);
+      const response = await axios.get(
+        `${API_URL}/api/artists/${artistSeq}/workspaces`,
         {
-          method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${storedToken}`,
           },
-          body: JSON.stringify({
-            name: workspaceName,
-            originTitle,
-            originSinger,
-          }),
+          params: {
+            page: page,
+          },
         }
       );
-
-      if (response.ok) {
-        toaster.create({
-          description: "워크스페이스가 성공적으로 생성되었습니다.",
-          type: "success",
-        });
-        navigate("/workspace-detail"); // 원하는 경로로 이동
-      } else {
-        toaster.create({
-          description: "워크스페이스 생성에 실패했습니다.",
-          type: "error",
-        });
-      }
+      console.log(response.data);
+      setWsList(response.data); // wsList 상태에 저장
     } catch (error) {
-      console.error("Error creating workspace:", error);
-      toaster.create({
-        description: "워크스페이스 생성에 실패했습니다.",
-        type: "error",
-      });
+      console.error("Error fetching wsList:", error);
+      throw error;
     }
   };
 
-  return (
-    <Stack>
-      <Flex justify="space-between" align="center">
-        <Flex gap={2}>
-          <Filter />
-          <Search />
-        </Flex>
+  // 페이지 렌더링 시 artistSeq 가져오기
+  useEffect(() => {
+    console.log("여기는 WsListView, artistSeq 는", artistSeq);
+    if (artistSeq) {
+      fetchWsList();
+    } else {
+      console.log("artistSeq 값 없음", artistSeq);
+    }
+  }, [artistSeq]);
 
-        <PopoverRoot>
-          <PopoverTrigger asChild>
-            <Button
-              size="sm"
-              variant="outline"
-              fontFamily="MiceGothic"
-              fontSize={13}
-            >
-              워크스페이스 생성
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverBody>
-              <PopoverTitle
-                fontWeight="medium"
-                fontFamily="MiceGothic"
-                fontSize={13}
-                marginBottom={3}
-              >
-                워크스페이스 생성
-              </PopoverTitle>
-              <Stack gap={2}>
-                <Input
-                  placeholder="워크스페이스 이름을 입력해주세요."
-                  size="sm"
-                  fontFamily="MiceGothic"
-                  fontSize={11}
-                  value={workspaceName}
-                  onChange={(e) => setWorkspaceName(e.target.value)}
-                />
-                <Input
-                  placeholder="작업할 곡의 원곡명을 입력해주세요."
-                  size="sm"
-                  fontFamily="MiceGothic"
-                  fontSize={11}
-                  value={originTitle}
-                  onChange={(e) => setOriginTitle(e.target.value)}
-                />
-                <Input
-                  placeholder="작업할 곡의 원곡자를 입력해주세요."
-                  size="sm"
-                  fontFamily="MiceGothic"
-                  fontSize={11}
-                  value={originSinger}
-                  onChange={(e) => setOriginSinger(e.target.value)}
-                />
-              </Stack>
-              <Button
-                size="sm"
-                variant="outline"
-                fontFamily="MiceGothic"
-                fontSize={11}
-                mt={4}
-                onClick={handleCreateWorkspace}
-              >
-                생성하기
-              </Button>
-            </PopoverBody>
-          </PopoverContent>
-        </PopoverRoot>
+  return (
+    <Flex direction="column" height="100%" paddingTop="3" px="5" gap="2">
+      <Stack>
+        <Flex justify="space-between">
+          <Search />
+
+          {/* artistSeq와 생성된 워크스페이스 ID 콜백을 전달 */}
+          {artistSeq && (
+            <WsCreateButton
+              artistSeq={artistSeq}
+              onWorkspaceCreated={handleWorkspaceCreated}
+            />
+          )}
+        </Flex>
+      </Stack>
+
+      <Box flex="1" overflowY="auto">
+        {/* wsList 데이터를 CardList에 props로 전달 */}
+        <CardList wsList={wsList} />
+      </Box>
+
+      <Flex justify="center" position="sticky" bottom="0" p={4}>
+        <WsPagination />
       </Flex>
-      <CardList />
-    </Stack>
+    </Flex>
   );
 }

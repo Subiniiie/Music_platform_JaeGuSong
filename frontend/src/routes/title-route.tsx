@@ -5,6 +5,7 @@ import DividerUploadView from "../pages/divider/upload-view";
 // import CommunityView from "@/pages/community/community-view";
 import WsListView from "@/pages/workspace/ws-list-view";
 import WsDetailView from "@/pages/workspace/ws-detail-view";
+import DividerAnnouncementView from "@/pages/divider/announcement-view";
 
 const titleRoute: RouteObject[] = [
   {
@@ -20,11 +21,15 @@ const titleRoute: RouteObject[] = [
         element: <DividerUploadView />,
       },
       {
+        path: paths.divider.announcement,
+        element: <DividerAnnouncementView />,
+      },
+      {
         path: paths.workspace.list,
         element: <WsListView />, // 나중에 추가 가능
       },
       {
-        path: `${paths.workspace.list}/:workspaceId`, // 워크스페이스 상세 페이지 라우트
+        path: `${paths.workspace.list}/:workspaceSeq`, // 워크스페이스 상세 페이지 라우트
         element: <WsDetailView />, // 상세 페이지 컴포넌트 렌더링
       },
     ],

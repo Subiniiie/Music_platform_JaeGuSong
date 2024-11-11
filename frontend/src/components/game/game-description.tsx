@@ -72,7 +72,7 @@ const GameDescriptionModal: React.FC<GameDescriptionModalProps> = ({
           {selectedGame === "keyboards" && (
             <>
               <span style={{ display: "block", marginTop: "3px" }}>
-                코드 천재는 실제 음 소리와 화음 소리를 바탕으로
+                절대 음감은 실제 음 소리와 화음 소리를 바탕으로
               </span>
               <span style={{ display: "block", marginTop: "3px" }}>
                 구성된 흥미로운 게임입니다.

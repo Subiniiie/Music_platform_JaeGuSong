@@ -10,7 +10,6 @@ export default function TitleLayout() {
         height={{ base: "70px", md: "80px" }} // 최소 폭 설정
         minHeight="70px"
         p="4"
-        boxShadow="md"
         background="#02001F"
       >
         <Title />
@@ -28,7 +27,7 @@ export default function TitleLayout() {
         borderBottom="none" // 하단 테두리 제거
         display="flex"
         alignItems="stretch"
-        // justifyContent="center"
+        overflow="hidden"
       >
         <Outlet />
       </Stack>

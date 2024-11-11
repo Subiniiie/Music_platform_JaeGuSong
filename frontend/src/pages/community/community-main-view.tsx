@@ -7,29 +7,25 @@ import Container from '@/components/community/container';
 import Header from '@/components/community/header';
 import CrewHeader from '@/components/community/crew-header';
 import useCommunityMain from '@/hooks/community/useCommunityMain';
-import Search from '@/components/community/search';
-import { Outlet } from 'react-router-dom';
+import useHeaderStore from '@/stores/headerStore';
 
 const CommunityMainView: React.FC = () => {
-  console.log('gg')
   
   const {
     feedState,
-    changeHeader,
-    openSearchModal,
-    searchInput,
-    setSearchInput,
-    toggleSearchModal,
     goMusicMainFeed,
     goMainFeed
   } = useCommunityMain();
 
+  const { openUserHeader } = useHeaderStore(state => state);
+
+  useEffect(() => {
+  }, [openUserHeader])
+
 
   return (
     <>
-      {/* {changeHeader ? <Header /> : <CrewHeader />} */}
-      {/* <Header /> */}
-      <CrewHeader />
+      {openUserHeader ? <Header /> : <CrewHeader />}
       <Container>
         <Box
           margin="10px 0"

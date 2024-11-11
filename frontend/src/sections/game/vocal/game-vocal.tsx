@@ -30,6 +30,28 @@ const VocalGame: React.FC = () => {
       height="600px"
       overflow="hidden"
     >
+      {!gameOver && isListening && (
+        <Box
+          position="absolute"
+          left="10px"
+          top="10px"
+          width="20px"
+          height="calc(100% - 120px)"
+          backgroundColor="rgba(255, 255, 255, 0.2)"
+          borderRadius="10px"
+          display="flex"
+          flexDirection="column-reverse"
+          overflow="hidden"
+        >
+          <Box
+            height={`${(userFrequency / 1200) * 100}%`}
+            width="100%"
+            backgroundColor="skyblue"
+            transition="height 0.1s ease"
+          />
+        </Box>
+      )}
+
       {!isListening && !gameOver && (
         <Text fontSize="72px" textAlign="center" color="#f0aaff">
           음표 피하기
