@@ -1,4 +1,4 @@
-import { Image, Stack } from "@chakra-ui/react";
+import { Box, Image, Stack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import SessionBox from "@/sections/workspace/sessionBox";
@@ -75,17 +75,19 @@ export default function WsDetailView() {
   };
 
   return (
-    <Stack padding={4} color="white" borderRadius="md">
+    <Stack padding={4} color="white" borderRadius="md" height="100%">
       <WsHeader wsDetails={wsDetails} workspaceSeq={workspaceSeqNumber} />
 
       <Image src={wsDetails.thumbnail} />
       {/* <Image src="https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/"/> */}
 
-      <SessionBox
-        workspaceSeq={workspaceSeqNumber}
-        sessions={wsDetails.sounds}
-        onSessionDelete={handleSessionDelete}
-      />
+      <Box flex="1" overflowY="auto">
+        <SessionBox
+          workspaceSeq={workspaceSeqNumber}
+          sessions={wsDetails.sounds}
+          onSessionDelete={handleSessionDelete}
+        />
+      </Box>
 
       <WsFooter wsDetails={wsDetails} workspaceSeq={workspaceSeqNumber} />
     </Stack>
