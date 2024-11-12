@@ -2,19 +2,16 @@ import { Stack, createListCollection } from "@chakra-ui/react";
 import {
   SelectContent,
   SelectItem,
-  // SelectLabel,
   SelectRoot,
   SelectTrigger,
   SelectValueText,
 } from "@/components/ui/select";
 
-export default function ToggleOptions() {
+export default function ToggleOptions({ onSelectSession }) {
   return (
     <Stack gap="5" width="180px">
-      {/* ["xs", "sm", "md", "lg"] */}
       <SelectRoot key={"xs"} size={"xs"} collection={frameworks}>
-        {/* <SelectLabel>size = {"xs"}</SelectLabel> */}
-        <SelectTrigger>
+        <SelectTrigger background={"white"} borderRadius={5}>
           <SelectValueText
             fontFamily="MiceGothic"
             fontSize={11}
@@ -22,14 +19,15 @@ export default function ToggleOptions() {
           />
         </SelectTrigger>
         <SelectContent>
-          {frameworks.items.map((movie) => (
+          {frameworks.items.map((session) => (
             <SelectItem
               fontFamily="MiceGothic"
               fontSize={10}
-              item={movie}
-              key={movie.value}
+              item={session}
+              key={session.value}
+              onClick={() => onSelectSession(session.value)}
             >
-              {movie.label}
+              {session.label}
             </SelectItem>
           ))}
         </SelectContent>
@@ -41,10 +39,12 @@ export default function ToggleOptions() {
 const frameworks = createListCollection({
   items: [
     { label: "보컬", value: "vocal" },
-    { label: "건반", value: "piano" },
-    { label: "기타", value: "guitar" },
-    { label: "베이스", value: "base" },
+    { label: "피아노", value: "piano" },
+    { label: "신시사이저", value: "synthesizer" },
+    { label: "어쿠스틱 기타", value: "acoustic_guitar" },
+    { label: "일렉트릭 기타", value: "electric_guitar" },
+    { label: "베이스", value: "bass" },
     { label: "드럼", value: "drum" },
-    { label: "etc.", value: "etc." },
+    // { label: "etc.", value: "etc." },
   ],
 });

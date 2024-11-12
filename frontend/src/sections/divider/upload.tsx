@@ -22,7 +22,9 @@ export default function Upload({ files, setFiles, onFileRemove }: UploadProps) {
       maxW="xl"
       alignItems="stretch"
       maxFiles={1}
+      accept={["audio/*", "video/*"]}
       onFileChange={handleFileUpload}
+      accept={["audio/*", "video/*"]}
     >
       <FileUploadDropzone
         label="Drag and drop here to upload"

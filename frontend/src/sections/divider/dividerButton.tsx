@@ -1,7 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
 import { Button, Input, Stack } from "@chakra-ui/react";
-import { toaster } from "@/components/ui/toaster";
 import {
   PopoverArrow,
   PopoverBody,
@@ -11,45 +9,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export default function DividerButton({ artistSeq, onDividerSuccess }) {
+export default function DividerButton() {
   const [workspaceName, setWorkspaceName] = useState("");
   const [originTitle, setOriginTitle] = useState("");
   const [originSinger, setOriginSinger] = useState("");
-  const API_URL = import.meta.env.VITE_API_URL;
-
-  const handleCreateWorkspace = async () => {
-    try {
-      const storedToken = localStorage.getItem("jwtToken");
-      const response = await axios.post(
-        `${API_URL}/api/artists/${artistSeq}/workspaces`,
-        {
-          name: workspaceName,
-          originSinger,
-          originTitle,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${storedToken}`,
-          },
-        }
-      );
-
-      toaster.create({
-        description: "워크스페이스가 성공적으로 생성되었습니다.",
-        type: "success",
-      });
-
-      // 생성 성공 시 부모 컴포넌트로 workspaceId 전달
-      onDividerSuccess(response.data);
-    } catch (error) {
-      console.error("Error creating workspace:", error);
-      toaster.create({
-        description: "워크스페이스 생성에 실패했습니다.",
-        type: "error",
-      });
-    }
-  };
 
   return (
     <PopoverRoot>
@@ -108,7 +71,6 @@ export default function DividerButton({ artistSeq, onDividerSuccess }) {
             fontFamily="MiceGothic"
             fontSize={11}
             mt={4}
-            onClick={handleCreateWorkspace}
           >
             추출하기
           </Button>

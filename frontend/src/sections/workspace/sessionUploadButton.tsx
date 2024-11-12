@@ -31,7 +31,9 @@ const encodeFileToBase64 = (file: File) => {
   });
 };
 
-export default function SessionUploadButton({ workspaceSeq }: SessionUploadButtonProps) {
+export default function SessionUploadButton({
+  workspaceSeq,
+}: SessionUploadButtonProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [errors, setErrors] = useState({
     file: "", // 파일 업로드 오류 메시지
@@ -39,35 +41,25 @@ export default function SessionUploadButton({ workspaceSeq }: SessionUploadButto
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleCreateSession = async () => {
-    console.log('세션 업로드 api 요청 보내는 handleCreateSession 실행시켜볼게')
-    console.log('files :', files)
-    console.log('files.acceptedFiles :', files.acceptedFiles)
-    console.log('files.acceptedFiles[0] :', files.acceptedFiles[0])
-    console.log('files.acceptedFiles[0].name :', files.acceptedFiles[0].name)
+    console.log("세션 업로드 api 요청 보내는 handleCreateSession 실행시켜볼게");
+    console.log("files :", files);
+    console.log("files.acceptedFiles :", files.acceptedFiles);
+    console.log("files.acceptedFiles[0] :", files.acceptedFiles[0]);
+    console.log("files.acceptedFiles[0].name :", files.acceptedFiles[0].name);
 
     if (files.length === 0) {
       setErrors({ file: "파일을 업로드해주세요." });
       return;
     }
 
-    // const formData = new FormData();
-    // formData.append("session", files[0]); // 첫 번째 파일만 업로드
-
     const formData = new FormData();
     formData.append("session", files.acceptedFiles[0]); // 첫 번째 파일만 업로드
 
-
     try {
-      // 파일을 Base64로 인코딩
-      // const base64File = await encodeFileToBase64(files.acceptedFiles[0]);
-      // console.log('base64File :', base64File)
-      console.log('formData', formData)
+      console.log("formData", formData);
       const storedToken = localStorage.getItem("jwtToken");
       const response = await axios.post(
         `${API_URL}/api/workspaces/${workspaceSeq}/session`,
-        // {
-        //   session: base64File,
-        // },
         formData,
         {
           headers: {
@@ -118,7 +110,10 @@ export default function SessionUploadButton({ workspaceSeq }: SessionUploadButto
           </PopoverTitle>
 
           {/* 파일 업로드 */}
-          <FileUploadRoot accept={["audio/*", "video/*"]} onFileChange={setFiles}>
+          <FileUploadRoot
+            accept={["audio/*", "video/*"]}
+            onFileChange={setFiles}
+          >
             <FileUploadTrigger asChild>
               <Button variant="outline" size="sm">
                 {/* 파일 업로드 버튼 내의 아이콘 + 문구 */}
