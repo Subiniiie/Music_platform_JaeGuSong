@@ -79,7 +79,7 @@ export default function WsListView() {
 
       <Box flex="1" overflowY="auto">
         {/* wsList 데이터를 CardList에 props로 전달 */}
-        <CardList wsList={wsList} />
+        <CardList wsList={wsList} fetchWsList={fetchWsList} />
       </Box>
 
       <Flex justify="center" position="sticky" bottom="0" p={4}>

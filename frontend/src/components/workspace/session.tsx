@@ -16,7 +16,6 @@ interface SessionProps {
   startPoint: number;
   endPoint: number;
   workspaceSeq: number; // workspaceSeq를 props로 추가
-  // onDelete: (sessionId: string) => void; // 삭제 핸들러 추가
   onSessionDelete: (sessionId: string) => void; // 삭제 핸들러 추가
 }
 
@@ -27,9 +26,7 @@ export default function Session({
   startPoint,
   endPoint,
   workspaceSeq,
-  // onDelete,
   onSessionDelete,
-// }: SessionProps) {
 }: SessionProps & { onSessionDelete: (sessionId: number) => void }) {
   const waveformRef = useRef<HTMLDivElement | null>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
@@ -120,7 +117,7 @@ export default function Session({
   };
 
   const handleDeleteSession = async () => {
-    console.log('세션 삭제 요청 api 날려볼게')
+    console.log("세션 삭제 요청 api 날려볼게");
 
     try {
       const storedToken = localStorage.getItem("jwtToken");
@@ -141,7 +138,6 @@ export default function Session({
 
       // onDelete(sessionId); // 삭제 후 부모 컴포넌트의 상태 업데이트
       onSessionDelete(Number(sessionId)); // 부모 컴포넌트에 삭제를 알림
-
     } catch (error) {
       console.error("Error adding session:", error);
       toaster.create({
@@ -149,7 +145,7 @@ export default function Session({
         type: "error",
       });
     }
-  }
+  };
 
   return (
     <Card.Root bg="transparent" color="white" padding="2" borderColor="grey">
@@ -192,7 +188,6 @@ export default function Session({
 
         {/* <Button onClick={handleDeleteSession}>삭제</Button> */}
         <Button onClick={handleDeleteSession}>삭제</Button>
-
       </Flex>
     </Card.Root>
   );
