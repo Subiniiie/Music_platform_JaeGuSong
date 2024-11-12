@@ -5,6 +5,7 @@ const PATH = {
   workspace: "/ws",
   game: "/game",
   setting: "/setting",
+  alarm: "/alarm",
 };
 
 const paths = {

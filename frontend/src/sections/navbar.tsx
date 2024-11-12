@@ -31,6 +31,8 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
+    localStorage.removeItem("fcmToken");
+    localStorage.removeItem("auth-storage");
     setIsLoggedIn(false);
     goLogout();
   };

@@ -8,6 +8,8 @@ import { Box, Button, Input as ChakraInput, Text } from "@chakra-ui/react";
 import paths from "@/configs/paths";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import fetchArtistSeq from "@/hooks/fetchArtistSeq";
+import { messaging } from "@/services/firebaseConfig";
+import { getToken } from "firebase/messaging";
 
 const Input: React.FC = () => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -16,10 +18,36 @@ const Input: React.FC = () => {
     userId: "",
     password: "",
   });
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 에러 메시지 상태 추가
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target as HTMLInputElement;
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  };
+
+  // FCM 코드
+
+  const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPIDKEY;
+  const fetchFCMToken = async (): Promise<string | null> => {
+    try {
+      const registration = await navigator.serviceWorker.register(
+        "/firebase-messaging-sw.js"
+      );
+      const fcmToken = await getToken(messaging, {
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration,
+      });
+      if (fcmToken) {
+        console.log("FCM 토큰:", fcmToken);
+        return fcmToken;
+      } else {
+        console.warn("FCM 토큰을 가져오지 못했습니다.");
+        return null;
+      }
+    } catch (error) {
+      console.error("FCM 토큰 가져오기 실패:", error);
+      return null;
+    }
   };
 
   const handleResponseDto = async (response: AxiosResponse) => {
@@ -32,7 +60,7 @@ const Input: React.FC = () => {
         withCredentials: true,
       });
 
-      // 로그인 성공 후 articeSeq 가져오기
+      // 로그인 성공 후 artistSeq 가져오기
       await fetchArtistSeq();
 
       navigate(paths.community.main);
@@ -53,7 +81,6 @@ const Input: React.FC = () => {
         );
     });
 
-    // 백한테 로그인 정보 보내기
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, null, {
         headers: {
@@ -63,10 +90,20 @@ const Input: React.FC = () => {
           email: formData.userId,
           password: formData.password,
         },
-        // withCredentials: true,
       });
+
       const token = response.headers.authorization.split(" ")[1];
       localStorage.setItem("jwtToken", token);
+
+      // FCM 토큰 가져와서 localStorage에 저장
+      const fcmToken = await fetchFCMToken();
+      if (fcmToken) {
+        localStorage.setItem("fcmToken", fcmToken);
+        console.log("FCM 토큰 저장 성공:", fcmToken);
+      } else {
+        console.warn("FCM 토큰 저장 실패.");
+      }
+
       setErrorMessage(null); // 성공하면 에러 메시지 초기화
       await handleResponseDto(response);
     } catch (error) {

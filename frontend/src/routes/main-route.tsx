@@ -82,8 +82,8 @@ const mainRoute: RouteObject[] = [
       // 마이페이지 경로
       {
         path: paths.setting.mypage,
-        element: <MyPageView />
-      }
+        element: <MyPageView />,
+      },
     ],
   },
 ];
