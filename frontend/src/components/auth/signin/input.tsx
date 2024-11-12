@@ -25,9 +25,29 @@ const Input: React.FC = () => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
-  // FCM 코드
-
   const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPIDKEY;
+
+  // 알림 권한 요청 함수
+  const requestNotificationPermission = async (): Promise<boolean> => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        console.log("알림 권한이 허용되었습니다.");
+        return true;
+      } else {
+        console.warn("알림 권한이 거부되었습니다.");
+        alert(
+          "알림 권한을 허용하면 중요한 공지와 업데이트를 받아볼 수 있습니다!"
+        );
+        return false;
+      }
+    } catch (error) {
+      console.error("알림 권한 요청 실패:", error);
+      return false;
+    }
+  };
+
+  // FCM 토큰 가져오기
   const fetchFCMToken = async (): Promise<string | null> => {
     try {
       const registration = await navigator.serviceWorker.register(
@@ -95,13 +115,18 @@ const Input: React.FC = () => {
       const token = response.headers.authorization.split(" ")[1];
       localStorage.setItem("jwtToken", token);
 
-      // FCM 토큰 가져와서 localStorage에 저장
-      const fcmToken = await fetchFCMToken();
-      if (fcmToken) {
-        localStorage.setItem("fcmToken", fcmToken);
-        console.log("FCM 토큰 저장 성공:", fcmToken);
-      } else {
-        console.warn("FCM 토큰 저장 실패.");
+      // 알림 권한 요청
+      const hasPermission = await requestNotificationPermission();
+
+      // 알림 권한이 허용된 경우 FCM 토큰 가져오기
+      if (hasPermission) {
+        const fcmToken = await fetchFCMToken();
+        if (fcmToken) {
+          localStorage.setItem("fcmToken", fcmToken);
+          console.log("FCM 토큰 저장 성공:", fcmToken);
+        } else {
+          console.warn("FCM 토큰 저장 실패.");
+        }
       }
 
       setErrorMessage(null); // 성공하면 에러 메시지 초기화
