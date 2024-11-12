@@ -201,7 +201,7 @@ export default function DividerUploadView() {
 
 const frameworks = createListCollection({
   items: [
-    { label: "보컬", value: "vocal" },
+    { label: "보컬", value: "vocals" },
     { label: "피아노", value: "piano" },
     { label: "신시사이저", value: "synthesizer" },
     { label: "어쿠스틱 기타", value: "acoustic_guitar" },
