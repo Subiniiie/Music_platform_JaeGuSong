@@ -4,7 +4,6 @@ import paths from "@/configs/paths";
 import { useNavigate } from "react-router-dom";
 import useHeaderStore from "@/stores/headerStore";
 
-
 interface SearchResult {
   email: string;
   nickname: string;
@@ -26,7 +25,7 @@ export default function useSearch() {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const toggleSearch = () => {
-    setRunSearch(false)
+    setRunSearch(false);
     if (isSearchActive) {
       setIsSearchActive(false);
       setTimeout(() => setIsVisible(false), 500);
@@ -44,30 +43,33 @@ export default function useSearch() {
 
   const handleSearchSubmit = async (e: React.FormEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const storedToken = localStorage.getItem('jwtToken');
-    setRunSearch(true)
-  
+    const storedToken = localStorage.getItem("jwtToken");
+    setRunSearch(true);
+
     try {
       const response = await axios.get(
-        `${API_URL}/api/artists/${searchQuery}`, 
+        `${API_URL}/api/artists/${searchQuery}`,
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,
           },
         }
       );
-      setSearchResults([response.data])
+      setSearchResults([response.data]);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const goOtherFeed = async (artistSeq: number, otherNickname: string, otherProfileImage: string) => {
-    setOtherUserNickname(otherNickname)
-    setOtherUserProfileImage(otherProfileImage)
-    navigate(paths.community.generalCommunity(artistSeq))
-  }
-  
+  const goOtherFeed = async (
+    artistSeq: number,
+    otherNickname: string,
+    otherProfileImage: string
+  ) => {
+    setOtherUserNickname(otherNickname);
+    setOtherUserProfileImage(otherProfileImage);
+    navigate(paths.community.generalCommunity(artistSeq));
+  };
 
   return {
     isSearchActive,
