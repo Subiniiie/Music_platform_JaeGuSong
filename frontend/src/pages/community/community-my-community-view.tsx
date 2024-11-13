@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import Header from '@/components/community/header';
 import Container from '@/components/community/container';
@@ -13,6 +13,7 @@ const CommunityMyCommunityView: React.FC = () => {
     goMusicMainFeed,
     goMainFeed
   } = useCommunityMain();
+
 
   return (
     <Box>

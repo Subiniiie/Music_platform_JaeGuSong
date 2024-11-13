@@ -10,7 +10,7 @@ const PATH = {
 
 const paths = {
   root: PATH.root,
-  main: `${PATH.community}/main`,
+  // main: `${PATH.community}/main`,
 
   // auth
   auth: {

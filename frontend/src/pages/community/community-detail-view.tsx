@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box, Text, Separator } from "@chakra-ui/react";
+import { Box, Text, Separator, Alert as ChakraAlert } from "@chakra-ui/react";
 import CommunityButton from "@/components/community/community-button";
 import Reviewcontainer from "@/components/community/review-container";
 import CrewHeader from "@/components/community/crew-header";
@@ -12,10 +12,10 @@ import paths from "@/configs/paths";
 import Modal from "@/components/common/Modal";
 import useCommunityDetail from "@/hooks/community/useCommunityDetail";
 import useHeaderStore from "@/stores/headerStore";
+import { Alert } from "@/components/ui/alert"
 
 const CommunityDetailView: React.FC = () => {
-  const { openDeleteModal, setOpenDeleteModal, deleteArticle } =
-    useCommunityDetail();
+  const { openDeleteModal, setOpenDeleteModal, deleteArticle } = useCommunityDetail();
   const [artistSeq, setArtistSeq] = useState<string>("");
   const [nickname, setNickname] = useState<string>("");
   const [profileImage, setProfileImage] = useState<string>("");
@@ -52,6 +52,7 @@ const CommunityDetailView: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    
   }, [openUserHeader])
 
   const getArticleDetail = async () => {
@@ -98,6 +99,8 @@ const CommunityDetailView: React.FC = () => {
     const numericId = Number(id);
     navigate(paths.community.update(numericId));
   };
+
+
 
   return (
     <Box>
@@ -197,6 +200,33 @@ const CommunityDetailView: React.FC = () => {
           />
         </Box>
       </Container>
+      {openDeleteModal && (
+            <Modal
+              isOpen={openDeleteModal}
+              onClose={() => setOpenDeleteModal(false)}
+            >
+              <Box padding=" 5px 20px">
+                <Text color="black" margin="40px">
+                  정말 이 게시물을 삭제하시겠습니까?
+                </Text>
+                <Box
+                  margin="10px"
+                  display="flex"
+                  justifyContent="center"
+                  gap="10px"
+                >
+                  <CommunityButton
+                    title="삭제"
+                    onClick={() => deleteArticle(Number(id))}
+                  />
+                  <CommunityButton
+                    title="취소"
+                    onClick={() => setOpenDeleteModal(false)}
+                  />
+                </Box>
+              </Box>
+            </Modal>
+          )}
     </Box>
   );
 };

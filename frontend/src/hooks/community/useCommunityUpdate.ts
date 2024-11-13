@@ -41,16 +41,19 @@ const useCommunityUpdate = () => {
   }, [API_URL]);
 
   useEffect(() => {
-  }, [formData])
+    if (id) {
+      fetchArticleDetail(parseInt(id));
+    }
+  }, [fetchArticleDetail, id]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, type, value, files } = e.target as HTMLInputElement;
-
+  
     if (type === "file" && files) {
-      const selectedFiles = files; // 첫 번째 파일을 가져옵니다.
+      // 파일을 상태에 저장
       setFormData((prevFormData) => ({
         ...prevFormData,
-        attachmentFile: selectedFiles, // 파일을 formData의 attachmentFile 상태에 저장
+        [name]: files[0], // 첫 번째 파일 저장
       }));
     } else {
       setFormData((prevFormData) => ({
@@ -59,6 +62,7 @@ const useCommunityUpdate = () => {
       }));
     }
   };
+  
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -69,7 +73,7 @@ const useCommunityUpdate = () => {
       if (key === "state") {
         formDataToSubmit.append(key, value === "공개" ? "공개" : "비공개");
       } else if (value) {
-        formDataToSubmit.append(key, value instanceof File ? value : String(value));
+        formDataToSubmit.append(key, typeof value === "string" ? value : value as any);
       }
     });
     const storedToken = localStorage.getItem('jwtToken');

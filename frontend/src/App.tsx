@@ -1,10 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 
 function App() {
   const [count, setCount] = useState(0);
+
+  // 컴포넌트가 마운트될 때 `beforeunload` 이벤트 리스너 추가
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.removeItem("authToken"); // 로컬 스토리지의 토큰 삭제
+    };
+    
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <>

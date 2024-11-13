@@ -12,7 +12,7 @@ const UpdateInputContainer: React.FC = () => {
     if (id) {
         fetchArticleDetail((parseInt(id)));
     }
-  }, [fetchArticleDetail]);
+  }, [fetchArticleDetail, id]);
 
   return (
     <Box width="100%" maxW="md" mx="auto">
@@ -44,6 +44,15 @@ const UpdateInputContainer: React.FC = () => {
                 resize="vertical"
                 height="180px" 
               />
+            ) : field.type === 'file' ? (
+              // 파일 입력 필드: value 속성 없이 설정
+              <ChakraInput
+                type="file"
+                name={field.name}
+                onChange={handleChange}
+                accept="image/*"
+                size="lg"
+              />
             ) : (
               <ChakraInput
                 type={field.type}
@@ -51,7 +60,6 @@ const UpdateInputContainer: React.FC = () => {
                 value={formData[field.name as keyof CreateArticleData] || ''}
                 onChange={handleChange}
                 placeholder={field.name === 'title' ? '제목을 입력하세요' : ''}
-                accept={field.type === 'file' ? 'image/*' : undefined}
                 size="lg"
               />
             )}

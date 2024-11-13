@@ -32,11 +32,12 @@ const mainRoute: RouteObject[] = [
   // },
   {
     path: paths.root,
-    element: (
-      <PrivateRoute>
-        <CommunityView />
-      </PrivateRoute>
-    ),
+    // element: (
+    //   <PrivateRoute>
+    //     <CommunityView />
+    //   </PrivateRoute>
+    // ),
+    // element: <SignInView />,
     // 메인 경로로 설정할 페이지는 나중에 element를 지정할 수 있음
     children: [
       {
