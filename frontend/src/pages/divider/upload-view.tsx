@@ -40,10 +40,6 @@ export default function DividerUploadView() {
     console.log("files :", files);
   };
 
-  // const handleFileChange = (event: any) => {
-  //   setFiles(event.target.files); // target.files를 통해 파일 배열을 setFiles로 전달
-  // };
-
   const handleDividerUpload = async () => {
     console.log(
       "안녕, 난 handleDividerUpload. 디바이더 업로드 api 요청 보내볼게"

@@ -7,6 +7,7 @@ import CommunityButton from "./community-button";
 import Modal from "../common/Modal";
 import UseCommunityCrew from "@/hooks/community/useCommunityCrew";
 import CrewMemeberListModal from "./crew-member-list-modal";
+import CrewJoinApplyModal from "./crew-join-apply-modal";
 
 const CrewHeader: React.FC = () => {
   const navigate = useNavigate();
@@ -33,8 +34,6 @@ const CrewHeader: React.FC = () => {
     setOpenCrewApproveModal,
     handleCrewFollowModal,
     handleCrewJoinModal,
-    handleCrewApproveModal,
-    handleCrewDeclineModal,
     handleCrewWithdrawModal,
     handleCrewMembers,
     preGetCrewInfo,
@@ -209,8 +208,7 @@ const CrewHeader: React.FC = () => {
             <Text color="black" margin="40px">
               가입 신청 유저 목록
             </Text>
-            <CommunityButton title="승인" onClick={handleCrewApproveModal} />
-            <CommunityButton title="거절" onClick={handleCrewDeclineModal} />
+            <CrewJoinApplyModal />
           </Box>
         </Modal>
       )}

@@ -7,6 +7,7 @@ import {
   Link,
   Stack,
   Text,
+  Collapsible
 } from "@chakra-ui/react";
 import paths from "@/configs/paths";
 import useAuth from "@/hooks/auth/useAuth";
@@ -19,15 +20,25 @@ export default function Navbar() {
     isSearchActive,
     isVisible,
     searchQuery,
+    searchResults,
+    runSearch,
     toggleSearch,
     handleSearchChange,
+    handleSearchSubmit,
+    goOtherFeed,
   } = useSearch();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
     setIsLoggedIn(!!token);
   }, []);
+
+  useEffect(() => {
+    console.log("runSearch 상태:", runSearch);
+    console.log("searchResults 상태:", searchResults);
+  }, [runSearch, searchResults]);
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
@@ -105,21 +116,45 @@ export default function Navbar() {
             X
           </Button>
         </Flex>
-        <Input
-          placeholder="검색어를 입력하세요"
-          value={searchQuery}
-          onChange={handleSearchChange}
-          marginBottom="4"
-          borderColor="white"
-          color="white"
-        />
-        <Stack>
-          {searchQuery && (
-            <Box>
-              <Text>검색 결과: {searchQuery}</Text>
-            </Box>
-          )}
-        </Stack>
+        <form onSubmit={handleSearchSubmit}>
+          <Box 
+            display="flex" 
+            flexDirection="row"
+            gap="5px"
+          >
+            <Input
+              placeholder="검색어를 입력하세요"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              marginBottom="4"
+              borderColor="white"
+              color="white"
+            />
+            <Button 
+              type="submit"
+              borderWidth="1px" 
+              borderColor="#c5e4f3" 
+              background="none"
+            >
+              검색
+            </Button>
+          </Box> 
+        </form>
+        {runSearch ? (
+          searchResults.length > 0 && searchResults[0]?.length > 0 ? (
+            searchResults[0].map((searchResult, index) => (
+              <Text 
+              key={index}
+              cursor="pointer"
+              onClick={() => goOtherFeed(searchResult.seq, searchResult.nickname, searchResult.profileImage)}
+            >
+              {searchResult.nickname}
+            </Text>
+            ))
+          ) : (
+            "검색 결과가 없습니다."
+          )
+        ) : ""}
       </Box>
       <Stack padding="0" fontFamily="MiceGothicBold" flex="1">
         <Box width="100%" margin="0" paddingY="4">
@@ -136,18 +171,37 @@ export default function Navbar() {
                 gap="10px"
                 justifyContent="center"
               >
-                <Button
-                  border="solid 2px #9000FF"
-                  borderRadius="15px"
-                  height="30px"
-                  width="60px"
-                  _hover={{
-                    color: "#9000ff",
-                    border: "solid 2px white",
-                  }}
-                >
-                  팔로우
-                </Button>
+                <Collapsible.Root>
+                  <Collapsible.Trigger asChild>
+                    <Button
+                      border="solid 2px #9000FF"
+                      borderRadius="15px"
+                      height="30px"
+                      width="60px"
+                      _hover={{
+                        color: "#9000ff",
+                        border: "solid 2px white",
+                      }}
+                    >
+                    팔로우
+                    </Button>
+                  </Collapsible.Trigger>
+                  <Collapsible.Content
+                    style={{
+                      position: "absolute", 
+                      top: "170px",
+                      width: "230px", 
+                      maxWidth: "230px",
+                      background: "white"
+                    }}
+                  >
+                    <Box padding="4" borderWidth="1px" color="black">
+                      팔로우 목록
+                    </Box>
+                  </Collapsible.Content>
+                </Collapsible.Root>
+                <Collapsible.Root>
+                <Collapsible.Trigger asChild>
                 <Button
                   border="solid 2px #9000FF"
                   borderRadius="15px"
@@ -160,6 +214,23 @@ export default function Navbar() {
                 >
                   팔로잉
                 </Button>
+                </Collapsible.Trigger>
+                  <Collapsible.Content
+                    style={{
+                      position: "absolute", 
+                      top: "170px",
+                      left: "16px",
+                      width: "230px", 
+                      maxWidth: "230px",
+                      background: "white",
+                      zIndex: 10,
+                    }}
+                  >
+                    <Box padding="4" borderWidth="1px" color="black">
+                      팔로잉 목록
+                    </Box>
+                  </Collapsible.Content>
+                </Collapsible.Root>
                 <Button
                   border="solid 2px #9000FF"
                   borderRadius="15px"
@@ -205,6 +276,7 @@ export default function Navbar() {
               </>
             )}
           </Flex>
+
         </Stack>
         <Stack marginTop="10px">
           {items.map((item, index) => (

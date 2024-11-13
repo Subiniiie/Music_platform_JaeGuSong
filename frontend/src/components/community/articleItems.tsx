@@ -5,9 +5,8 @@ import { useNavigate } from "react-router-dom";
 import paths from "@/configs/paths";
 
 interface ArticleItemsProps {
-  boardSeq: number;  // 숫자로 articleSeq를 받음
+  boardSeq: number; // 숫자로 articleSeq를 받음
 }
-
 
 const ArticleItems: React.FC<ArticleItemsProps> = ({ boardSeq }) => {
   const navigate = useNavigate();

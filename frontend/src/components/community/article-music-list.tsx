@@ -16,7 +16,6 @@ export interface MyMusicFeedList {
 const ArticleMusicList: React.FC = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
-
   const [myMusicFeedList, setMyMusicFeedList] = useState<MyMusicFeedList[]>([]);
 
   useEffect(() => {
@@ -47,13 +46,21 @@ const ArticleMusicList: React.FC = () => {
             },
           }
         );
-        setMyMusicFeedList(response.data);
+
+        console.log("어떤 데이터냐", response.data.workspaceDto);
+        // 데이터가 배열인지 확인하고 설정
+        if (Array.isArray(response.data.workspaceDto)) {
+          setMyMusicFeedList(response.data.workspaceDto);
+        } else {
+          console.warn("Expected an array but received:", response.data);
+        }
       } catch (error) {
         console.warn(error);
       }
     };
+
     getMusicFeed();
-  }, []);
+  }, [API_URL, id]);
 
   return (
     <Box marginBottom="200px">
@@ -63,7 +70,7 @@ const ArticleMusicList: React.FC = () => {
         margin="60px"
         marginLeft="90px"
       >
-        {myMusicFeedList &&
+        {Array.isArray(myMusicFeedList) &&
           myMusicFeedList.map((myMusic, index) => (
             <GridItem key={index}>
               <MusicArticleItems myMusic={myMusic} />

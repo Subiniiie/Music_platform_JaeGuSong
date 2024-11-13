@@ -2,7 +2,6 @@ import type { RouteObject } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import paths from "../configs/paths";
 import DividerUploadView from "../pages/divider/upload-view";
-// import CommunityView from "@/pages/community/community-view";
 import WsListView from "@/pages/workspace/ws-list-view";
 import WsDetailView from "@/pages/workspace/ws-detail-view";
 import DividerAnnouncementView from "@/pages/divider/announcement-view";
@@ -11,6 +10,7 @@ const titleRoute: RouteObject[] = [
   {
     path: paths.root,
     // 메인 경로로 설정할 페이지는 나중에 element를 지정할 수 있음
+    // element: <Navigate to={paths.auth.signIn} />,
     children: [
       {
         path: "community",

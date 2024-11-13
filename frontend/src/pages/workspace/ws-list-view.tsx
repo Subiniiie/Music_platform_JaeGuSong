@@ -1,4 +1,4 @@
-import { Box, Stack, Flex } from "@chakra-ui/react";
+import { Box, Stack, Flex, Center } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Search from "@/sections/workspace/search";
@@ -18,6 +18,8 @@ export default function WsListView() {
 
   // 워크스페이스 리스트 상태 관리
   const [wsList, setWsList] = useState([]);
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
 
   // 워크스페이스 생성 후 navigate 처리를 위한 콜백 함수
   const handleWorkspaceCreated = (workspaceId) => {
@@ -30,21 +32,19 @@ export default function WsListView() {
       console.log("워크스페이스 리스트 GET API 요청 보낼게");
 
       const storedToken = localStorage.getItem("jwtToken");
-      console.log("storedToken :", storedToken);
       console.log("artistSeq :", artistSeq);
       const response = await axios.get(
-        `${API_URL}/api/artists/${artistSeq}/workspaces`,
+        `${API_URL}/api/artists/${artistSeq}/workspaces?page=${page - 1}`,
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,
           },
-          params: {
-            page: page,
-          },
         }
       );
-      console.log(response.data);
-      setWsList(response.data); // wsList 상태에 저장
+      console.log("fetchWsList의 response.data :", response.data);
+      console.log("params :", page);
+      setWsList(response.data.workspaceDto); // wsList 상태에 저장
+      setTotalPage(response.data.totalPage); // totalPage 상태에 저장
     } catch (error) {
       console.error("Error fetching wsList:", error);
       throw error;
@@ -55,11 +55,18 @@ export default function WsListView() {
   useEffect(() => {
     console.log("여기는 WsListView, artistSeq 는", artistSeq);
     if (artistSeq) {
-      fetchWsList();
+      fetchWsList(page);
     } else {
       console.log("artistSeq 값 없음", artistSeq);
     }
   }, [artistSeq]);
+
+  // page 값이 변경될 때마다 fetchWsList 호출
+  useEffect(() => {
+    if (artistSeq) {
+      fetchWsList(page);
+    }
+  }, [page]);
 
   return (
     <Flex direction="column" height="100%" paddingTop="3" px="5" gap="2">
@@ -83,7 +90,7 @@ export default function WsListView() {
       </Box>
 
       <Flex justify="center" position="sticky" bottom="0" p={4}>
-        <WsPagination />
+        <WsPagination totalPage={totalPage} onPageChange={setPage} />
       </Flex>
     </Flex>
   );

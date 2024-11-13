@@ -1,9 +1,14 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import paths from "@/configs/paths";
 import axios from "axios";
 import { MakeCrewFormData } from "@/configs/community/makeCrew";
 import useCrewSeqStore from '@/stores/crewSeqStore';
+import useHeaderStore from "@/stores/headerStore";
+
+interface WantCrewJoinUser {
+    userSeq: number
+};
 
 
 const UseCommunityCrew = () => {
@@ -22,6 +27,7 @@ const UseCommunityCrew = () => {
     const [ myCrewsSeq, setMyCrewsSeq ] = useState<any[]>([]);
     const [ myName, setMyName ] = useState<string>('');
     const getCrewSeq = useCrewSeqStore((state) => state.getCrewSeq);
+    const { openUserHeader } = useHeaderStore(state => state);
 
     const [ makeCrewFormData, setMakeCrewFormData ] = useState<MakeCrewFormData>({
         birth: new Date().toISOString().split('T')[0],
@@ -36,6 +42,8 @@ const UseCommunityCrew = () => {
 
     const navigate = useNavigate();
     const { id } = useParams<{id: string}>();
+    const location = useLocation();
+    const hasDetailWord = location.pathname.includes('detail');
 
     const goCrewFollow = async () => {
         setopenCrewFollowModal((prev) => !prev);
@@ -50,7 +58,8 @@ const UseCommunityCrew = () => {
         // 크루 가입 요청 api 연결
         const storedToken = localStorage.getItem('jwtToken');
         // 예시
-        const crewSeq =  {id}
+        const crewSeq =  id
+        console.log('나 가입할거임', crewSeq)
         try {
             const response = await axios.post(
                 `${API_URL}/api/crew/join`,
@@ -68,20 +77,17 @@ const UseCommunityCrew = () => {
         }
     };
 
-    const handleCrewApproveModal = async () => {
+    const handleCrewApproveModal = async ({ userSeq }: WantCrewJoinUser): Promise<void> => {
         // 크루장이 가입 요청 승인
         const storedToken = localStorage.getItem('jwtToken');
-        // 요청 받았다고 리스트 필요함
-        // 일단은 예시 크루: 4, 유저:8
-        const userSeq = 3
-        const crewSeq = id
-        // 이건 상황 봐가면서 계속 바꾸기
+        console.log('가입용어청아차받아아아아', id)
+    
         try {
             const response = await axios.patch(
                 `${API_URL}/api/crew/accept`,
                 {
                     "userSeq": userSeq,
-                    "crewSeq": crewSeq,
+                    "crewSeq": id,
                 },
                 {
                     headers: {
@@ -95,33 +101,27 @@ const UseCommunityCrew = () => {
         }
     };
 
-    const handleCrewDeclineModal = async () => {
+    const handleCrewDeclineModal = async ({ userSeq }: WantCrewJoinUser): Promise<void> => {
         // 크루장이 가입 요청 거절
         const storedToken = localStorage.getItem('jwtToken');
-        // 요청 받았다고 리스트 필요함
-        // 일단은 예시 크루: 4, 유저:8
-        const userSeq = 8
-        const crewSeq = id
-        // 이건 상황 봐가면서 계속 바꾸기
+
         try {
-            const response = await axios.patch(
-                `${API_URL}/api/crew/decline`,
-                {
-                    "userSeq": userSeq,
-                    "crewSeq": crewSeq,
-                },
-                {
+            console.log('가입 신청 거절', userSeq, id)
+            const response = await axios.delete(
+                `${API_URL}/api/crew/decline`, {
                     headers: {
-                        Authorization: `Bearer ${storedToken}`
+                        Authorization: `Bearer ${storedToken}`,
                     },
-                }
-            )
-            console.log('크루 가입 신청 거절 완료', response)
+                    data: {
+                        "userSeq": userSeq,
+                        "crewSeq": id,
+                    },
+                })
+            console.log('크루 가입 신청 거절 완료', response);
         } catch(error) {
-            console.warn(error)
+            console.warn(error);
         }
     };
-    
     const goWithdrawCrew = async () => {
         setopenCrewWithdrawModal((prev) => !prev);
         const storedToken = localStorage.getItem('jwtToken');
@@ -226,7 +226,11 @@ const UseCommunityCrew = () => {
         if ( id === undefined ) {
             crewSeq = getCrewSeq;
         } else {
+            if (hasDetailWord) {
+                crewSeq = getCrewSeq
+            } else {
             crewSeq =  parseInt(id)
+            }    
         }
         try {
           const response = await axios.get(
@@ -245,8 +249,6 @@ const UseCommunityCrew = () => {
           } catch(error) {
             console.warn(error)
           }
-
-
     }
 
     const preGetCrewInfo = async () => {
