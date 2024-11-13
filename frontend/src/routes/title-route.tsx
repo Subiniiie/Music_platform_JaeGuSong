@@ -4,7 +4,7 @@ import paths from "../configs/paths";
 import DividerUploadView from "../pages/divider/upload-view";
 import WsListView from "@/pages/workspace/ws-list-view";
 import WsDetailView from "@/pages/workspace/ws-detail-view";
-import DividerAnnouncementView from "@/pages/divider/announcement-view";
+import DividerAnnouncementView from "@/sections/divider/announcement-view";
 
 const titleRoute: RouteObject[] = [
   {
