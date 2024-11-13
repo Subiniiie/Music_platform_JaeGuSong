@@ -6,7 +6,7 @@ import { useChat } from "@/hooks/chat/useChat";
 interface OtherHeaderProps {
   otherUserNickname: string;
   otherUserProfileImage: string;
-  OtheruserSeq: number;
+  OtheruserSeq?: number;
 }
 
 const OtherHeader: React.FC<OtherHeaderProps> = ({
@@ -21,6 +21,7 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
 
   const jwtToken = localStorage.getItem("jwtToken");
   const API_URL = import.meta.env.VITE_API_URL;
+
   const {
     roomSeq,
     chatMessages,
@@ -39,60 +40,35 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
       left="250px"
       width="calc(100% - 250px)"
       padding="4"
-      boxShadow="md" // 그림자 추가
-      zIndex={10} // 헤더가 항상 상단에 오도록 설정
+      boxShadow="md"
+      zIndex={10}
     >
       <Box height="70px">
-        <Box display="flex" flexDirection="row" alignItems="center" gap="5px">
-          <Box width="70px" height="70px">
-            <img
-              src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${otherUserProfileImage}`}
-              alt={`${otherUserProfileImage}`}
-            />
-          </Box>
-          <Text textStyle="3xl" marginTop="10px">
-            {otherUserNickname}
-          </Text>
-          <Text textStyle="xl" marginTop="10px">
-      boxShadow="md" // 그림자 추가
-      zIndex={10} // 헤더가 항상 상단에 오도록 설정
-    >
-      <Box
-        height="70px"
-      >
-        <Box 
-          display="flex" 
-          flexDirection="row" 
-          alignItems="center"
-          gap="15px"
-        >
+        <Box display="flex" flexDirection="row" alignItems="center" gap="15px">
+          {/* 프로필 이미지 */}
           <Box
             width="70px"
             height="70px"
-            borderRadius="full" // 프로필 이미지를 원형으로
+            borderRadius="full"
             overflow="hidden"
-            border="2px solid #fff" // 테두리 추가
-            boxShadow="0 0 10px rgba(0, 0, 0, 0.2)" 
+            border="2px solid #fff"
+            boxShadow="0 0 10px rgba(0, 0, 0, 0.2)"
           >
-            <img src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${otherUserProfileImage}`} alt={`${otherUserProfileImage}`}></img>
-          </Box>            
-          <Text
-            textStyle="3xl"
-            fontWeight="bold"
-            color="white"
-            marginTop="10px"
-            noOfLines={1}
-          >
+            <img
+              src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${otherUserProfileImage}`}
+              alt={`${otherUserNickname}의 프로필 이미지`}
+            />
+          </Box>
+
+          {/* 닉네임 및 설명 */}
+          <Text textStyle="3xl" fontWeight="bold" color="white" noOfLines={1}>
             {otherUserNickname}
           </Text>
-          <Text
-            textStyle="xl"
-            color="whiteAlpha.800"
-            marginTop="5px"
-            noOfLines={1}
-          >
+          <Text textStyle="xl" color="whiteAlpha.800" noOfLines={1}>
             님의 피드
           </Text>
+
+          {/* 팔로우 및 채팅 버튼 */}
           <Button
             border="solid 2px #9000FF"
             borderRadius="15px"
@@ -122,6 +98,7 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
         </Box>
       </Box>
 
+      {/* 채팅 모달 */}
       {isChatModalOpen && (
         <Modal
           isOpen={isChatModalOpen}
@@ -137,6 +114,7 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
               채팅방
             </Text>
 
+            {/* 채팅 메시지 리스트 */}
             <VStack align="flex-start" marginTop="4" flex="1" overflowY="auto">
               {chatMessages.map((message, index) => (
                 <Box
@@ -151,6 +129,7 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
               ))}
             </VStack>
 
+            {/* 입력창 */}
             <Flex
               alignItems="center"
               position="absolute"
@@ -180,7 +159,6 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
           </Flex>
         </Modal>
       )}
-    </Box>
     </Box>
   );
 };
