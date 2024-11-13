@@ -26,7 +26,7 @@ export const useChat = ({ jwtToken, API_URL, userSeq }: UseChatProps) => {
         "https://k11e106.p.ssafy.io/api/chats/webflux/artistInfo/1",
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6ImFjY2VzcyIsIm5pY2tuYW1lIjoi7ZqM7JuQ67OA6rK9IO2ZleyduC0yIiwic2VxIjoxLCJlbWFpbCI6ImFhYWFAc3NhZnkuY29tIiwicG9zaXRpb24iOiJWT0NBTCIsImdlbmRlciI6IkVUQyIsImdlbnJlIjoiUk9DSyIsInllYXIiOiIyMDAwIiwicmVnaW9uIjoiU1UiLCJjcmV3cyI6IjQgMjIiLCJpYXQiOjE3MzE0ODAxNTMsImV4cCI6MTczMTU2NjU1M30.cLe801buGC71JHGJBleBDAZbzbb7KVID5nIcTMIl1C0`,
+            Authorization: `Bearer ${jwtToken}`,
           },
           timeout: 100000,
         }
