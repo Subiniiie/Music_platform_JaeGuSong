@@ -36,6 +36,7 @@ export const useChat = ({ jwtToken, API_URL, userSeq }: UseChatProps) => {
         console.log("응답 데이터 없음");
       }
     } catch (error) {
+      console.log("상고나없나");
       console.error("테스트 요청 실패:", error);
     }
   };
