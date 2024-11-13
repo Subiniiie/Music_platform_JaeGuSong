@@ -1,19 +1,24 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Text, Button, Input, VStack, Flex } from "@chakra-ui/react";
+import { useLocation } from "react-router-dom";
 import Modal from "../common/Modal";
 import { useChat } from "@/hooks/chat/useChat";
 
-interface OtherHeaderProps {
-  otherUserNickname: string;
-  otherUserProfileImage: string;
-  OtheruserSeq?: number;
-}
+// 시간 포맷팅 함수
+const formatMessageTime = (createdAt: string) => {
+  const messageDate = new Date(createdAt);
 
-const OtherHeader: React.FC<OtherHeaderProps> = ({
-  otherUserNickname,
-  otherUserProfileImage,
-  OtheruserSeq,
-}) => {
+  // 시간만 추출 (HH:mm)
+  const hours = messageDate.getHours().toString().padStart(2, "0");
+  const minutes = messageDate.getMinutes().toString().padStart(2, "0");
+
+  return `${hours}:${minutes}`;
+};
+
+const OtherHeader: React.FC = () => {
+  const location = useLocation();
+  const { artistSeq, otherNickname, otherProfileImage } = location.state || {};
+  localStorage.setItem("OtherUserSeq", artistSeq);
   const authStorage = localStorage.getItem("auth-storage");
   const userSeq = authStorage
     ? JSON.parse(authStorage)?.state?.artistSeq
@@ -23,7 +28,6 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
   const API_URL = import.meta.env.VITE_API_URL;
 
   const {
-    roomSeq,
     chatMessages,
     isChatModalOpen,
     inputMessage,
@@ -31,7 +35,16 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
     setIsChatModalOpen,
     handleCreateChat,
     handleSendMessage,
-  } = useChat({ jwtToken, API_URL, userSeq });
+    chatRoomUsers,
+  } = useChat({ jwtToken, API_URL, userSeq, OtherUserSeq: artistSeq });
+
+  const messageEndRef = useRef<HTMLDivElement>(null);
+  // Scroll to the bottom when a new message is added
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages]);
 
   return (
     <Box
@@ -55,19 +68,17 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
             boxShadow="0 0 10px rgba(0, 0, 0, 0.2)"
           >
             <img
-              src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${otherUserProfileImage}`}
-              alt={`${otherUserNickname}의 프로필 이미지`}
+              src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${otherProfileImage}`}
+              alt={`${otherNickname}의 프로필 이미지`}
             />
           </Box>
 
-          {/* 닉네임 및 설명 */}
-          <Text textStyle="3xl" fontWeight="bold" color="white" noOfLines={1}>
-            {otherUserNickname}
+          <Text textStyle="3xl" fontWeight="bold" color="white">
+            {otherNickname}
           </Text>
-          <Text textStyle="xl" color="whiteAlpha.800" noOfLines={1}>
+          <Text textStyle="xl" color="whiteAlpha.800">
             님의 피드
           </Text>
-
           {/* 팔로우 및 채팅 버튼 */}
           <Button
             border="solid 2px #9000FF"
@@ -81,9 +92,8 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
           >
             팔로우
           </Button>
-
           <Button
-            onClick={() => handleCreateChat(OtheruserSeq)}
+            onClick={() => handleCreateChat()}
             border="solid 2px #9000FF"
             borderRadius="15px"
             height="30px"
@@ -110,23 +120,56 @@ const OtherHeader: React.FC<OtherHeaderProps> = ({
             height="600px"
             position="relative"
           >
+            {/* 대화 상대의 닉네임을 렌더링 */}
             <Text fontSize="24px" fontWeight="bold" marginBottom="20px">
               채팅방
             </Text>
 
             {/* 채팅 메시지 리스트 */}
-            <VStack align="flex-start" marginTop="4" flex="1" overflowY="auto">
-              {chatMessages.map((message, index) => (
-                <Box
+            <VStack
+              align="flex-start"
+              marginTop="4"
+              flex="1"
+              overflowY="auto"
+              marginBottom="100px"
+            >
+              {chatMessages.map((message: any, index: number) => (
+                <Flex
                   key={index}
-                  bg="gray.100"
+                  bg={
+                    String(message.artistSeq) === String(userSeq)
+                      ? "skyblue"
+                      : "gray.100"
+                  }
                   p="2"
                   borderRadius="md"
-                  alignSelf="flex-start"
+                  alignSelf={
+                    String(message.artistSeq) === String(userSeq)
+                      ? "flex-end"
+                      : "flex-start"
+                  }
+                  color={
+                    String(message.artistSeq) === String(userSeq)
+                      ? "blue500"
+                      : "black"
+                  }
+                  direction="row"
+                  justify="space-between"
+                  alignItems="center"
                 >
-                  {message}
-                </Box>
+                  {/* 시간 */}
+                  <Text fontSize="xs" color="gray.500" marginRight="10px">
+                    {formatMessageTime(message.createdAt)}
+                  </Text>
+
+                  {/* 메시지 내용 */}
+                  <Text fontSize="sm" flex="1">
+                    {message.msg}
+                  </Text>
+                </Flex>
               ))}
+
+              <div ref={messageEndRef} />
             </VStack>
 
             {/* 입력창 */}

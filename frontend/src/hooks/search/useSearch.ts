@@ -9,7 +9,7 @@ interface SearchResult {
   nickname: string;
   position: string;
   profileImage: string;
-  seq: number;
+  seq: number; // artistSeq 값
 }
 
 export default function useSearch() {
@@ -68,7 +68,11 @@ export default function useSearch() {
   ) => {
     setOtherUserNickname(otherNickname);
     setOtherUserProfileImage(otherProfileImage);
-    navigate(paths.community.generalCommunity(artistSeq));
+
+    // artistSeq를 URL에 포함해 전달
+    navigate(paths.community.generalCommunity(artistSeq), {
+      state: { artistSeq, otherNickname, otherProfileImage },
+    });
   };
 
   return {
