@@ -75,6 +75,8 @@ const MyInfo: React.FC<{ myInfo: UserInfo }> = ({ myInfo }) => {
       genre: myInfo.genre || "",
       birth: myInfo.birth || "",
     }); // 초기 값 설정
+
+    console.log('정버', myInfo, modifiedInfo)
   }, [myInfo]);
 
   const handleChange = (
@@ -170,7 +172,7 @@ const MyInfo: React.FC<{ myInfo: UserInfo }> = ({ myInfo }) => {
                   cursor: "pointer",
                 }}
               >
-                <option>전라남도</option>
+                <option>{myInfo.region}</option>
                 {regions.map((region, index) => {
                   if (region !== myInfo.region) {
                     return (
@@ -199,7 +201,7 @@ const MyInfo: React.FC<{ myInfo: UserInfo }> = ({ myInfo }) => {
                   cursor: "pointer",
                 }}
               >
-                <option>남성</option>
+                <option>{myInfo.gender}</option>
                 {genders.map((gender, index) => {
                   if (gender !== myInfo.region) {
                     return (
@@ -231,7 +233,7 @@ const MyInfo: React.FC<{ myInfo: UserInfo }> = ({ myInfo }) => {
                   cursor: "pointer",
                 }}
               >
-                <option>건반</option>
+                <option>{myInfo.position}</option>
                 {positions.map((position, index) => {
                   if (position !== myInfo.region) {
                     return (
@@ -260,7 +262,7 @@ const MyInfo: React.FC<{ myInfo: UserInfo }> = ({ myInfo }) => {
                   cursor: "pointer",
                 }}
               >
-                <option>건반</option>
+                <option>{myInfo.genre}</option>
                 {genres.map((genre, index) => {
                   if (genre !== myInfo.region) {
                     return (

@@ -9,7 +9,6 @@ import {
   Fieldset,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { toaster } from "@/components/ui/toaster";
 import { useNavigate } from "react-router-dom";
 import paths from "@/configs/paths";
 import axios from "axios";
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/file-button";
 import { HiUpload } from "react-icons/hi";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toaster } from "@/components/ui/toaster";
 
 export default function DividerUploadView() {
   const [workspaceName, setWorkspaceName] = useState("");
@@ -30,21 +30,21 @@ export default function DividerUploadView() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File | null>(null);
 
-  const handleFileChange = (event: { files: File[] }) => {
-    // setFiles(event.files); // files 배열을 setFiles로 전달
+  type FileChangeEvent = {
+    acceptedFiles: File[];
+  };
+
+  const handleFileChange = (event: FileChangeEvent) => {
     setFiles(event.acceptedFiles[0]); // files 배열을 setFiles로 전달
-    console.log("event :", event);
-    console.log(event.acceptedFiles[0]);
-    console.log("files :", files);
   };
 
   const handleDividerUpload = async () => {
     console.log(
       "안녕, 난 handleDividerUpload. 디바이더 업로드 api 요청 보내볼게"
     );
-    if (!files || files.length === 0) {
+    if (!files) {
       toaster.error({
         title: "No files selected",
         description: "Please upload files before submitting.",
@@ -100,55 +100,51 @@ export default function DividerUploadView() {
   };
 
   return (
-    <Box>
-      <Stack>
-        <Text color={"white"}>세션 추출하기</Text>
-        {/* 파일 업로드 */}
-        <FileUploadRoot
-          accept={["audio/*", "video/*"]}
-          onFileChange={handleFileChange}
-          // onFileChange={(event) => handleFileChange(event)}
+    <Box
+      width="100%"
+      height="100%"
+      alignContent="center"
+      justifyItems="center"
+      fontFamily="MiceGothic"
+      color="white"
+    >
+      <Stack width="450px">
+        <Stack
+          gap={2}
+          my={2}
+          background="rgba(0, 0, 0, 0.15)"
+          border="2px solid rgba(90, 0, 170, 0.7)"
+          borderRadius="10px"
+          px="20px"
+          py="20px"
         >
-          <FileUploadTrigger asChild>
-            <Button variant="outline" size="sm" background={"white"}>
-              {/* 파일 업로드 버튼 내의 아이콘 + 문구 */}
-              <HiUpload /> 파일 업로드
-            </Button>
-          </FileUploadTrigger>
-          <FileUploadList />
-        </FileUploadRoot>
-
-        {/* 파일 업로드 유효성 검사 실패 문구
-        {errors.file && (
-          <Text color="red.500" fontSize="xs">
-            {errors.file}
+          <Text fontSize={15} color={"white"} fontWeight={"bold"} mb="3">
+            워크스페이스 정보
           </Text>
-        )} */}
-        <Stack gap={2}>
           <Input
             placeholder="워크스페이스 이름을 입력해주세요."
             size="sm"
-            fontFamily="MiceGothic"
             fontSize={11}
             background={"white"}
+            color={"black"}
             value={workspaceName}
             onChange={(e) => setWorkspaceName(e.target.value)}
           />
           <Input
             placeholder="작업할 곡의 원곡명을 입력해주세요."
             size="sm"
-            fontFamily="MiceGothic"
             fontSize={11}
             background={"white"}
+            color={"black"}
             value={originTitle}
             onChange={(e) => setOriginTitle(e.target.value)}
           />
           <Input
             placeholder="작업할 곡의 원곡자를 입력해주세요."
             size="sm"
-            fontFamily="MiceGothic"
             fontSize={11}
             background={"white"}
+            color={"black"}
             value={originSinger}
             onChange={(e) => setOriginSinger(e.target.value)}
           />
@@ -160,36 +156,92 @@ export default function DividerUploadView() {
             defaultValue={["vocal"]}
             name="framework"
             value={selectedSessions}
+            background="rgba(0, 0, 0, 0.15)"
+            border="2px solid rgba(90, 0, 170, 0.7)"
+            borderRadius="10px"
+            px="20px"
+            py="20px"
+            mb={2}
           >
-            <Fieldset.Legend
-              fontSize={14}
-              mb="2"
-              fontFamily="MiceGothic"
-              color={"white"}
-            >
-              추출할 세션 선택하기
+            <Fieldset.Legend fontSize={15} color={"white"} fontWeight={"bold"}>
+              세션 추출
             </Fieldset.Legend>
-            <Fieldset.Content>
+            <Fieldset.Legend
+              fontSize={12}
+              mb="3"
+              color="rgba(255, 255, 255, 0.85)"
+            >
+              추출할 세션 종류를 선택해주세요.
+            </Fieldset.Legend>
+
+            <Fieldset.Content
+              display="grid"
+              gridTemplateColumns="repeat(2, 1fr)"
+              gap={2}
+            >
               {frameworks.items.map((session) => (
                 <Checkbox
-                  fontFamily="MiceGothic"
-                  fontSize={8}
+                  size={"sm"}
                   key={session.value}
-                  color={"white"}
                   onChange={(e) => {
                     const target = e.target as HTMLInputElement;
                     handleCheckboxChange(session.value, target.checked);
                     console.log("체크박스 이벤트 발생 :", session.value);
                   }}
                 >
-                  {session.label}
+                  <Text fontSize="13px">{session.label}</Text>
                 </Checkbox>
               ))}
             </Fieldset.Content>
           </CheckboxGroup>
         </Fieldset.Root>
 
-        <Button onClick={handleDividerUpload}>세션 추출하기</Button>
+        <Stack
+          border="2px solid rgba(90, 0, 170, 0.7)"
+          borderRadius="10px"
+          px="20px"
+          py="20px"
+          mb="15px"
+        >
+          <Text fontSize={15} color={"white"} fontWeight={"bold"} mb="3">
+            파일 업로드
+          </Text>
+
+          {/* 파일 업로드 */}
+          <FileUploadRoot
+            accept={["audio/*", "video/*"]}
+            onFileChange={handleFileChange}
+          >
+            <FileUploadTrigger asChild>
+              <Button
+                variant="outline"
+                // size="sm"
+                width="100%"
+                height="100px"
+                color="white"
+                background="rgba(255, 255, 255, 0.05)"
+                border="2px solid rgba(255, 255, 255, 0.5)"
+              >
+                <HiUpload /> 파일 업로드
+              </Button>
+            </FileUploadTrigger>
+            <FileUploadList />
+          </FileUploadRoot>
+        </Stack>
+
+        <Button
+          onClick={handleDividerUpload}
+          fontSize={13}
+          width="180px"
+          background="rgba(255, 255, 255, 0.2)"
+          alignSelf="center"
+          _hover={{
+            border: "2px solid rgba(0, 128, 0, 0.5)", // 형광 느낌의 테두리
+            background: "rgba(0, 128, 0, 0.2)",
+          }}
+        >
+          세션 추출하기
+        </Button>
       </Stack>
     </Box>
   );
@@ -198,12 +250,11 @@ export default function DividerUploadView() {
 const frameworks = createListCollection({
   items: [
     { label: "보컬", value: "vocals" },
-    { label: "피아노", value: "piano" },
-    { label: "신시사이저", value: "synthesizer" },
     { label: "어쿠스틱 기타", value: "acoustic_guitar" },
+    { label: "피아노", value: "piano" },
     { label: "일렉트릭 기타", value: "electric_guitar" },
+    { label: "신시사이저", value: "synthesizer" },
     { label: "베이스", value: "bass" },
     { label: "드럼", value: "drum" },
-    // { label: "etc.", value: "etc." },
   ],
 });

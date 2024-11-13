@@ -5,7 +5,7 @@ import { CreateArticleFields } from '@/configs/community/createArticleForm';
 import useCommunityUpdate from '@/hooks/community/useCommunityUpdate';
 
 const UpdateInputContainer: React.FC = () => {
-  const { previewFile, formData, handleChange, handleSubmit, fetchArticleDetail } = useCommunityUpdate();
+  const { formData, handleChange, handleSubmit, fetchArticleDetail } = useCommunityUpdate();
   const { id } = useParams<{id: string}>();
 
   useEffect(() => {

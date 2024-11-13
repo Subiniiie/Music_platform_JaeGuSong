@@ -4,6 +4,9 @@ import { persist } from "zustand/middleware";
 interface AuthState {
   artistSeq: string | null;
   setArtistSeq: (seq: string) => void;
+
+  artistNickname: string | null;
+  setArtistNickname: (seq: string) => void;
 }
 
 const useAuthStore = create<AuthState>()(
@@ -13,6 +16,11 @@ const useAuthStore = create<AuthState>()(
       setArtistSeq: (seq) => {
         console.log("Setting artistSeq in zustand:", seq);
         set({ artistSeq: seq });
+      },
+      artistNickname: null,
+      setArtistNickname: (nickname) => {
+        console.log("Setting artistNickname in zustand:", nickname);
+        set({ artistNickname: nickname });
       },
     }),
     {

@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text } from "@chakra-ui/react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 interface ModalProps {
   isOpen: boolean;
@@ -7,7 +9,31 @@ interface ModalProps {
 }
 
 const CrewMemeberListModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   if (!isOpen) return null;
+  const { id } = useParams<{ id: string }>();
+  const storedToken = localStorage.getItem('jwtToken');
+
+  useEffect(() => {
+    const getCrewMembers = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/api/crew/${id}`,
+          {
+            headers: {
+                Authorization: `Bearer ${storedToken}` 
+            },
+        }
+        )
+        console.log('크루크루크루', response.data)
+      } catch(error) {
+        console.warn(error)
+      }
+    }
+
+    getCrewMembers()
+  }, [id])
 
   const overlayStyle: React.CSSProperties = {
     position: "fixed",

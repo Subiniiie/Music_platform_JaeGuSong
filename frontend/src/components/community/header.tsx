@@ -5,11 +5,11 @@ import CommunityButton from './community-button';
 import { useNavigate } from 'react-router-dom';
 import paths from '@/configs/paths';
 
-const Header: React.FC =  () => {
-  const API_URL =import.meta.env.VITE_API_URL;
+const Header: React.FC = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
-  const [ myNickname, setMyNickname ] = useState<string>('');
-  const [ myProfileImage, setMyProfileImage ] = useState<string>('');
+  const [myNickname, setMyNickname] = useState<string>('');
+  const [myProfileImage, setMyProfileImage] = useState<string>('');
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -20,13 +20,13 @@ const Header: React.FC =  () => {
             `${API_URL}/api/user`,
             {
               headers: {
-                Authorization: `Bearer ${storedToken}`
+                Authorization: `Bearer ${storedToken}`,
               },
               withCredentials: true,
             }
           );
-          setMyNickname(response.data.nickname)
-          setMyProfileImage(response.data.profileImage)
+          setMyNickname(response.data.nickname);
+          setMyProfileImage(response.data.profileImage);
         } catch (error) {
           console.warn('Error during API request:', error);
         }
@@ -34,59 +34,99 @@ const Header: React.FC =  () => {
         console.warn('No stored token found');
       }
     };
-  
-    fetchUserInfo(); // 유저 정보 가져오기
-  // }, [API_URL, getStoredToken, navigate, token]); // 필요한 의존성 추가
-  }, []); // 필요한 의존성 추가
-  
+
+    fetchUserInfo();
+  }, []);
 
   const goCreateArticle = () => {
-      navigate(paths.community.create);
-  }
+    navigate(paths.community.create);
+  };
 
   const goCreateMusicArticle = () => {
-    navigate(paths.divider.upload)
-  }
+    navigate(paths.divider.upload);
+  };
+
   return (
     <Box
-        position="fixed"
-        top="0"
-        left="250px"
-        width="calc(100% - 250px)" 
-        padding="4"
+      position="fixed"
+      top="0"
+      left="250px"
+      width="calc(100% - 250px)"
+      padding="4"
+      boxShadow="md" // 그림자 추가
+      zIndex={10} // 헤더가 항상 상단에 오도록 설정
     >
-      <Box
-        height="70px"
-      >
-        <Box 
-          display="flex" 
-          flexDirection="row" 
+
+      <Box height="70px">
+        <Box
+          display="flex"
+          flexDirection="row"
           alignItems="center"
-          gap="5px"
+          gap="15px" // 프로필 이미지와 텍스트 사이 간격 추가
         >
-          <Box width="70px" height="70px">
-            <img src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${myProfileImage}`} alt={`${myProfileImage}`}></img>
-          </Box>            
-          <Text textStyle="3xl" marginTop="10px">{myNickname}</Text>
-          <Text textStyle="xl" marginTop="10px">님의 피드</Text>
-        </Box>          
-      </Box>        
-      <Box 
+          <Box
+            width="70px"
+            height="70px"
+            borderRadius="full" // 프로필 이미지를 원형으로
+            overflow="hidden"
+            border="2px solid #fff" // 테두리 추가
+            boxShadow="0 0 10px rgba(0, 0, 0, 0.2)" // 그림자 효과 추가
+          >
+            <img
+              src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${myProfileImage}`}
+              alt={myProfileImage}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </Box>
+          <Box>
+            <Text
+              textStyle="3xl"
+              fontWeight="bold"
+              color="white"
+              marginTop="10px"
+              noOfLines={1} // 한 줄로만 표시
+            >
+              {myNickname}
+            </Text>
+            <Text
+              textStyle="xl"
+              color="whiteAlpha.800"
+              marginTop="5px"
+              noOfLines={1}
+            >
+              님의 피드
+            </Text>
+          </Box>
+        </Box>
+      </Box>
+      <Box
         marginTop="20px"
         marginRight="20px"
         display="flex"
         justifyContent="flex-end"
-        gap="5px"
+        gap="10px"
       >
-        <CommunityButton 
-          title='글쓰기'
-          onClick={goCreateArticle}
-          />
         <CommunityButton
-          title='음원피드 올리기'
-          onClick={goCreateMusicArticle}
+          title="글쓰기"
+          onClick={goCreateArticle}
+          bg="teal.500"
+          color="white"
+          _hover={{
+            bg: 'teal.600',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+          }} // 호버 효과
         />
-      </Box>        
+        <CommunityButton
+          title="음원피드 올리기"
+          onClick={goCreateMusicArticle}
+          bg="purple.500"
+          color="white"
+          _hover={{
+            bg: 'purple.600',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+          }} // 호버 효과
+        />
+      </Box>
     </Box>
   );
 };

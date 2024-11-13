@@ -8,6 +8,7 @@ import CommunityMyCommunityView from "@/pages/community/community-my-community-v
 import CommunityCreateView from "@/pages/community/community-create-view";
 import CommunityDetailView from "@/pages/community/community-detail-view";
 import CommunityUpdateView from "@/pages/community/community-update-view";
+import CommunityRecommendView from "@/pages/community/community-recommend-view";
 import GameView from "../pages/game/home/game-view";
 import DrumView from "../sections/game/drum/game-drum";
 import KeyboardsView from "../sections/game/keyboards/game-keyboards";
@@ -38,7 +39,11 @@ const mainRoute: RouteObject[] = [
         children: [
           {
             path: "",
-            element: <CommunityMyCommunityView />,
+            element: <CommunityRecommendView />,
+          },
+          {
+            path: "main",
+            element: <CommunityRecommendView />,
           },
           {
             path: "my-community",

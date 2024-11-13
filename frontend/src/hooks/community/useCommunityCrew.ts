@@ -28,6 +28,8 @@ const UseCommunityCrew = () => {
     const [ myName, setMyName ] = useState<string>('');
     const getCrewSeq = useCrewSeqStore((state) => state.getCrewSeq);
     const { openUserHeader } = useHeaderStore(state => state);
+    const [joinApplyUsers, setJoinApplyUsers] = useState<JoinApplyUserData[]>([]);
+
 
     const [ makeCrewFormData, setMakeCrewFormData ] = useState<MakeCrewFormData>({
         birth: new Date().toISOString().split('T')[0],
@@ -96,6 +98,9 @@ const UseCommunityCrew = () => {
                 }
             )
             console.log('크루 가입 신청 승인 완료', response)
+            setJoinApplyUsers((prev) =>
+                prev.filter((user) => user.seq !== userSeq) // 거절된 사용자를 목록에서 제거
+            );
         } catch(error) {
             console.warn(error)
         }
@@ -118,6 +123,9 @@ const UseCommunityCrew = () => {
                     },
                 })
             console.log('크루 가입 신청 거절 완료', response);
+            setJoinApplyUsers((prev) =>
+                prev.filter((user) => user.seq !== userSeq) // 거절된 사용자를 목록에서 제거
+            );
         } catch(error) {
             console.warn(error);
         }
@@ -286,6 +294,7 @@ const UseCommunityCrew = () => {
         crewMembers,
         myCrewsSeq,
         myName,
+        joinApplyUsers,
         goCrewFollow,
         goJoinCrew,
         goWithdrawCrew,
@@ -304,6 +313,7 @@ const UseCommunityCrew = () => {
         makeCrew,
         setMakeCrewFormData,
         preGetCrewInfo,
+        setJoinApplyUsers,
     }
 };
 

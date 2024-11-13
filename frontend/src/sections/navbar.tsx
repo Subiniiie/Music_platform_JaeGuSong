@@ -13,6 +13,7 @@ import paths from "@/configs/paths";
 import useAuth from "@/hooks/auth/useAuth";
 import useSearch from "@/hooks/search/useSearch";
 import { useEffect, useState } from "react";
+import useAuthStore from "@/stores/authStore";
 
 export default function Navbar() {
   const { goSignupPage, goSignInPage, goLogout } = useAuth();
@@ -28,6 +29,7 @@ export default function Navbar() {
     goOtherFeed,
   } = useSearch();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const artistNickname = useAuthStore((state) => state.artistNickname);
 
 
   useEffect(() => {
@@ -52,7 +54,10 @@ export default function Navbar() {
     {
       value: "a",
       title: "커뮤니티",
-      path: paths.community.myCommunity,
+      text: [
+        {label: "메인", path: paths.community.main},
+        {label: "내 피드", path: paths.community.myCommunity},
+      ]
     },
     {
       value: "b",
@@ -165,12 +170,18 @@ export default function Navbar() {
         <Stack>
           <Flex gap="2">
             {isLoggedIn ? (
+              <Box display="flex" flexDirection="column">
+                                <Box display="flex" justifyContent="center" marginRight="10px" marginTop="10px" marginBottom="20px">
+                  <Text color="white">{artistNickname}님 환영합니다</Text>
+                </Box>
+              
               <Box
                 display="flex"
                 flexDirection="row"
                 gap="10px"
                 justifyContent="center"
               >
+                
                 <Collapsible.Root>
                   <Collapsible.Trigger asChild>
                     <Button
@@ -244,6 +255,7 @@ export default function Navbar() {
                 >
                   로그아웃
                 </Button>
+                </Box>
               </Box>
             ) : (
               <>
@@ -298,7 +310,7 @@ export default function Navbar() {
               >
                 {item.title}
               </Text>
-              {item.value === "c" &&
+              {(item.value === "a" || item.value === "c") &&
                 item.text?.map((linkItem, i) => (
                   <Link
                     key={i}

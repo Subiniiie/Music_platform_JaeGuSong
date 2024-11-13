@@ -26,7 +26,6 @@ const CommunityMainView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const API_URL = import.meta.env.VITE_API_URL;
   const [checkSearchUser, setCheckSearchUser] = useState<boolean>(true);
-  const {} = useHeaderStore((state) => state);
 
   useEffect(() => {}, [openUserHeader, otherUserNickname, checkSearchUser]);
 
@@ -42,6 +41,7 @@ const CommunityMainView: React.FC = () => {
       }
 
       try {
+        console.log("넌 뮤ㅓ야", crewSeq);
         const response = await axios.get(`${API_URL}/api/crew/${crewSeq}`, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
@@ -68,7 +68,6 @@ const CommunityMainView: React.FC = () => {
         <OtherHeader
           otherUserNickname={otherUserNickname}
           otherUserProfileImage={otherUserProfileImage}
-          OtheruserSeq={id}
         />
       ) : (
         <CrewHeader />

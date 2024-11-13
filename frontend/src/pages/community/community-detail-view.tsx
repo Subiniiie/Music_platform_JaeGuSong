@@ -116,7 +116,23 @@ const CommunityDetailView: React.FC = () => {
         <CrewHeader />
       )}
       <Container>
-        <Box>
+        <Box 
+          height="600px" 
+          overflowY="auto"
+          css={{
+            "&::-webkit-scrollbar": {
+              width: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "#6a4bff", // 보라색 계열
+              borderRadius: "20px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "#02001F",
+              borderRadius: "20px",
+            },
+          }}
+        >
           <Box margin="30px 30px">
             <Box
               display="flex"

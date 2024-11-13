@@ -41,8 +41,7 @@ const useCommunityMain = () => {
           },
         }
       );
-      console.log(response);
-      setMyFeedArticleItems([response.data]);
+      setMyFeedArticleItems([response.data.boards]);
     } catch (error) {
       console.error(error);
     }

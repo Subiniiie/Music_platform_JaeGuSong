@@ -13,9 +13,11 @@ const fetchArtistSeq = async () => {
       },
     });
 
+    console.log(response.data)
     const artistSeq = response.data.seq;
     console.log("zustand에 저장할 artistSeq :", artistSeq);
     useAuthStore.getState().setArtistSeq(artistSeq); // Zustand에 저장
+    useAuthStore.getState().setArtistNickname(response.data.nickname)
 
     return artistSeq;
   } catch (error) {

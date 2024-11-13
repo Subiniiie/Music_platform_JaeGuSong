@@ -43,8 +43,8 @@ const Input: React.FC = () => {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    attachmentFile: null as File | null,
-    static: "",
+    sources: null as File | null,
+    state: "",
   });
 
   const handleChange = (
@@ -61,7 +61,7 @@ const Input: React.FC = () => {
     } else if (name === "visibility") {  // select에 대해서 특별히 처리
       setFormData((prevFormData) => ({
         ...prevFormData,
-        static: value, // select의 값은 static에 반영
+        state: value, // select의 값은 state 반영
       }));
     } else {
       setFormData((prevFormData) => ({
@@ -80,7 +80,7 @@ const Input: React.FC = () => {
     const boardRequestDto = {
       artistSeq: artistSeq,
       title: formData.title,
-      state: formData.static,
+      state: formData.state,
       content: formData.content,
     };
 
@@ -89,12 +89,15 @@ const Input: React.FC = () => {
       new Blob([JSON.stringify(boardRequestDto)], { type: "application/json" })
     );
 
-    if (formData.attachmentFile) {
-      formDataToSubmit.append("files", formData.attachmentFile);
+    if (formData.sources) {
+      formDataToSubmit.append("files", formData.sources);
     }
 
 
     try {
+      formDataToSubmit.forEach((value, key) => {
+        console.log(key, value);
+      });
       const response = await axios.post(
         `${API_URL}/api/boards`,
         formDataToSubmit,
@@ -106,7 +109,7 @@ const Input: React.FC = () => {
           },
         }
       );
-      console.log("Response:", response.data);
+      console.log(" 글 생성 완료 Response:", response.data);
       setGetCrewSeq(0); // 상태를 0으로 리셋
       navigate(paths.community.myCommunity);
     } catch (error) {
@@ -115,74 +118,95 @@ const Input: React.FC = () => {
   };
 
   return (
-    <Box width="100%" maxW="md" mx="auto">
-      <form onSubmit={handleSubmit}>
-        <Box mb={4}>
-          <label>제목</label>
-          <ChakraInput
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="제목을 입력해주세요."
-            size="lg"
-          />
-        </Box>
-
-        <Box mb={4}>
-          <label>내용</label>
-          <Textarea
-            name="content"
-            value={formData.content}
-            onChange={handleChange}
-            placeholder="내용을 입력해주세요."
-            size="lg"
-            resize="vertical"
-          />
-        </Box>
-        <Box mb={4}>
-          <label htmlFor="visibility" style={{ fontSize: "16px", color: "white" }}>공개</label>
-          <select
-            id="visibility"
-            name="visibility"
-            value={formData.static}
-            onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "0.5rem",
-              backgroundColor: "#02001F",
-              border: "1px solid #fff",
-              borderRadius: "5px",
-              color: "gray",
-              cursor: "pointer",
-            }}
-          >
-            <option value="선택">선택</option>
-            <option value="공개">공개</option>
-            <option value="비공개">비공개</option>
-          </select>
-        </Box>
-        <Box mb={4}>
-          <label>파일 첨부</label>
-          <ChakraInput
-            type="file"
-            name="attachmentFile" // name을 attachmentFile로 수정
-            onChange={handleChange}
-            accept="audio/*, image/*"
-          />
-        </Box>
-
-        <Button
-          type="submit"
-          border="solid 2px #9000FF"
-          borderRadius="15px"
-          height="30px"
-          width="auto"
-        >
-          제출
-        </Button>
-      </form>
+<Box width="100%" maxW="md" mx="auto" p={6}>
+  <form onSubmit={handleSubmit}>
+    <Box mb={4}>
+      <label style={{ fontSize: "14px", color: "gray.600" }}>제목</label>
+      <ChakraInput
+        type="text"
+        name="title"
+        value={formData.title}
+        onChange={handleChange}
+        placeholder="제목을 입력해주세요."
+        size="lg"
+        focusBorderColor="purple.500"
+        borderColor="gray.400"
+        color="white"
+        _placeholder={{ color: "gray.500" }}
+      />
     </Box>
+
+    <Box mb={4}>
+      <label style={{ fontSize: "14px", color: "gray.600" }}>내용</label>
+      <Textarea
+        name="content"
+        value={formData.content}
+        onChange={handleChange}
+        placeholder="내용을 입력해주세요."
+        size="lg"
+        resize="vertical"
+        minHeight="150px"
+        focusBorderColor="purple.500"
+        borderColor="gray.400"
+        color="white"
+        _placeholder={{ color: "gray.500" }}
+      />
+    </Box>
+
+    <Box mb={4}>
+      <label htmlFor="visibility" style={{ fontSize: "14px", color: "gray.600" }}>공개</label>
+      <select
+        id="visibility"
+        name="visibility"
+        value={formData.state}
+        onChange={handleChange}
+        style={{
+          width: "100%",
+          padding: "0.5rem",
+          backgroundColor: "white",
+          border: "1px solid #CBD5E0",
+          borderRadius: "5px",
+          color: "black",
+          cursor: "pointer",
+        }}
+      >
+        <option value="선택" color="black">선택</option>
+        <option value="공개">공개</option>
+        <option value="비공개">비공개</option>
+      </select>
+    </Box>
+
+    <Box mb={4}>
+      <label style={{ fontSize: "14px", color: "gray.600" }}>파일 첨부</label>
+      <ChakraInput
+        type="file"
+        name="attachmentFile"
+        onChange={handleChange}
+        accept="audio/*, image/*"
+        border="none"
+        p={0}
+      />
+    </Box>
+
+    <Box display="flex" justifyContent="flex-end">
+      <Button
+        type="submit"
+        bg="purple.600"
+        color="white"
+        borderRadius="8px"
+        height="36px"
+        px={6}
+        _hover={{ bg: "purple.700" }}
+        _active={{ bg: "purple.800" }}
+        _focus={{ boxShadow: "0 0 0 2px rgba(128, 90, 213, 0.6)" }}
+      >
+        제출
+      </Button>
+    </Box>
+  </form>
+</Box>
+
+
   );
 };
 
