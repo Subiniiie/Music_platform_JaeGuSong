@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 
 interface ModalProps {
   isOpen: boolean;
@@ -15,11 +16,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     left: 0,
     width: "100vw",
     height: "100vh",
-    background: "rgba(0, 0, 0, 0.3)",
+    background: "rgba(0, 0, 0, 0.5)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 15,
+    zIndex: 9999,
   };
 
   const contentStyle: React.CSSProperties = {
@@ -43,7 +44,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     cursor: "pointer",
   };
 
-  return (
+  // React Portal을 사용하여 모달을 body 바로 아래 렌더링
+  return ReactDOM.createPortal(
     <div style={overlayStyle} onClick={onClose}>
       <div style={contentStyle} onClick={(e) => e.stopPropagation()}>
         {children}
@@ -51,7 +53,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
           X
         </button>
       </div>
-    </div>
+    </div>,
+    document.body // body 아래에 렌더링
   );
 };
 
