@@ -9,26 +9,9 @@ const Input: React.FC = () => {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
   const authStorage = localStorage.getItem("auth-storage");
-  const getCrewSeq = useCrewSeqStore((state) => state.getCrewSeq);
-  const setGetCrewSeq = useCrewSeqStore((state) => state.setGetCrewSeq);
-  // let artistSeq: number | null = null;
+  const getCrewSeq = useCrewSeqStore((state) => state.getCrewSeqStore);
+  const setGetCrewSeq = useCrewSeqStore((state) => state.setGetCrewSeqStore);
   const [artistSeq, setArtistSeq] = useState<number | null>(null);
-
-  // if (authStorage) {
-  //   try {
-  //     console.log('id는', getCrewSeq)
-  //     if ( getCrewSeq !== 0 ) {
-  //       artistSeq = getCrewSeq
-  //       setGetCrewSeq(0)
-  //     } else {
-  //     const parsedData = JSON.parse(authStorage);
-  //     artistSeq = parsedData?.state?.artistSeq || null;
-  //     }
-  //     console.log('어디에서 제출???', artistSeq)
-  //   } catch (error) {
-  //     console.error("Failed to parse auth-storage:", error);
-  //   }
-  // }
 
   useEffect(() => {
     if (getCrewSeq !== 0) {
@@ -109,7 +92,6 @@ const Input: React.FC = () => {
           },
         }
       );
-      console.log(" 글 생성 완료 Response:", response.data);
       setGetCrewSeq(0); // 상태를 0으로 리셋
       navigate(paths.community.myCommunity);
     } catch (error) {

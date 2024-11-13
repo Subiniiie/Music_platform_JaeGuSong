@@ -26,7 +26,6 @@ const CrewMemeberListModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             },
         }
         )
-        console.log('크루크루크루', response.data)
       } catch(error) {
         console.warn(error)
       }

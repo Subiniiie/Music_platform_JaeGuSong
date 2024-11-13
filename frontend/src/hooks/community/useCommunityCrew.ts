@@ -26,7 +26,7 @@ const UseCommunityCrew = () => {
     const [ crewMembers, setCrewMembers ] = useState<any[]>([]);
     const [ myCrewsSeq, setMyCrewsSeq ] = useState<any[]>([]);
     const [ myName, setMyName ] = useState<string>('');
-    const getCrewSeq = useCrewSeqStore((state) => state.getCrewSeq);
+    const getCrewSeq = useCrewSeqStore((state) => state.getCrewSeqStore);
     const { openUserHeader } = useHeaderStore(state => state);
     const [joinApplyUsers, setJoinApplyUsers] = useState<JoinApplyUserData[]>([]);
 
@@ -61,7 +61,6 @@ const UseCommunityCrew = () => {
         const storedToken = localStorage.getItem('jwtToken');
         // 예시
         const crewSeq =  id
-        console.log('나 가입할거임', crewSeq)
         try {
             const response = await axios.post(
                 `${API_URL}/api/crew/join`,
@@ -82,8 +81,6 @@ const UseCommunityCrew = () => {
     const handleCrewApproveModal = async ({ userSeq }: WantCrewJoinUser): Promise<void> => {
         // 크루장이 가입 요청 승인
         const storedToken = localStorage.getItem('jwtToken');
-        console.log('가입용어청아차받아아아아', id)
-    
         try {
             const response = await axios.patch(
                 `${API_URL}/api/crew/accept`,
@@ -97,7 +94,6 @@ const UseCommunityCrew = () => {
                     },
                 }
             )
-            console.log('크루 가입 신청 승인 완료', response)
             setJoinApplyUsers((prev) =>
                 prev.filter((user) => user.seq !== userSeq) // 거절된 사용자를 목록에서 제거
             );
@@ -111,7 +107,6 @@ const UseCommunityCrew = () => {
         const storedToken = localStorage.getItem('jwtToken');
 
         try {
-            console.log('가입 신청 거절', userSeq, id)
             const response = await axios.delete(
                 `${API_URL}/api/crew/decline`, {
                     headers: {
@@ -122,7 +117,6 @@ const UseCommunityCrew = () => {
                         "crewSeq": id,
                     },
                 })
-            console.log('크루 가입 신청 거절 완료', response);
             setJoinApplyUsers((prev) =>
                 prev.filter((user) => user.seq !== userSeq) // 거절된 사용자를 목록에서 제거
             );
@@ -146,7 +140,6 @@ const UseCommunityCrew = () => {
                     },
                 }
             )
-            console.log('나 크루 탈퇴했다! 빠이')
             navigate(paths.community.main)
         } catch(error) {
             console.warn(error)
@@ -209,7 +202,6 @@ const UseCommunityCrew = () => {
      
 
         try {
-            console.log('formData', formData)
             const response = await axios.post(
                 `${API_URL}/api/crew`,
                 formData,
@@ -271,10 +263,10 @@ const UseCommunityCrew = () => {
             })
             setMyCrewsSeq(response.data.crews)
             setMyName(response.data.nickname)
-            getCrewInfo()
-          } catch(error) {
+        } catch(error) {
             console.warn(error)
-          }
+        }
+        getCrewInfo()
     }
     
 
@@ -313,6 +305,7 @@ const UseCommunityCrew = () => {
         makeCrew,
         setMakeCrewFormData,
         preGetCrewInfo,
+        getCrewInfo,
         setJoinApplyUsers,
     }
 };

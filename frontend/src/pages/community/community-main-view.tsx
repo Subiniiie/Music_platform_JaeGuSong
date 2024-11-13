@@ -25,20 +25,26 @@ const CommunityMainView: React.FC = () => {
   } = useHeaderStore((state) => state);
   const { id } = useParams<{ id: string }>();
   const API_URL = import.meta.env.VITE_API_URL;
+  const [crewSeq, setCrewSeq] = useState<number>(0);
   const [checkSearchUser, setCheckSearchUser] = useState<boolean>(true);
-
-  useEffect(() => {}, [openUserHeader, otherUserNickname, checkSearchUser]);
 
   useEffect(() => {
     const getCrewInfoCheck = async () => {
       const storedToken = localStorage.getItem("jwtToken");
-      let crewSeq = 0;
 
       if (id === undefined) {
-        crewSeq = 0;
+        setCrewSeq(0);
       } else {
-        crewSeq = parseInt(id);
+        setCrewSeq(parseInt(id));
       }
+    };
+
+    getCrewInfoCheck();
+  }, [id]); // id 값이 변경될 때마다 crewSeq를 업데이트
+
+  useEffect(() => {
+    const getCrewInfo = async () => {
+      const storedToken = localStorage.getItem("jwtToken");
 
       try {
         console.log("넌 뮤ㅓ야", crewSeq);
@@ -51,6 +57,7 @@ const CommunityMainView: React.FC = () => {
         setOpenUserHeader(false);
       } catch (error) {
         if (error.response && error.response.status === 404) {
+          console.log("404 오류 ㄱㅊ 넘어가");
           setCheckSearchUser(true);
           setOpenUserHeader(true);
           setOpenOtherUserHeader(true);
@@ -59,8 +66,11 @@ const CommunityMainView: React.FC = () => {
         }
       }
     };
-    getCrewInfoCheck();
-  }, [id, otherUserNickname, openUserHeader]);
+
+    if (crewSeq !== 0) {
+      getCrewInfo();
+    }
+  }, [id, crewSeq]); // crewSeq 값이 변경될 때마다 API 요청을 보냄
 
   return (
     <>

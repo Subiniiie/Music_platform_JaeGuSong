@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
 interface CrewSeqState {
-    getCrewSeq: number;
-    setGetCrewSeq: (seq: number) => void;
+    getCrewSeqStore: number;
+    setGetCrewSeqStore: (seq: number) => void;
 }
 
 const useCrewSeqStore = create<CrewSeqState>((set) => ({
-    getCrewSeq: 0,
-    setGetCrewSeq: (seq) => set({ getCrewSeq: seq })
+    getCrewSeqStore: 0,
+    setGetCrewSeqStore: (seq) => set({ getCrewSeqStore: seq })
 }));
 
 export default useCrewSeqStore;

@@ -25,7 +25,7 @@ const Input: React.FC = () => {
     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
-  const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPIDKEY;
+  const VAPID_KEY = "BLALTG6X_xCCYIZYNJSSFVqTL7MOGKCCxUp1zoHDRW-w3DyJL2732IjUEVR_88hIoM6V9jL1yLe9URumoG3Odas"
 
   // 알림 권한 요청 함수
   const requestNotificationPermission = async (): Promise<boolean> => {

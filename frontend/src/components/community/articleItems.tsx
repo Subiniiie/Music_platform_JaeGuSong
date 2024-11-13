@@ -12,9 +12,7 @@ const ArticleItems: React.FC<ArticleItemsProps> = ({ boardSeq }) => {
   const navigate = useNavigate();
 
   const goDetail = () => {
-    console.log("Navigating to:", paths.community.detail(boardSeq));
     navigate(paths.community.detail(boardSeq));
-    console.log("갔다왔다");
   };
 
   return (

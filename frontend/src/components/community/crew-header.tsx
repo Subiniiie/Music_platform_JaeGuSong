@@ -12,7 +12,8 @@ import CrewJoinApplyModal from "./crew-join-apply-modal";
 const CrewHeader: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const setGetCrewSeq = useCrewSeqStore((state) => state.setGetCrewSeq);
+  const setGetCrewSeqStore = useCrewSeqStore((state) => state.setGetCrewSeqStore);
+  const getCrewSeqStore = useCrewSeqStore((state) => state.getCrewSeqStore);
 
   const {
     openCrewFollowModal,
@@ -37,19 +38,23 @@ const CrewHeader: React.FC = () => {
     handleCrewWithdrawModal,
     handleCrewMembers,
     preGetCrewInfo,
+    getCrewInfo
   } = UseCommunityCrew();
 
   useEffect(() => {
     if (!myCrewsSeq || !crewNameSeq) {
       preGetCrewInfo();
+    } else {
+      getCrewInfo();
     }
-  }, [myCrewsSeq, crewNameSeq]);
+  }, [myCrewsSeq, crewNameSeq, getCrewSeqStore, id]);
+
 
   useEffect(() => {
     if (id) {
-      setGetCrewSeq(Number(id));
+      setGetCrewSeqStore(Number(id));
     }
-  }, [id, setGetCrewSeq]);
+  }, [id, setGetCrewSeqStore]);
 
   const goCreateArticle = () => {
     navigate(paths.community.create);

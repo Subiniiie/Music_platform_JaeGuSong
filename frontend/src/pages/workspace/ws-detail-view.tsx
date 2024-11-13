@@ -42,6 +42,7 @@ export default function WsDetailView() {
 
   useEffect(() => {
     const fetchWorkspaceDetail = async () => {
+      console.log('나 된다', workspaceSeq)
       try {
         const response = await axios.get(
           `${API_URL}/api/workspaces/${workspaceSeq}`,

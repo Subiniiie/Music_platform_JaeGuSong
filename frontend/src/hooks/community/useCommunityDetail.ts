@@ -16,7 +16,6 @@ const useCommunityDetail = () => {
                         Authorization: `Bearer ${storedToken}`,
                     },
                 });
-            console.log("삭제 성공:", response.data);
           } catch (error) {
             console.error("게시물 삭제 중 오류 발생:", error);
             if (error.response) {

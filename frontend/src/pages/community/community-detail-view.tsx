@@ -52,7 +52,6 @@ const CommunityDetailView: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('크루 헤더', openUserHeader)
   }, [openUserHeader])
 
   const getArticleDetail = async () => {
@@ -75,7 +74,6 @@ const CommunityDetailView: React.FC = () => {
       setTitle(article.title || "");
 
       const commentSeqs = article.comments.map((comment) => comment.commentSeq);
-      console.log(commentSeqs); // commentSeq 배열 출력
     } catch (error) {
       console.error(error);
     }

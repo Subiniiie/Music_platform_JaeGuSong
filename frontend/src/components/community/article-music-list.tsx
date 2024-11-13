@@ -25,7 +25,6 @@ const ArticleMusicList: React.FC = () => {
   const itemsPerPage = 8; // 페이지당 표시할 게시물 수
   const [totalPage, setTotalPage] = useState<number>(1); // 전체 페이지 수
 
-  console.log('id를 찾아보자!!!!', id)
 
   useEffect(() => {
     const getMusicFeed = async () => {

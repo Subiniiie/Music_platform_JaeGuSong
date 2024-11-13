@@ -43,7 +43,6 @@ const CrewJoinApplyModal: React.FC = () => {
     }, [id])
 
     useEffect(() => {
-        console.log('바껴라!!', joinApplyUsers)
     }, [joinApplyUsers])
 
     

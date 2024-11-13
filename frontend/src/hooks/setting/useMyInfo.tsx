@@ -29,8 +29,6 @@ const useMyInfo = () => {
                 headers: { Authorization: `Bearer ${storedToken}` },
                 withCredentials: true,
             });
-
-            console.log("Fetched data:", response.data); // 응답 데이터 확인
             setMyInfo(response.data); // API 응답 데이터를 myInfo 상태로 설정
         } catch (error) {
             console.error('Error fetching user info:', error);
@@ -45,8 +43,6 @@ const useMyInfo = () => {
             const response = await axios.post(`${API_URL}/api/user`, changes, {
                 headers: { Authorization: `Bearer ${storedToken}` },
             });
-
-            console.log('Updated user info:', response.data);
         } catch (error) {
             console.error('Error updating user info:', error);
         }
@@ -55,7 +51,6 @@ const useMyInfo = () => {
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         e.preventDefault();
         const { name, value, type } = e.target;
-        console.log('구현우 바보', name, value);
 
         setMyInfo((prevFormData: UserInfo | null) => {
             const updatedFormData: UserInfo = {
@@ -92,15 +87,12 @@ const useMyInfo = () => {
 
     const createOrUpdateMyInfo = async (userData: UserInfo) => {
         try {
-            console.log('userData:', userData);
             const storedToken = localStorage.getItem('jwtToken');
             if (!storedToken) return;
 
             const response = await axios.post(`${API_URL}/api/user`, userData, {
                 headers: { Authorization: `Bearer ${storedToken}` },
             });
-
-            console.log('User info created/updated:', response.data);
         } catch (error) {
             console.error('Error creating/updating user info:', error);
         }

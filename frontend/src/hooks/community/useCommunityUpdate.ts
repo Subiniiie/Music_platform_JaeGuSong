@@ -29,7 +29,6 @@ const useCommunityUpdate = () => {
         }
       )
       const article = response.data
-      console.log('내가 수정할 데이터', response.data)
       setFormData({
         title: article.title || '',
         content: article.content || '',
@@ -42,7 +41,6 @@ const useCommunityUpdate = () => {
   }, [API_URL]);
 
   useEffect(() => {
-    console.log('왜안되니닌니ㅣㅣㄴ', formData)
   }, [formData])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -90,9 +88,6 @@ const useCommunityUpdate = () => {
     
     // 백한테 게시글 수정해서 보내기
     try {
-      formDataToSubmit.forEach((value, key) => {
-        console.log(key, value);
-      });
       const response = await axios.post(
         `${API_URL}/api/boards/${id}`, // API_URL 변수 확인 필요
         formDataToSubmit,

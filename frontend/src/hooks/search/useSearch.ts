@@ -56,7 +56,6 @@ export default function useSearch() {
           },
         }
       );
-      console.log('사진 잘 오는지 확인', response.data)
       setSearchResults([response.data])
     } catch (error) {
       console.error(error);

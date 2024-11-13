@@ -194,20 +194,20 @@ export default function Navbar() {
                         border: "solid 2px white",
                       }}
                     >
-                    팔로우
+                    팔로워
                     </Button>
                   </Collapsible.Trigger>
                   <Collapsible.Content
                     style={{
                       position: "absolute", 
-                      top: "170px",
+                      top: "225px",
                       width: "230px", 
                       maxWidth: "230px",
                       background: "white"
                     }}
                   >
                     <Box padding="4" borderWidth="1px" color="black">
-                      팔로우 목록
+                      팔로워 목록
                     </Box>
                   </Collapsible.Content>
                 </Collapsible.Root>
@@ -229,7 +229,7 @@ export default function Navbar() {
                   <Collapsible.Content
                     style={{
                       position: "absolute", 
-                      top: "170px",
+                      top: "225px",
                       left: "16px",
                       width: "230px", 
                       maxWidth: "230px",

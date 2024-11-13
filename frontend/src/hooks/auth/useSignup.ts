@@ -127,7 +127,6 @@ const useSignup = () => {
       const response = await axios.post(`${API_URL}/api/auth/email`, {
         email: formData.userId,
       });
-      console.log(response.data);
       setVertifyNumber(true);
       setVerifyMessage("인증 메일을 확인해주세요!");
     } catch (error) {
@@ -142,7 +141,6 @@ const useSignup = () => {
         email: formData.userId,
         code: formData.confirmNumber,
       });
-      console.log(response.data);
       setSubmitSignup(true);
       setIsStepValid(true);
     } catch (error) {
@@ -174,7 +172,6 @@ const useSignup = () => {
 
     if (formData.profileImage) {
       joinFormData.append("profileImage", formData.profileImage);
-      console.log('이미ㅣㄴ 젛었다', formData.profileImage)
     }
 
     try {
@@ -188,7 +185,6 @@ const useSignup = () => {
         }
       );
       navigate(paths.auth.signIn);
-      console.log("회원가입 성공!", response.data);
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.response) {
