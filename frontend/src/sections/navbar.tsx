@@ -152,13 +152,14 @@ export default function Navbar() {
                 rounded="md"
                 shadow="sm"
                 _hover={{ bg: "#4e4b7e", cursor: "pointer" }}
-                onClick={() =>
-                  goOtherFeed(
+                onClick={async () => {
+                  await goOtherFeed(
                     searchResult.seq,
                     searchResult.nickname,
                     searchResult.profileImage
-                  )
-                }
+                  );
+                  toggleSearch(); // 검색창 닫기
+                }}
               >
                 <Box
                   w="50px"
