@@ -36,6 +36,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
   handleLeaveChat,
   chatRoomUsers,
   userSeq,
+  // roomSeq,
 }) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -44,7 +45,6 @@ const ChatModal: React.FC<ChatModalProps> = ({
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
-
   const formatMessageTime = (createdAt: string) => {
     const messageDate = new Date(createdAt);
 

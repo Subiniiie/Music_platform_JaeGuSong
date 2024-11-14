@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-
 const useChatList = (
   API_URL: string,
   userSeq: string | null,
@@ -17,7 +16,7 @@ const useChatList = (
 
     eventSource.onmessage = (event) => {
       const users = JSON.parse(event.data);
-
+      console.log(users);
       setChatList((prevList) => {
         if (prevList.some((chat) => chat.roomSeq === users.roomSeq)) {
           return prevList;

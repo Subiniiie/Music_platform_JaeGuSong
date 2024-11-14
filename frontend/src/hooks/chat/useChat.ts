@@ -33,7 +33,7 @@ export const useChat = ({
   const [chatRoomUsers, setChatRoomUsers] = useState<ChatRoomUser[]>([]);
   const eventSourceRef = useRef<EventSource | null>(null);
 
-  // 채팅 생성
+  // 채팅방 열기
   const handleCreateChat = async () => {
     if (!jwtToken || !userSeq || !OtherUserSeq) {
       console.error("채팅 생성 실패: 필요한 정보가 누락되었습니다.");
@@ -52,7 +52,6 @@ export const useChat = ({
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
       setRoomSeq(response.data);
       setIsChatModalOpen(true);
     } catch (error) {
@@ -90,7 +89,6 @@ export const useChat = ({
 
     eventSource.onmessage = (event) => {
       const user: ChatRoomUser = JSON.parse(event.data);
-      console.log(user);
       if (user.artistSeq !== String(userSeq)) {
         setChatRoomUsers((prevUsers) => {
           if (
