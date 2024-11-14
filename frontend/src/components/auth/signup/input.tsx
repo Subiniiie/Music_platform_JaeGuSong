@@ -10,7 +10,7 @@ import {
   Input as ChakraInput,
   Text,
 } from "@chakra-ui/react";
-import { Checkbox } from "@/components/ui/checkbox"
+import { Checkbox } from "@/components/ui/checkbox";
 import Modal from "@/components/common/Modal";
 import useSignup from "@/hooks/auth/useSignup";
 
@@ -35,13 +35,12 @@ const Input: React.FC = () => {
     handleFileChange,
     setOpenSignupModal,
   } = useSignup();
-  
-  const [ isChecked, setIsChecked ] = useState(false);
+
+  const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(e.target.checked)
+    setIsChecked(e.target.checked);
   };
-
 
   return (
     <Box width="100%" maxW="md" mx="auto">
@@ -309,15 +308,17 @@ const Input: React.FC = () => {
             >
               <Box padding="5px 20px">
                 <Text color="black" marginTop="40px" whiteSpace="pre-line">
-                  재구송을 통해 일어나는 모든 창작 활동에 대해{"\n"} 
+                  재구송을 통해 일어나는 모든 창작 활동에 대해{"\n"}
                   재구송은 저작권 책임을 지지 않습니다.
                 </Text>
-                <Checkbox  
+                <Checkbox
                   marginTop="20px"
-                  marginBottom="15px" 
-                  variant="subtle" 
+                  marginBottom="15px"
+                  variant="subtle"
                   color="#02001F"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCheckboxChange(e)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleCheckboxChange(e)
+                  }
                 >
                   동의
                 </Checkbox>

@@ -26,6 +26,7 @@ export const useChat = ({
   const [inputMessage, setInputMessage] = useState("");
   const [chatRoomUsers, setChatRoomUsers] = useState<any[]>([]);
   const eventSourceRef = useRef<EventSource | null>(null);
+
   // 채팅 생성
   const handleCreateChat = async () => {
     if (!jwtToken || !userSeq || !OtherUserSeq) {
@@ -63,14 +64,13 @@ export const useChat = ({
     };
 
     try {
-      await axios.post(`${API_URL}/api/chats/webflux`, data, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          "Content-Type": "application/json",
-        },
+      await axios.post(`${API_URL}/api/chats/webflux?token=${jwtToken}`, data, {
+        // headers: {
+        //   Authorization: `Bearer ${jwtToken}`,
+        //   // "Content-Type": "application/json",
+        // },
       });
       setInputMessage("");
-      console.log("hihihihi");
     } catch (error) {
       console.error("메시지 전송 실패:", error);
     }
@@ -79,13 +79,13 @@ export const useChat = ({
   // 채팅방 유저 누구있는지 ?
   const handleFetchChatRoomUsers = () => {
     const eventSource = new EventSource(
-      `${API_URL}/api/chats/webflux/artistInfo/${roomSeq}`
+      `${API_URL}/api/chats/webflux/artistInfo/${roomSeq}?token=${jwtToken}`
     );
 
     eventSource.onmessage = (event) => {
       const users = JSON.parse(event.data);
       setChatRoomUsers(users);
-      console.log("채팅방 유저 정보 수신:", users);
+      // console.log("채팅방 유저 정보 수신:", users);
     };
 
     eventSource.onerror = (error) => {
@@ -99,12 +99,12 @@ export const useChat = ({
   // 채팅 메시지 가져오기 (EventSource)
   const handleFetchMessages = () => {
     const eventSource = new EventSource(
-      `${API_URL}/api/chats/webflux/${roomSeq}/${userSeq}`
+      `${API_URL}/api/chats/webflux/${roomSeq}/${userSeq}?token=${jwtToken}`
     );
     eventSource.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
       setChatMessages((prevMessages) => [...prevMessages, newMessage]);
-      console.log("hihihi");
+      console.log(newMessage);
     };
     eventSource.onerror = (error) => {
       console.error("SSE 에러:", error);
@@ -130,6 +130,8 @@ export const useChat = ({
 
   return {
     roomSeq,
+    userSeq,
+    OtherUserSeq,
     chatMessages,
     isChatModalOpen,
     inputMessage,
