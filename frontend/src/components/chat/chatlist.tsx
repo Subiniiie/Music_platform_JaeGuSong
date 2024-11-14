@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, Flex } from "@chakra-ui/react";
 import Modal from "@/components/common/Modal";
 import useChatList from "@/hooks/chat/useChatList";
 
@@ -52,36 +52,56 @@ const ChatList = () => {
         }}
       />
       <Modal isOpen={modalOpen} onClose={handleChatButtonClick}>
-        <Box padding="20px" width="400px" height="600px" overflowY="auto">
-          <Text fontSize="24px" fontWeight="bold" color="black" mb={4}>
-            채팅방 목록
-          </Text>
+        <Box padding="0" width="600px" height="600px" overflowY="auto">
+          <Box
+            padding="20px"
+            backgroundColor="white"
+            borderBottom="1px solid"
+            borderColor="gray.200"
+            position="sticky"
+            top="0"
+            zIndex="1"
+          >
+            <Text fontSize="24px" fontWeight="bold" color="black">
+              채팅
+            </Text>
+          </Box>
 
-          {chatList && chatList.length > 0 ? (
-            chatList.map((item: ChatListResponse) => (
-              <Box
-                key={item.roomSeq}
-                padding={3}
-                borderBottom="1px"
-                borderColor="gray.200"
-                mb={2}
-                cursor="pointer"
-                onClick={() => handleChatRoomClick(item.roomSeq)} // 채팅방 클릭 시 실행
-              >
-                <Text fontWeight="bold">
-                  {item.chatRoomResponses
-                    .map((user) => user.nickname)
-                    .join(", ")}
-                </Text>
-                <Text>{item.lastMsg}</Text>
-                <Text color="gray.500" fontSize="sm">
-                  {item.lastMsgTime}
-                </Text>
-              </Box>
-            ))
-          ) : (
-            <Text>No chat rooms available</Text> // 채팅방이 없을 때 표시
-          )}
+          <Box padding="20px">
+            {chatList && chatList.length > 0 ? (
+              chatList.map((item: ChatListResponse) => (
+                <Box
+                  key={item.roomSeq}
+                  padding={4}
+                  borderBottom="1px solid"
+                  borderColor="gray.200"
+                  mb={4}
+                  cursor="pointer"
+                  _hover={{ background: "gray.100" }}
+                  onClick={() => handleChatRoomClick(item.roomSeq)}
+                >
+                  <Flex justify="space-between" align="center" mb={2}>
+                    <Text fontWeight="bold" fontSize="18px">
+                      {item.chatRoomResponses
+                        .map((user) => user.nickname)
+                        .join(", ")}
+                    </Text>
+                    <Text fontSize="14px" color="gray.500">
+                      {new Date(item.lastMsgTime).toLocaleTimeString("ko-KR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </Text>
+                  </Flex>
+                  <Text color="gray.700" textAlign="left">
+                    {item.lastMsg}
+                  </Text>
+                </Box>
+              ))
+            ) : (
+              <Text>채팅방이 없습니다.</Text>
+            )}
+          </Box>
         </Box>
       </Modal>
     </>

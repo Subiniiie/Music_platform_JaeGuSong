@@ -16,9 +16,14 @@ const useChatList = (
     );
 
     eventSource.onmessage = (event) => {
-      const userList = JSON.parse(event.data);
-      console.log(userList);
-      setChatList(userList);
+      const users = JSON.parse(event.data);
+
+      setChatList((prevList) => {
+        if (prevList.some((chat) => chat.roomSeq === users.roomSeq)) {
+          return prevList;
+        }
+        return [...prevList, users];
+      });
     };
 
     eventSource.onerror = (error) => {
@@ -33,7 +38,7 @@ const useChatList = (
         eventSourceRef.current.close();
       }
     };
-  }, [API_URL, userSeq]);
+  }, [API_URL, userSeq, jwtToken]);
 
   return chatList;
 };

@@ -14,6 +14,12 @@ interface UseChatProps {
   OtherUserSeq: number | null;
 }
 
+interface ChatRoomUser {
+  artistSeq: string;
+  nickname: string;
+  profilePicUrl: string;
+}
+
 export const useChat = ({
   jwtToken,
   API_URL,
@@ -24,7 +30,7 @@ export const useChat = ({
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
-  const [chatRoomUsers, setChatRoomUsers] = useState<any[]>([]);
+  const [chatRoomUsers, setChatRoomUsers] = useState<ChatRoomUser[]>([]);
   const eventSourceRef = useRef<EventSource | null>(null);
 
   // 채팅 생성
@@ -46,6 +52,7 @@ export const useChat = ({
           "Content-Type": "application/json",
         },
       });
+      console.log(response);
       setRoomSeq(response.data);
       setIsChatModalOpen(true);
     } catch (error) {
@@ -64,12 +71,11 @@ export const useChat = ({
     };
 
     try {
-      await axios.post(`${API_URL}/api/chats/webflux?token=${jwtToken}`, data, {
-        // headers: {
-        //   Authorization: `Bearer ${jwtToken}`,
-        //   // "Content-Type": "application/json",
-        // },
-      });
+      await axios.post(
+        `${API_URL}/api/chats/webflux?token=${jwtToken}`,
+        data,
+        {}
+      );
       setInputMessage("");
     } catch (error) {
       console.error("메시지 전송 실패:", error);
@@ -83,9 +89,20 @@ export const useChat = ({
     );
 
     eventSource.onmessage = (event) => {
-      const users = JSON.parse(event.data);
-      setChatRoomUsers(users);
-      // console.log("채팅방 유저 정보 수신:", users);
+      const user: ChatRoomUser = JSON.parse(event.data);
+      console.log(user);
+      if (user.artistSeq !== String(userSeq)) {
+        setChatRoomUsers((prevUsers) => {
+          if (
+            prevUsers.some(
+              (existingUser) => existingUser.artistSeq === user.artistSeq
+            )
+          ) {
+            return prevUsers;
+          }
+          return [...prevUsers, user];
+        });
+      }
     };
 
     eventSource.onerror = (error) => {
@@ -104,7 +121,6 @@ export const useChat = ({
     eventSource.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
       setChatMessages((prevMessages) => [...prevMessages, newMessage]);
-      console.log(newMessage);
     };
     eventSource.onerror = (error) => {
       console.error("SSE 에러:", error);
@@ -112,6 +128,31 @@ export const useChat = ({
     };
 
     eventSourceRef.current = eventSource;
+  };
+
+  // 채팅방 나가기
+  const handleLeaveChat = async () => {
+    if (!jwtToken || !userSeq || !roomSeq) {
+      console.error("채팅 나가기 실패: 필요한 정보가 누락되었습니다.");
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `${API_URL}/api/chats/leave/${roomSeq}/${userSeq}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
+      console.log(response);
+      if (response.status === 200) {
+        console.log("채팅방 나가기 성공:", response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -139,6 +180,7 @@ export const useChat = ({
     setIsChatModalOpen,
     handleCreateChat,
     handleSendMessage,
+    handleLeaveChat,
     chatRoomUsers,
   };
 };
