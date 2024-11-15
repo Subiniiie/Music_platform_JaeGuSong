@@ -152,8 +152,8 @@ export default function CardList({ wsList, fetchWsList }: CardListProps) {
         styles={{
           "html, body": {
             backgroundColor: "#02001F",
-            color: "white",
-            fontFamily: "Arial, sans-serif",
+            color: "black",
+            fontFamily: "MiceGothic",
             margin: 0,
             padding: 0,
           },
@@ -287,7 +287,21 @@ export default function CardList({ wsList, fetchWsList }: CardListProps) {
                   </Card.Body>
                 </Stack>
                 <Card.Footer>
-                  <Button onClick={() => handleCardClick(ws.workspaceSeq)}>
+                  <Button
+                    bg="blue.100" // 검은 배경
+                    color="black" // 텍스트 색상
+                    border="1.5px solid" // 테두리 두께
+                    borderColor="blue.500" // 보라색 테두리
+                    borderRadius={13} // 모서리 둥글게
+                    _hover={{ bg: "blue.700" }} // 호버 효과
+                    _active={{ bg: "blue.800" }} // 클릭 효과
+                    paddingX="4"
+                    paddingY="2"
+                    width="60px"
+                    height="40px"
+                    fontWeight="bold"
+                    onClick={() => handleCardClick(ws.workspaceSeq)}
+                  >
                     <RiArrowRightLine />
                   </Button>
 
@@ -302,7 +316,22 @@ export default function CardList({ wsList, fetchWsList }: CardListProps) {
                         asChild
                         onClick={() => handleWsDelete(ws.workspaceSeq)}
                       >
-                        <Button variant="outline">삭제 ({"center"}) </Button>
+                        <Button
+                          bg="purple.100" // 검은 배경
+                          color="black" // 텍스트 색상
+                          border="1.5px solid" // 테두리 두께
+                          borderColor="purple.500" // 보라색 테두리
+                          borderRadius={13} // 모서리 둥글게
+                          _hover={{ bg: "purple.700" }} // 호버 효과
+                          _active={{ bg: "purple.800" }} // 클릭 효과
+                          paddingX="4"
+                          paddingY="2"
+                          width="60px"
+                          height="40px"
+                          fontWeight="bold"
+                        >
+                          삭제
+                        </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>

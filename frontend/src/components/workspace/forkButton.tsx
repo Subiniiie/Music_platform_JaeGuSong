@@ -34,5 +34,23 @@ export default function ForkButton({ workspaceSeq }: ForkButtonProps) {
     }
   };
 
-  return <Button onClick={handleForkWs}>워크스페이스 포크</Button>;
+  return (
+    <Button
+      bg="blackAlpha.900" // 검은 배경
+      color="white" // 텍스트 색상
+      border="2px solid" // 테두리 두께
+      borderColor="purple.500" // 보라색 테두리
+      borderRadius={13} // 모서리 둥글게
+      _hover={{ bg: "purple.700" }} // 호버 효과
+      _active={{ bg: "purple.800" }} // 클릭 효과
+      paddingX="4"
+      paddingY="2"
+      width="140px"
+      height="40px"
+      fontWeight="bold"
+      onClick={handleForkWs}
+    >
+      워크스페이스 포크
+    </Button>
+  );
 }

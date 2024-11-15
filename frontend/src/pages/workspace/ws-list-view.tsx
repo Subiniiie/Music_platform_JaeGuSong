@@ -70,9 +70,9 @@ export default function WsListView() {
 
   return (
     <Flex direction="column" height="100%" paddingTop="3" px="5" gap="2">
-      <Stack>
-        <Flex justify="space-between">
-          <Search />
+      <Stack mb="3">
+        <Flex justify="end">
+          {/* <Search /> */}
 
           {/* artistSeq와 생성된 워크스페이스 ID 콜백을 전달 */}
           {artistSeq && (

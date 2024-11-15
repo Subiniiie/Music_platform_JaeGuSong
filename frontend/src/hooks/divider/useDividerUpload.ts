@@ -40,6 +40,8 @@ export function useDividerUpload(API_URL: string): UseDividerUploadReturn {
       originTitle: originTitle,
     };
 
+    const fcmToken = localStorage.getItem("fcmToken");
+
     const formData = new FormData();
     formData.append(
       "workspaceRequest",
@@ -50,6 +52,7 @@ export function useDividerUpload(API_URL: string): UseDividerUploadReturn {
       "stemList",
       new Blob([JSON.stringify(selectedSessions)], { type: "application/json" })
     );
+    formData.append("fcmToken", fcmToken || "");
 
     try {
       const storedToken = localStorage.getItem("jwtToken");

@@ -29,8 +29,8 @@ export default function SessionBox({
         styles={{
           "html, body": {
             backgroundColor: "#02001F",
-            color: "white",
-            fontFamily: "Arial, sans-serif",
+            color: "black",
+            fontFamily: "MiceGothic",
             margin: 0,
             padding: 0,
           },
