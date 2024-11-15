@@ -8,13 +8,13 @@ import Container from "@/components/community/container";
 import Header from "@/components/community/header";
 import CrewHeader from "@/components/community/crew-header";
 import OtherHeader from "@/components/community/otherHeader";
-import OtherArticleList from "@/components/community/other-article-list";
 import useCommunityMain from "@/hooks/community/useCommunityMain";
 import axios from "axios";
 import useHeaderStore from "@/stores/headerStore";
 
 const CommunityMainView: React.FC = () => {
   const { feedState, goMusicMainFeed, goMainFeed } = useCommunityMain();
+  const [ checkBoardSeq, setCheckBoardSeq ] = useState<number>(0);
 
   const {
     openUserHeader,
@@ -55,6 +55,9 @@ const CommunityMainView: React.FC = () => {
         });
         setCheckSearchUser(false);
         setOpenUserHeader(false);
+        console.log('크루 메인 화면에서 정보', response.data)
+        const boardUserSeq = response.data?.crews.find((item) => item.crewUserState === "BOARD")?.seq;
+        setCheckBoardSeq(boardUserSeq)
       } catch (error) {
         if (error.response && error.response.status === 404) {
           console.log("404 오류 ㄱㅊ 넘어가");
@@ -80,7 +83,8 @@ const CommunityMainView: React.FC = () => {
           otherUserProfileImage={otherUserProfileImage}
         />
       ) : (
-        <CrewHeader />
+        // Use parentheses to ensure proper JSX rendering
+        checkBoardSeq !== 0 && <CrewHeader checkBoardSeq={checkBoardSeq} />
       )}
       <Container>
         <Box margin="10px 0" overflow="auto">
@@ -94,6 +98,6 @@ const CommunityMainView: React.FC = () => {
       </Container>
     </>
   );
-};
+};  
 
 export default CommunityMainView;

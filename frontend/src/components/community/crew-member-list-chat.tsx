@@ -23,7 +23,7 @@ const CrewMemeberListChat: React.FC<CrewMemeberListContainerProps> = ({ crewData
       alignItems="center"
       marginTop="80px"
       gap="45px"
-      value={chatValue}
+      value={chatValue || chatUserSeq.toString()}
       onChange={(e) => setChatValue((e.target as HTMLInputElement).value)}
       disabled={!checkManagerSeq}
     >

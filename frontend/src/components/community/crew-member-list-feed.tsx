@@ -25,7 +25,7 @@ const CrewMemeberListFeed: React.FC<CrewMemeberListContainerProps> = ({ crewData
       alignItems="center"
       marginTop="80px"
       gap="45px"
-      value={feedValue}
+      value={feedValue ||boardUserSeq.toString()}
       onChange={(e) => setFeedValue((e.target as HTMLInputElement).value)}
       disabled={!checkManagerSeq}
     >
