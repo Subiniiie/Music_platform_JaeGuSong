@@ -1,5 +1,13 @@
 import axios from "axios";
-import { Box, Stack, Text, Flex, Card, Button, IconButton } from "@chakra-ui/react";
+import {
+  Box,
+  Stack,
+  Text,
+  Flex,
+  Card,
+  Button,
+  IconButton,
+} from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 import ToggleOptions from "./toggleOptions";
@@ -13,7 +21,7 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "../ui/checkbox";
 import Play from "@/sections/workspace/play";
-import Waveform from "./waveform"
+import Waveform from "./waveform";
 import { toaster } from "@/components/ui/toaster";
 import { useWsDetailStore } from "@/stores/wsDetailStore";
 import { Rnd } from "react-rnd";
@@ -164,7 +172,7 @@ export default function Session({
   };
 
   const handleStop = () => {
-    console.log('안녕, 난 handleStop')
+    console.log("안녕, 난 handleStop");
     if (wavesurferRef.current) {
       wavesurferRef.current.stop();
       wavesurferRef.current?.setTime(startPointRef.current);
@@ -219,7 +227,7 @@ export default function Session({
 
       if (newStartPoint <= endPointRef.current) {
         setCursor1(newStartPoint); // 커서 위치 갱신
-        startPointRef.current = newStartPoint
+        startPointRef.current = newStartPoint;
         // 현재 재생 위치가 새 startPoint보다 이전이라면 위치를 맞춥니다.
         if (currentTime < newStartPoint) {
           wavesurferRef.current?.setTime(newStartPoint);
@@ -237,7 +245,7 @@ export default function Session({
 
       if (newEndPoint >= startPointRef.current) {
         setCursor2(newEndPoint); // 커서 위치 갱신
-        endPointRef.current = newEndPoint
+        endPointRef.current = newEndPoint;
       }
       console.log("newEndPoint :", newEndPoint);
 
@@ -252,59 +260,84 @@ export default function Session({
   };
 
   return (
-    <Card.Root bg="transparent" color="white" padding="2" borderColor="grey">
+    <Card.Root
+      bg="transparent"
+      color="white"
+      py="5px"
+      px="15px"
+      border="rgba(255, 255, 255, 0.3) 1.5px solid"
+    >
       <Flex gap={3}>
-        <Checkbox colorPalette="purple" onChange={() => toggleSession(sessionId)} />
+        <Checkbox
+          colorPalette="purple"
+          onChange={() => toggleSession(sessionId)}
+        />
         <Stack width="150px" justifyContent="center">
           <Stack width="150px" justifyContent="center" alignItems="start">
             <Text fontFamily="MiceGothic" fontSize={11}>
               세션 타입 : {sessionTypeRef.current || "세션을 선택해주세요"}
             </Text>
-            {sessionTypeRef.current !== type ? (
-              <Button
-                width="50px"
-                height="20px"
-                fontSize="10px"
-                onClick={handleResetSession}
-              >
-                Reset
-              </Button>
-            ) : (
-              <PopoverRoot>
-                <PopoverTrigger asChild>
-                  <Button
-                    width="50px"
-                    height="20px"
-                    fontSize="10px"
-                  >
-                    Change
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <PopoverArrow />
-                  <PopoverBody>
-                    <PopoverTitle
-                      fontWeight="medium"
-                      fontSize={13}
-                      marginBottom={3}
-                    >
-                      세션 정보 변경
-                    </PopoverTitle>
-                    <ToggleOptions onSelectSession={handleSelectSession} />
+            <Flex my={1} gap={2}>
+              {sessionTypeRef.current !== type ? (
+                <Button
+                  width="50px"
+                  height="26px"
+                  fontSize="10px"
+                  border="purple 2px solid"
+                  borderRadius="8px"
+                  onClick={handleResetSession}
+                >
+                  초기화
+                </Button>
+              ) : (
+                <PopoverRoot>
+                  <PopoverTrigger asChild>
                     <Button
-                      size="sm"
-                      variant="outline"
-                      fontFamily="MiceGothic"
-                      fontSize={11}
-                      mt={4}
-                      onClick={() => console.log('변경하기')}
+                      width="50px"
+                      height="26px"
+                      fontSize="10px"
+                      border="purple 2px solid"
+                      borderRadius="8px"
                     >
-                      변경하기
+                      변경
                     </Button>
-                  </PopoverBody>
-                </PopoverContent>
-              </PopoverRoot>
-            )}
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverBody>
+                      <PopoverTitle
+                        fontWeight="medium"
+                        fontSize={13}
+                        marginBottom={3}
+                      >
+                        세션 정보 변경
+                      </PopoverTitle>
+                      <ToggleOptions onSelectSession={handleSelectSession} />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        fontFamily="MiceGothic"
+                        fontSize={11}
+                        mt={4}
+                        onClick={() => console.log("변경하기")}
+                      >
+                        변경하기
+                      </Button>
+                    </PopoverBody>
+                  </PopoverContent>
+                </PopoverRoot>
+              )}
+              <Button
+                onClick={handleDeleteSession}
+                width="50px"
+                height="26px"
+                fontSize="10px"
+                border="purple 2px solid"
+                borderRadius="8px"
+              >
+                삭제
+              </Button>
+            </Flex>
           </Stack>
         </Stack>
 
@@ -315,7 +348,6 @@ export default function Session({
             height="100px"
             position="relative"
           >
-
             {/* Draggable startPoint 커서 */}
             <Rnd
               bounds="parent"
@@ -417,8 +449,6 @@ export default function Session({
           onStop={handleStop}
           mode="individual"
         />
-
-        <Button onClick={handleDeleteSession}>삭제</Button>
       </Flex>
     </Card.Root>
   );

@@ -1,4 +1,4 @@
-import { Text, Stack, Flex } from "@chakra-ui/react";
+import { Text, Stack, Flex, Heading } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import ForkButton from "@/components/workspace/forkButton";
 import { useState } from "react";
@@ -10,12 +10,17 @@ interface WsHeaderProps {
     originTitle: string;
     originSinger: string;
     state: string;
+    updatedAt: string;
   };
   workspaceSeq: number;
   role: string;
 }
 
-export default function WsHeader({ wsDetails, workspaceSeq, role }: WsHeaderProps) {
+export default function WsHeader({
+  wsDetails,
+  workspaceSeq,
+  role,
+}: WsHeaderProps) {
   const [isPublic, setIsPublic] = useState(wsDetails.state === "PUBLIC");
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -39,18 +44,29 @@ export default function WsHeader({ wsDetails, workspaceSeq, role }: WsHeaderProp
     }
   };
 
+  // 날짜 포맷팅 (YYYY-MM-DD HH:MM)
+  const formattedDate = new Date(wsDetails.updatedAt).toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   return (
     <Stack>
       <Flex justifyContent="space-between">
         <Stack>
-          <Text>{wsDetails.name || "제목 없음"}</Text>
-          <Text>
+          <Heading fontFamily="MiceGothic" size="xl">
+            {wsDetails.name || "제목 없음"}
+          </Heading>
+          <Heading fontFamily="MiceGothic" size="md">
             {wsDetails.originTitle || "제목 없음"} -{" "}
             {wsDetails.originSinger || "아티스트 없음"}
-          </Text>
+          </Heading>
           {role === "MASTER" && (
-            <Text fontSize="sm" color="gray.400">
-              최종 저장일시: 2024-10-24 23:10
+            <Text fontSize="sm" color="gray.400" mt={1}>
+              최종 저장일시 : {formattedDate}
             </Text>
           )}
         </Stack>
@@ -58,7 +74,9 @@ export default function WsHeader({ wsDetails, workspaceSeq, role }: WsHeaderProp
           {role === "MASTER" ? (
             <>
               <Button>저장</Button>
-              <Button onClick={toggleState}>{isPublic ? "비공개" : "공유"}</Button>
+              <Button onClick={toggleState}>
+                {isPublic ? "비공개" : "공유"}
+              </Button>
             </>
           ) : (
             <ForkButton />

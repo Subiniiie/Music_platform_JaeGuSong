@@ -1,4 +1,5 @@
 import { Stack, Flex, Box, Text } from "@chakra-ui/react";
+import { Slider } from "@/components/ui/slider";
 import Play from "./play";
 import ButtonBox from "./buttonBox";
 import ForkButton from "@/components/workspace/forkButton";
@@ -17,7 +18,11 @@ interface WsFooterProps {
   role: string;
 }
 
-export default function WsFooter({ wsDetails, workspaceSeq, role }: WsFooterProps) {
+export default function WsFooter({
+  wsDetails,
+  workspaceSeq,
+  role,
+}: WsFooterProps) {
   // Zustand store에서 전체 재생 및 정지 제어를 위한 상태와 함수 가져오기
   const isPlaying = useWsDetailStore((state) => state.isPlaying);
   const playAll = useWsDetailStore((state) => state.playAll);
@@ -38,13 +43,32 @@ export default function WsFooter({ wsDetails, workspaceSeq, role }: WsFooterProp
 
   return (
     <Stack>
-      <Flex justifyContent="space-between" position="relative">
+      <Flex justifyContent="space-between" position="relative" gap="16px">
         <Play
           isPlaying={isPlaying} // 전체 재생 상태 전달
           onPlayPause={handlePlayPause} // 전체 재생 및 일시정지 함수 전달
           onStop={stopAll} // 전체 정지 함수 전달
           mode="all" // 전체 모드로 설정
         />
+
+        <Stack
+          direction="row"
+          bg="gray.800"
+          padding="6"
+          borderRadius="15px"
+          border="0.5px solid rgba(255, 255, 255, 0.2)"
+          gap="4"
+          justifyContent="center"
+          alignItems="center"
+          background="rgba(0, 0, 0, 0.3)"
+          flex="1"
+        >
+          <Flex gap="4" justifyContent="center" width="100%">
+            재생 바
+            <Slider width="90%" defaultValue={[30, 60]} />
+          </Flex>
+        </Stack>
+
         <ButtonBox wsDetails={wsDetails} workspaceSeq={workspaceSeq} />
 
         {role === "VIEWER" && (
@@ -75,7 +99,9 @@ export default function WsFooter({ wsDetails, workspaceSeq, role }: WsFooterProp
                 borderRadius="md"
                 textAlign="center"
               >
-                <Text>추가 작업을 원하시면 해당 워크스페이스를 포크 떠주세요.</Text>
+                <Text>
+                  추가 작업을 원하시면 해당 워크스페이스를 포크 떠주세요.
+                </Text>
                 <ForkButton />
               </Box>
             )}

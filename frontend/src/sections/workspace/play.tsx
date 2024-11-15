@@ -14,19 +14,17 @@ export default function Play({
   onStop,
   mode,
 }: PlayProps) {
-  const playAll = useWsDetailStore((state) => state.playAll);
-  const pauseAll = useWsDetailStore((state) => state.pauseAll);
-  const stopAll = useWsDetailStore((state) => state.stopAll);
+  const { playAll, pauseAll, stopAll } = useWsDetailStore();
 
   const handlePlayPause = () => {
     if (mode === "all") {
       if (isPlaying) {
-        pauseAll(); // 전체 일시정지
+        pauseAll();
       } else {
-        playAll(); // 전체 재생
+        playAll();
       }
     } else {
-      onPlayPause(); // 개별 세션 재생/일시정지
+      onPlayPause(); // 개별 세션 재생/일시정지 실행
     }
   };
 
@@ -34,21 +32,36 @@ export default function Play({
     if (mode === "all") {
       stopAll();
     } else {
-      onStop();
+      onStop(); // 개별 세션 정지 실행
     }
   };
 
   return (
-    <Stack bg="gray.900" padding="4" borderRadius="md">
+    <Stack
+      direction="row"
+      bg="gray.800"
+      padding="6"
+      borderRadius="15px"
+      border="0.5px solid rgba(255, 255, 255, 0.2)"
+      gap="4"
+      justifyContent="center"
+      alignItems="center"
+      background="rgba(0, 0, 0, 0.3)"
+    >
       <Flex gap="4" justifyContent="center">
         <IconButton
+          bg="blackAlpha.900"
+          border="2px solid"
+          borderColor="teal.700"
+          borderRadius="md"
+          _hover={{ bg: "teal.700" }}
+          _active={{ bg: "teal.800" }}
           aria-label={isPlaying ? "일시정지" : "재생"}
           colorScheme="teal"
           color="white"
           onClick={handlePlayPause}
-          _hover={{ bg: "teal.700" }}
-          width="50px"
-          height="50px"
+          width="46px"
+          height="46px"
           padding="0"
           display="flex"
           alignItems="center"
@@ -66,13 +79,18 @@ export default function Play({
         </IconButton>
 
         <IconButton
+          bg="blackAlpha.900"
+          border="2px solid"
+          borderColor="red.700"
+          borderRadius="md"
+          _hover={{ bg: "red.700" }}
+          _active={{ bg: "red.800" }}
           aria-label="정지"
           colorScheme="red"
           color="white"
           onClick={handleStop}
-          _hover={{ bg: "red.700" }}
-          width="50px"
-          height="50px"
+          width="46px"
+          height="46px"
           padding="0"
           display="flex"
           alignItems="center"

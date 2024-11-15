@@ -12,6 +12,9 @@ export default function WsButton({ children }) {
       _active={{ bg: "purple.800" }} // 클릭 효과
       paddingX="4"
       paddingY="2"
+      width="110px"
+      height="46px"
+      fontWeight="bold"
     >
       {children}
     </Button>

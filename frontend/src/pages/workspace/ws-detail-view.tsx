@@ -21,6 +21,7 @@ export default function WsDetailView() {
     role: string;
     state: string; // 추가된 state 필드
     sounds: Sound[];
+    updatedAt: string;
     thumbnail: string;
   }>({
     name: "",
@@ -29,6 +30,7 @@ export default function WsDetailView() {
     role: "",
     state: "", // 기본값 설정
     sounds: [], // 세션 데이터를 초기 상태로 설정
+    updatedAt: "",
     thumbnail: "",
   });
 
@@ -42,7 +44,7 @@ export default function WsDetailView() {
 
   useEffect(() => {
     const fetchWorkspaceDetail = async () => {
-      console.log('나 된다', workspaceSeq)
+      console.log("나 된다", workspaceSeq);
       try {
         const response = await axios.get(
           `${API_URL}/api/workspaces/${workspaceSeq}`,
@@ -76,8 +78,19 @@ export default function WsDetailView() {
   };
 
   return (
-    <Stack padding={4} color="white" borderRadius="md" height="100%">
-      <WsHeader wsDetails={wsDetails} workspaceSeq={workspaceSeqNumber} role={wsDetails.role} />
+    <Stack
+      padding={4}
+      gap={5}
+      color="white"
+      borderRadius="md"
+      height="100%"
+      fontFamily="MiceGothic"
+    >
+      <WsHeader
+        wsDetails={wsDetails}
+        workspaceSeq={workspaceSeqNumber}
+        role={wsDetails.role}
+      />
 
       <Box flex="1" overflowY="auto">
         <SessionBox
@@ -88,7 +101,11 @@ export default function WsDetailView() {
         />
       </Box>
 
-      <WsFooter wsDetails={wsDetails} workspaceSeq={workspaceSeqNumber} role={wsDetails.role}/>
+      <WsFooter
+        wsDetails={wsDetails}
+        workspaceSeq={workspaceSeqNumber}
+        role={wsDetails.role}
+      />
     </Stack>
   );
 }
