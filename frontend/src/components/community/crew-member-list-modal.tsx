@@ -1,15 +1,37 @@
-import React, { useEffect } from "react";
-import { Text } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { Text, Box } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import CrewMemeberListCotainer from "./crew-member-list-container";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+interface Manager {
+  seq: number;
+  profileImage: string;
+  email: string;
+  nickname: string;
+}
+
+export interface CrewData {
+  birth: string;
+  content: string;
+  crewSeq: number;
+  crews: Array<any>;  // crews 데이터의 타입을 구체적으로 정의할 수 있음
+  genre: string;
+  manager: Manager;
+  nickname: string;
+  profileImage: string;
+  region: string;
+}
+
 const CrewMemeberListModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const API_URL = import.meta.env.VITE_API_URL;
+
+  const [crewData, setCrewData] = useState<CrewData | null>(null);
 
   if (!isOpen) return null;
   const { id } = useParams<{ id: string }>();
@@ -24,8 +46,10 @@ const CrewMemeberListModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             headers: {
                 Authorization: `Bearer ${storedToken}` 
             },
-        }
+          }
         )
+        console.log('크루 정보', response.data)
+        setCrewData(response.data);
       } catch(error) {
         console.warn(error)
       }
@@ -33,6 +57,10 @@ const CrewMemeberListModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
     getCrewMembers()
   }, [id])
+
+  useEffect(() => {
+    console.log('저장완', crewData)
+  }, [crewData])
 
   const overlayStyle: React.CSSProperties = {
     position: "fixed",
@@ -71,14 +99,15 @@ const CrewMemeberListModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={contentStyle} onClick={(e) => e.stopPropagation()}>
+    <Box style={overlayStyle} onClick={onClose}>
+      <Box style={contentStyle} onClick={(e) => e.stopPropagation()}>
         <button style={closeButtonStyle} onClick={onClose}>
           X
         </button>
         <Text color="black">크루원</Text>
-      </div>
-    </div>
+          <CrewMemeberListCotainer crewData={crewData} onClose={onClose} />
+      </Box>
+    </Box>
   );
 };
 
