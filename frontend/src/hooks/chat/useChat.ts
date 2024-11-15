@@ -149,9 +149,19 @@ export const useChat = ({
       );
       if (response.status === 200) {
         console.log("채팅방 나가기 성공:", response);
+
+        setRoomSeq(null);
+        setChatMessages([]);
+        setChatRoomUsers([]);
+        setIsChatModalOpen(false);
+
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          eventSourceRef.current = null;
+        }
       }
     } catch (error) {
-      console.log(error);
+      console.error("채팅 나가기 실패:", error);
     }
   };
 

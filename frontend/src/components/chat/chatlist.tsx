@@ -29,7 +29,6 @@ const ChatList = () => {
   const [selectedRoom, setSelectedRoom] = useState<ChatListResponse | null>(
     null
   );
-  console.log(selectedRoom);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatRoomUsers, setChatRoomUsers] = useState<ChatRoomUser[]>([]);
@@ -46,6 +45,7 @@ const ChatList = () => {
   console.log(userSeq);
   const jwtToken = localStorage.getItem("jwtToken");
   const chatList = useChatList(API_URL, userSeq, jwtToken, modalOpen);
+
   const handleChatButtonClick = () => {
     setModalOpen(!modalOpen);
     setSelectedRoom(null);
@@ -154,7 +154,11 @@ const ChatList = () => {
         setSelectedRoom(null);
         setChatMessages([]);
         setChatRoomUsers([]);
-        eventSourceRef.current?.close();
+
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          eventSourceRef.current = null;
+        }
       }
     } catch (error) {
       console.error("채팅방 나가기 실패:", error);
