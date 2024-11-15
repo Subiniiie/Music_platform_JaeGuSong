@@ -79,7 +79,7 @@ export default function WsHeader({
               </Button>
             </>
           ) : (
-            <ForkButton />
+            <ForkButton workspaceSeq={workspaceSeq} />
           )}
         </Flex>
       </Flex>

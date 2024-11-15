@@ -1,13 +1,5 @@
 import axios from "axios";
-import {
-  Box,
-  Stack,
-  Text,
-  Flex,
-  Card,
-  Button,
-  IconButton,
-} from "@chakra-ui/react";
+import { Box, Stack, Text, Flex, Card, Button } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 import ToggleOptions from "./toggleOptions";
@@ -21,7 +13,6 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "../ui/checkbox";
 import Play from "@/sections/workspace/play";
-import Waveform from "./waveform";
 import { toaster } from "@/components/ui/toaster";
 import { useWsDetailStore } from "@/stores/wsDetailStore";
 import { Rnd } from "react-rnd";
@@ -266,6 +257,7 @@ export default function Session({
       py="5px"
       px="15px"
       border="rgba(255, 255, 255, 0.3) 1.5px solid"
+      borderRadius={10}
     >
       <Flex gap={3}>
         <Checkbox

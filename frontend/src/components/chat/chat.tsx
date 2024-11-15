@@ -100,7 +100,6 @@ const ChatModal: React.FC<ChatModalProps> = ({
 
           <VStack
             align="flex-start"
-            marginTop="4"
             flex="1"
             overflowY="auto"
             marginBottom="100px"
@@ -146,6 +145,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
                   marginRight={isUserMessage ? "10px" : 0}
                   marginLeft={isUserMessage ? 0 : "10px"}
                   textAlign={isUserMessage ? "right" : "left"}
+                  marginTop="5px"
                 >
                   <Text fontSize="16px" wordBreak="break-word">
                     {message.msg}

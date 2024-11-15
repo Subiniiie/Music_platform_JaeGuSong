@@ -16,15 +16,11 @@ export default function ForkButton({ workspaceSeq }: ForkButtonProps) {
     try {
       const storedToken = localStorage.getItem("jwtToken");
 
-      const response = await axios.get(
-        `${API_URL}/api/workspaces/${workspaceSeq}/fork`,
-        {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.get(`${API_URL}/api/workspaces/${workspaceSeq}/fork`, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      });
       toaster.create({
         description: "내 워크스페이스에 성공적으로 추가되었습니다.",
         type: "success",
@@ -38,7 +34,5 @@ export default function ForkButton({ workspaceSeq }: ForkButtonProps) {
     }
   };
 
-  return (
-    <Button onClick={handleForkWs}>워크스페이스 포크</Button>
-  );
+  return <Button onClick={handleForkWs}>워크스페이스 포크</Button>;
 }

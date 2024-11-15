@@ -29,6 +29,7 @@ const ChatList = () => {
   const [selectedRoom, setSelectedRoom] = useState<ChatListResponse | null>(
     null
   );
+  console.log(selectedRoom);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatRoomUsers, setChatRoomUsers] = useState<ChatRoomUser[]>([]);
@@ -42,7 +43,7 @@ const ChatList = () => {
   const userSeq = authStorage
     ? JSON.parse(authStorage)?.state?.artistSeq
     : null;
-
+  console.log(userSeq);
   const jwtToken = localStorage.getItem("jwtToken");
   const chatList = useChatList(API_URL, userSeq, jwtToken, modalOpen);
   const handleChatButtonClick = () => {
@@ -123,6 +124,7 @@ const ChatList = () => {
 
     eventSource.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
+      console.log(newMessage);
       setChatMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
@@ -134,6 +136,7 @@ const ChatList = () => {
     eventSourceRef.current = eventSource;
   };
 
+  // 채팅 나가기
   const handleLeaveChat = async () => {
     if (!selectedRoom) return;
 
@@ -228,7 +231,7 @@ const ChatList = () => {
         onClick={handleChatButtonClick}
         style={{
           position: "fixed",
-          bottom: "40px",
+          bottom: "100px",
           right: "40px",
           cursor: "pointer",
           width: "60px",
@@ -284,7 +287,6 @@ const ChatList = () => {
 
               <VStack
                 align="flex-start"
-                marginTop="4"
                 flex="1"
                 overflowY="auto"
                 marginBottom="100px"
@@ -330,6 +332,7 @@ const ChatList = () => {
                       marginRight={isUserMessage ? "10px" : 0}
                       marginLeft={isUserMessage ? 0 : "10px"}
                       textAlign={isUserMessage ? "right" : "left"}
+                      marginTop="5px"
                     >
                       <Text fontSize="16px" wordBreak="break-word">
                         {message.msg}
