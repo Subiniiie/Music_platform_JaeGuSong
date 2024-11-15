@@ -73,16 +73,14 @@ const ChatModal: React.FC<ChatModalProps> = ({
                 key={user.artistSeq}
                 direction="row"
                 alignItems="center"
-                marginBottom="20px"
                 padding="10px"
               >
                 <Box
-                  width="50px"
-                  height="50px"
+                  width="60px"
+                  height="60px"
                   borderRadius="full"
                   overflow="hidden"
                   marginRight="10px"
-                  border="2px solid black"
                 >
                   <img
                     src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${user.profilePicUrl}`}
@@ -108,6 +106,22 @@ const ChatModal: React.FC<ChatModalProps> = ({
             marginBottom="100px"
             backgroundColor="gray.100"
             borderRadius="15px"
+            css={{
+              "&::-webkit-scrollbar": {
+                width: "10px",
+              },
+              "&::-webkit-scrollbar-track": {
+                background: "#f1f1f1",
+                borderRadius: "10px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "#888",
+                borderRadius: "10px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                background: "#555",
+              },
+            }}
           >
             {chatMessages.map((message, index) => {
               const isUserMessage =
@@ -131,8 +145,9 @@ const ChatModal: React.FC<ChatModalProps> = ({
                   borderBottomRightRadius={isUserMessage ? "0" : "30px"}
                   marginRight={isUserMessage ? "10px" : 0}
                   marginLeft={isUserMessage ? 0 : "10px"}
+                  textAlign={isUserMessage ? "right" : "left"}
                 >
-                  <Text fontSize="16px" wordBreak="break-word" textAlign="left">
+                  <Text fontSize="16px" wordBreak="break-word">
                     {message.msg}
                   </Text>
                   <Text

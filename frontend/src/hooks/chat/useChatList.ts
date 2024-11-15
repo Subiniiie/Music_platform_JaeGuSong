@@ -21,7 +21,6 @@ const useChatList = (
 
     eventSource.onmessage = (event) => {
       const newChat = JSON.parse(event.data);
-
       setChatList((prevList) => {
         if (prevList.some((chat) => chat.roomSeq === newChat.roomSeq)) {
           return prevList.map((chat) =>

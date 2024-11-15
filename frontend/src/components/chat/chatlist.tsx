@@ -35,7 +35,7 @@ const ChatList = () => {
   const eventSourceRef = useRef<EventSource | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest"); // 정렬 상태
+  const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
 
   const API_URL = import.meta.env.VITE_API_URL;
   const authStorage = localStorage.getItem("auth-storage");
@@ -45,7 +45,6 @@ const ChatList = () => {
 
   const jwtToken = localStorage.getItem("jwtToken");
   const chatList = useChatList(API_URL, userSeq, jwtToken, modalOpen);
-
   const handleChatButtonClick = () => {
     setModalOpen(!modalOpen);
     setSelectedRoom(null);
@@ -94,7 +93,6 @@ const ChatList = () => {
 
     eventSource.onmessage = (event) => {
       const user: ChatRoomUser = JSON.parse(event.data);
-      console.log(user);
       if (user.artistSeq !== String(userSeq)) {
         setChatRoomUsers((prevUsers) => {
           if (
@@ -259,16 +257,14 @@ const ChatList = () => {
                     key={user.artistSeq}
                     direction="row"
                     alignItems="center"
-                    marginBottom="20px"
                     padding="10px"
                   >
                     <Box
-                      width="50px"
-                      height="50px"
+                      width="60px"
+                      height="60px"
                       borderRadius="full"
                       overflow="hidden"
                       marginRight="10px"
-                      border="2px solid black"
                     >
                       <img
                         src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${user.profilePicUrl}`}
@@ -294,6 +290,22 @@ const ChatList = () => {
                 marginBottom="100px"
                 backgroundColor="gray.100"
                 borderRadius="15px"
+                css={{
+                  "&::-webkit-scrollbar": {
+                    width: "10px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    background: "#f1f1f1",
+                    borderRadius: "10px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#888",
+                    borderRadius: "10px",
+                  },
+                  "&::-webkit-scrollbar-thumb:hover": {
+                    background: "#555",
+                  },
+                }}
               >
                 {chatMessages.map((message, index) => {
                   const isUserMessage =
@@ -317,12 +329,9 @@ const ChatList = () => {
                       borderBottomRightRadius={isUserMessage ? "0" : "20px"}
                       marginRight={isUserMessage ? "10px" : 0}
                       marginLeft={isUserMessage ? 0 : "10px"}
+                      textAlign={isUserMessage ? "right" : "left"}
                     >
-                      <Text
-                        fontSize="16px"
-                        wordBreak="break-word"
-                        textAlign="left"
-                      >
+                      <Text fontSize="16px" wordBreak="break-word">
                         {message.msg}
                       </Text>
                       <Text
@@ -462,6 +471,22 @@ const ChatList = () => {
               overflowY="auto"
               backgroundColor="gray.100"
               borderRadius="15px"
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: "10px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "#f1f1f1",
+                  borderRadius: "10px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#888",
+                  borderRadius: "10px",
+                },
+                "&::-webkit-scrollbar-thumb:hover": {
+                  background: "#555",
+                },
+              }}
             >
               {chatList && chatList.length > 0 ? (
                 sortedChatList.map((item: ChatListResponse) => (
@@ -472,23 +497,57 @@ const ChatList = () => {
                     borderColor="gray.200"
                     mb={4}
                     cursor="pointer"
-                    _hover={{ background: "gray.200", borderRadius: "15px" }}
+                    _hover={{ background: "white", borderRadius: "15px" }}
                     onClick={() => handleChatRoomClick(item.roomSeq)}
                   >
                     <Flex justify="space-between" align="center" mb={2}>
-                      <Text fontFamily="MiceGothicBold" fontSize="18px">
-                        {item.chatRoomResponses
-                          .map((user) => user.nickname)
-                          .join(", ")}
-                      </Text>
-
-                      <Text fontSize="14px" color="gray.500">
+                      <Flex align="center">
+                        {item.chatRoomResponses.map((user, index) => (
+                          <Box
+                            key={index}
+                            width="60px"
+                            height="60px"
+                            borderRadius="full"
+                            overflow="hidden"
+                            marginRight="10px"
+                            border="2px solid white"
+                          >
+                            <img
+                              src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${user.artistImage}`}
+                              alt={`${user.nickname}의 프로필 이미지`}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                              }}
+                            />
+                          </Box>
+                        ))}
+                        <Box>
+                          <Text
+                            fontFamily="MiceGothicBold"
+                            fontSize="18px"
+                            textAlign="left"
+                          >
+                            {item.chatRoomResponses
+                              .map((user) => user.nickname)
+                              .join(", ")}
+                          </Text>
+                          <Text color="gray.700" textAlign="left">
+                            {item.lastMsg.length > 20
+                              ? `${item.lastMsg.slice(0, 20)}...`
+                              : item.lastMsg}
+                          </Text>
+                        </Box>
+                      </Flex>
+                      <Text
+                        fontSize="14px"
+                        color="gray.500"
+                        marginBottom="25px"
+                      >
                         {formatMessageTimeList(item.lastMsgTime)}
                       </Text>
                     </Flex>
-                    <Text color="gray.700" textAlign="left">
-                      {item.lastMsg}
-                    </Text>
                   </Box>
                 ))
               ) : (
