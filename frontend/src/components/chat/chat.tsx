@@ -36,15 +36,16 @@ const ChatModal: React.FC<ChatModalProps> = ({
   handleLeaveChat,
   chatRoomUsers,
   userSeq,
-  // roomSeq,
 }) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
+
   const formatMessageTime = (createdAt: string) => {
     const messageDate = new Date(createdAt);
 
@@ -66,7 +67,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
           height="600px"
           position="relative"
         >
-          {chatRoomUsers.length > 0 &&
+          {chatRoomUsers?.length > 0 &&
             chatRoomUsers.map((user) => (
               <Flex
                 key={user.artistSeq}
@@ -81,7 +82,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
                   borderRadius="full"
                   overflow="hidden"
                   marginRight="10px"
-                  border="2px solid #9000FF"
+                  border="2px solid black"
                 >
                   <img
                     src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${user.profilePicUrl}`}
@@ -105,52 +106,46 @@ const ChatModal: React.FC<ChatModalProps> = ({
             flex="1"
             overflowY="auto"
             marginBottom="100px"
+            backgroundColor="gray.100"
+            borderRadius="15px"
           >
-            {chatMessages.map((message, index) => (
-              <Flex
-                key={index}
-                bg={
-                  String(message.artistSeq) === String(userSeq)
-                    ? "skyblue"
-                    : "gray.100"
-                }
-                p="2"
-                borderRadius="20px"
-                alignSelf={
-                  String(message.artistSeq) === String(userSeq)
-                    ? "flex-end"
-                    : "flex-start"
-                }
-                color={
-                  String(message.artistSeq) === String(userSeq)
-                    ? "white"
-                    : "black"
-                }
-                direction="row"
-                justify="space-between"
-                alignItems="center"
-              >
-                {String(message.artistSeq) === String(userSeq) ? (
-                  <>
-                    <Text fontSize="12px" color="gray.500" marginRight="10px">
-                      {formatMessageTime(message.createdAt)}
-                    </Text>
-                    <Text fontSize="16px" flex="1" fontWeight="bold">
-                      {message.msg}
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <Text fontSize="16px" flex="1" fontWeight="bold">
-                      {message.msg}
-                    </Text>
-                    <Text fontSize="12px" color="gray.500" marginLeft="10px">
-                      {formatMessageTime(message.createdAt)}
-                    </Text>
-                  </>
-                )}
-              </Flex>
-            ))}
+            {chatMessages.map((message, index) => {
+              const isUserMessage =
+                String(message.artistSeq) === String(userSeq);
+
+              return (
+                <Flex
+                  key={index}
+                  direction="column"
+                  alignSelf={isUserMessage ? "flex-end" : "flex-start"}
+                  maxWidth="70%"
+                  marginBottom="5px"
+                  padding="8px 12px"
+                  borderRadius="15px"
+                  position="relative"
+                  fontFamily="MiceGothic"
+                  bg={isUserMessage ? "blue.500" : "gray.200"}
+                  color={isUserMessage ? "white" : "black"}
+                  boxShadow="md"
+                  borderBottomLeftRadius={isUserMessage ? "30px" : "0"}
+                  borderBottomRightRadius={isUserMessage ? "0" : "30px"}
+                  marginRight={isUserMessage ? "10px" : 0}
+                  marginLeft={isUserMessage ? 0 : "10px"}
+                >
+                  <Text fontSize="16px" wordBreak="break-word" textAlign="left">
+                    {message.msg}
+                  </Text>
+                  <Text
+                    fontSize="12px"
+                    color={isUserMessage ? "gray.100" : "gray.500"}
+                    textAlign={isUserMessage ? "right" : "left"}
+                    marginTop="5px"
+                  >
+                    {formatMessageTime(message.createdAt)}
+                  </Text>
+                </Flex>
+              );
+            })}
             <div ref={messageEndRef} />
           </VStack>
 
@@ -177,15 +172,15 @@ const ChatModal: React.FC<ChatModalProps> = ({
               }}
             />
             <Button onClick={handleSendMessage}>
-              <Text fontWeight="bold">전송</Text>
+              <Text fontFamily="MiceGothicBold">전송</Text>
             </Button>
           </Flex>
 
           <Button
             colorScheme="red"
             position="absolute"
-            // top="10px"
             right="30px"
+            fontFamily="MiceGothicBold"
             onClick={() => setIsConfirmModalOpen(true)}
           >
             채팅방 나가기

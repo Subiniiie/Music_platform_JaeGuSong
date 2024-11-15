@@ -32,10 +32,10 @@ const ChatList = () => {
   const [inputMessage, setInputMessage] = useState<string>("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatRoomUsers, setChatRoomUsers] = useState<ChatRoomUser[]>([]);
-  console.log(chatRoomUsers);
   const eventSourceRef = useRef<EventSource | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest"); // 정렬 상태
 
   const API_URL = import.meta.env.VITE_API_URL;
   const authStorage = localStorage.getItem("auth-storage");
@@ -44,7 +44,7 @@ const ChatList = () => {
     : null;
 
   const jwtToken = localStorage.getItem("jwtToken");
-  const chatList = useChatList(API_URL, userSeq, jwtToken);
+  const chatList = useChatList(API_URL, userSeq, jwtToken, modalOpen);
 
   const handleChatButtonClick = () => {
     setModalOpen(!modalOpen);
@@ -82,8 +82,12 @@ const ChatList = () => {
     }
   };
 
-  // 채팅방 유저 누구있는지 ?
+  // 채팅방 누구 있는지 ?
   const handleFetchChatRoomUsers = (roomSeq: number) => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+    }
+
     const eventSource = new EventSource(
       `${API_URL}/api/chats/webflux/artistInfo/${roomSeq}?token=${jwtToken}`
     );
@@ -106,7 +110,7 @@ const ChatList = () => {
     };
 
     eventSource.onerror = (error) => {
-      console.error("SSE 에러:", error);
+      console.error(error);
       eventSource.close();
     };
 
@@ -125,7 +129,7 @@ const ChatList = () => {
     };
 
     eventSource.onerror = (error) => {
-      console.error("SSE 에러:", error);
+      console.error(error);
       eventSource.close();
     };
 
@@ -145,7 +149,7 @@ const ChatList = () => {
         }
       );
       if (response.status === 200) {
-        console.log("채팅방 나가기 성공:", response);
+        console.log("채팅방 나가기 성공:");
         setSelectedRoom(null);
         setChatMessages([]);
         setChatRoomUsers([]);
@@ -166,6 +170,45 @@ const ChatList = () => {
 
     return `${period} ${formattedHours}:${minutes}`;
   };
+
+  const formatMessageTimeList = (createdAt: string) => {
+    const messageDate = new Date(createdAt);
+    const now = new Date();
+
+    const isToday =
+      messageDate.getDate() === now.getDate() &&
+      messageDate.getMonth() === now.getMonth() &&
+      messageDate.getFullYear() === now.getFullYear();
+
+    const isYesterday =
+      messageDate.getDate() === now.getDate() - 1 &&
+      messageDate.getMonth() === now.getMonth() &&
+      messageDate.getFullYear() === now.getFullYear();
+
+    if (isToday) {
+      // 오늘인 경우 시간만 표시
+      const hours = messageDate.getHours();
+      const minutes = messageDate.getMinutes().toString().padStart(2, "0");
+      const period = hours < 12 ? "오전" : "오후";
+      const formattedHours = hours % 12 || 12;
+      return `${period} ${formattedHours}:${minutes}`;
+    } else if (isYesterday) {
+      // 어제인 경우 "어제"로 표시
+      return "어제";
+    } else {
+      // 그 외 날짜는 월/일로 표시
+      const month = (messageDate.getMonth() + 1).toString().padStart(2, "0");
+      const day = messageDate.getDate().toString().padStart(2, "0");
+      return `${month}/${day}`;
+    }
+  };
+
+  // 채팅 목록 정렬
+  const sortedChatList = [...chatList].sort((a, b) => {
+    const dateA = new Date(a.lastMsgTime).getTime();
+    const dateB = new Date(b.lastMsgTime).getTime();
+    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
+  });
 
   useEffect(() => {
     if (messageEndRef.current) {
@@ -225,7 +268,7 @@ const ChatList = () => {
                       borderRadius="full"
                       overflow="hidden"
                       marginRight="10px"
-                      border="2px solid #9000FF"
+                      border="2px solid black"
                     >
                       <img
                         src={`https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${user.profilePicUrl}`}
@@ -249,60 +292,50 @@ const ChatList = () => {
                 flex="1"
                 overflowY="auto"
                 marginBottom="100px"
+                backgroundColor="gray.100"
+                borderRadius="15px"
               >
-                {chatMessages.map((message, index) => (
-                  <Flex
-                    key={index}
-                    bg={
-                      String(message.artistSeq) === String(userSeq)
-                        ? "skyblue"
-                        : "gray.100"
-                    }
-                    p="2"
-                    borderRadius="20px"
-                    alignSelf={
-                      String(message.artistSeq) === String(userSeq)
-                        ? "flex-end"
-                        : "flex-start"
-                    }
-                    color={
-                      String(message.artistSeq) === String(userSeq)
-                        ? "white"
-                        : "black"
-                    }
-                    direction="row"
-                    justify="space-between"
-                    alignItems="center"
-                  >
-                    {String(message.artistSeq) === String(userSeq) ? (
-                      <>
-                        <Text
-                          fontSize="12px"
-                          color="gray.500"
-                          marginRight="10px"
-                        >
-                          {formatMessageTime(message.createdAt)}
-                        </Text>
-                        <Text fontSize="16px" flex="1" fontWeight="bold">
-                          {message.msg}
-                        </Text>
-                      </>
-                    ) : (
-                      <>
-                        <Text fontSize="16px" flex="1" fontWeight="bold">
-                          {message.msg}
-                        </Text>
-                        <Text
-                          fontSize="12px"
-                          color="gray.500"
-                          marginLeft="10px"
-                        >
-                          {formatMessageTime(message.createdAt)}
-                        </Text>
-                      </>
-                    )}
-                  </Flex>
-                ))}
+                {chatMessages.map((message, index) => {
+                  const isUserMessage =
+                    String(message.artistSeq) === String(userSeq);
+
+                  return (
+                    <Flex
+                      key={index}
+                      direction="column"
+                      alignSelf={isUserMessage ? "flex-end" : "flex-start"}
+                      maxWidth="70%"
+                      marginBottom="5px"
+                      padding="8px 12px"
+                      borderRadius="15px"
+                      position="relative"
+                      fontFamily="MiceGothic"
+                      bg={isUserMessage ? "blue.500" : "gray.200"}
+                      color={isUserMessage ? "white" : "black"}
+                      boxShadow="md"
+                      borderBottomLeftRadius={isUserMessage ? "20px" : "0"}
+                      borderBottomRightRadius={isUserMessage ? "0" : "20px"}
+                      marginRight={isUserMessage ? "10px" : 0}
+                      marginLeft={isUserMessage ? 0 : "10px"}
+                    >
+                      <Text
+                        fontSize="16px"
+                        wordBreak="break-word"
+                        textAlign="left"
+                      >
+                        {message.msg}
+                      </Text>
+                      <Text
+                        fontSize="12px"
+                        color={isUserMessage ? "gray.100" : "gray.500"}
+                        textAlign={isUserMessage ? "right" : "left"}
+                        marginTop="5px"
+                      >
+                        {formatMessageTime(message.createdAt)}
+                      </Text>
+                    </Flex>
+                  );
+                })}
                 <div ref={messageEndRef} />
               </VStack>
 
@@ -329,14 +362,14 @@ const ChatList = () => {
                   }}
                 />
                 <Button onClick={handleSendMessage}>
-                  <Text fontWeight="bold">전송</Text>
+                  <Text fontFamily="MiceGothicBold">전송</Text>
                 </Button>
               </Flex>
               <Button
                 colorScheme="red"
                 position="absolute"
-                // top="10px"
                 right="30px"
+                fontFamily="MiceGothicBold"
                 onClick={() => setIsConfirmModalOpen(true)}
               >
                 채팅방 나가기
@@ -396,19 +429,42 @@ const ChatList = () => {
             <Box
               padding="20px"
               backgroundColor="white"
-              borderBottom="1px solid"
-              borderColor="gray.200"
               position="sticky"
               top="0"
               zIndex="1"
             >
-              <Text fontSize="24px" fontWeight="bold" color="black">
-                채팅
-              </Text>
+              <Flex justify="space-between" align="center">
+                <Text fontSize="24px" fontWeight="bold" color="black">
+                  채팅
+                </Text>
+
+                <select
+                  value={sortOrder}
+                  onChange={(e) =>
+                    setSortOrder(e.target.value as "latest" | "oldest")
+                  }
+                  style={{
+                    padding: "8px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    fontSize: "16px",
+                  }}
+                >
+                  <option value="latest">최신순</option>
+                  <option value="oldest">오래된순</option>
+                </select>
+              </Flex>
             </Box>
-            <Box padding="20px">
+
+            <Box
+              padding="20px"
+              height="500px"
+              overflowY="auto"
+              backgroundColor="gray.100"
+              borderRadius="15px"
+            >
               {chatList && chatList.length > 0 ? (
-                chatList.map((item: ChatListResponse) => (
+                sortedChatList.map((item: ChatListResponse) => (
                   <Box
                     key={item.roomSeq}
                     padding={4}
@@ -416,23 +472,18 @@ const ChatList = () => {
                     borderColor="gray.200"
                     mb={4}
                     cursor="pointer"
-                    _hover={{ background: "gray.100" }}
+                    _hover={{ background: "gray.200", borderRadius: "15px" }}
                     onClick={() => handleChatRoomClick(item.roomSeq)}
                   >
                     <Flex justify="space-between" align="center" mb={2}>
-                      <Text fontWeight="bold" fontSize="18px">
+                      <Text fontFamily="MiceGothicBold" fontSize="18px">
                         {item.chatRoomResponses
                           .map((user) => user.nickname)
                           .join(", ")}
                       </Text>
+
                       <Text fontSize="14px" color="gray.500">
-                        {new Date(item.lastMsgTime).toLocaleTimeString(
-                          "ko-KR",
-                          {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )}
+                        {formatMessageTimeList(item.lastMsgTime)}
                       </Text>
                     </Flex>
                     <Text color="gray.700" textAlign="left">
@@ -441,7 +492,7 @@ const ChatList = () => {
                   </Box>
                 ))
               ) : (
-                <Text>채팅방이 없습니다.</Text>
+                <Text fontFamily="MiceGothicBold">채팅방이 없습니다.</Text>
               )}
             </Box>
           </Box>

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Box, Text, Flex, Button } from "@chakra-ui/react";
 import GameDescriptionModal from "../../../components/game/game-description";
-import Chat from "@/components/chat/chatlist";
 type GameType = "keyboards" | "drum" | "vocal" | null;
 
 const Game: React.FC = () => {
@@ -116,7 +115,6 @@ const Game: React.FC = () => {
           </Text>
         </Button>
       </Flex>
-      <Chat />
       <GameDescriptionModal
         isOpen={isModalOpen}
         onClose={closeModal}

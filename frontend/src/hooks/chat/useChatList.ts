@@ -1,32 +1,39 @@
 import { useState, useEffect, useRef } from "react";
+
 const useChatList = (
   API_URL: string,
   userSeq: string | null,
-  jwtToken: string | null
+  jwtToken: string | null,
+  resetKey: boolean
 ) => {
   const [chatList, setChatList] = useState<any[]>([]);
   const eventSourceRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
-    if (!userSeq) return;
+    if (!userSeq || !jwtToken) return;
 
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+    }
     const eventSource = new EventSource(
       `${API_URL}/api/chats/webflux/${userSeq}?token=${jwtToken}`
     );
 
     eventSource.onmessage = (event) => {
-      const users = JSON.parse(event.data);
-      console.log(users);
+      const newChat = JSON.parse(event.data);
+
       setChatList((prevList) => {
-        if (prevList.some((chat) => chat.roomSeq === users.roomSeq)) {
-          return prevList;
+        if (prevList.some((chat) => chat.roomSeq === newChat.roomSeq)) {
+          return prevList.map((chat) =>
+            chat.roomSeq === newChat.roomSeq ? { ...chat, ...newChat } : chat
+          );
         }
-        return [...prevList, users];
+        return [...prevList, newChat];
       });
     };
 
     eventSource.onerror = (error) => {
-      console.error("SSE 에러:", error);
+      console.error(error);
       eventSource.close();
     };
 
@@ -37,7 +44,7 @@ const useChatList = (
         eventSourceRef.current.close();
       }
     };
-  }, [API_URL, userSeq, jwtToken]);
+  }, [API_URL, userSeq, jwtToken, resetKey]);
 
   return chatList;
 };
