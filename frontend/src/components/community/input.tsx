@@ -92,8 +92,12 @@ const Input: React.FC = () => {
           },
         }
       );
+      if (getCrewSeq !== 0) {
+        navigate(paths.community.generalCommunity(getCrewSeq));
+      } else {
+        navigate(paths.community.myCommunity);
+      }
       setGetCrewSeq(0); // 상태를 0으로 리셋
-      navigate(paths.community.myCommunity);
     } catch (error) {
       console.error("Error while submitting form:", error);
     }

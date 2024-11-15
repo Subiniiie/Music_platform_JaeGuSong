@@ -12,7 +12,8 @@ import paths from "@/configs/paths";
 import Modal from "@/components/common/Modal";
 import useCommunityDetail from "@/hooks/community/useCommunityDetail";
 import useHeaderStore from "@/stores/headerStore";
-import { Alert } from "@/components/ui/alert"
+import useReviewStore from "@/stores/review";
+
 
 const CommunityDetailView: React.FC = () => {
   const { openDeleteModal, setOpenDeleteModal, deleteArticle } = useCommunityDetail();
@@ -33,6 +34,8 @@ const CommunityDetailView: React.FC = () => {
     otherUserNickname,
     otherUserProfileImage,
   } = useHeaderStore((state) => state);
+  const { changeReview } = useReviewStore();
+  
 
   const { id } = useParams<{ id: string }>();
   const API_URL = import.meta.env.VITE_API_URL;
@@ -74,6 +77,8 @@ const CommunityDetailView: React.FC = () => {
       setState(article.state || "");
       setTitle(article.title || "");
 
+      console.log('게시물 상세 데이터', article)
+
       const commentSeqs = article.comments.map((comment) => comment.commentSeq);
     } catch (error) {
       console.error(error);
@@ -82,7 +87,7 @@ const CommunityDetailView: React.FC = () => {
 
   useEffect(() => {
     getArticleDetail();
-  }, [id]);
+  }, [id, changeReview]);
 
   const changeMyLiked = () => {
     const newLikedStatus = !isLiked;
