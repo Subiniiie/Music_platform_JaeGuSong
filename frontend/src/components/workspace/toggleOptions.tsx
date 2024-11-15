@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 
 export default function ToggleOptions({ onSelectSession }) {
+
   return (
     <Stack gap="5" width="180px">
       <SelectRoot key={"xs"} size={"xs"} collection={frameworks}>
@@ -15,6 +16,7 @@ export default function ToggleOptions({ onSelectSession }) {
           <SelectValueText
             fontFamily="MiceGothic"
             fontSize={11}
+            color={"black"}
             placeholder="세션을 선택해주세요"
           />
         </SelectTrigger>
@@ -25,7 +27,7 @@ export default function ToggleOptions({ onSelectSession }) {
               fontSize={10}
               item={session}
               key={session.value}
-              onClick={() => onSelectSession(session.value)}
+              onClick={() => onSelectSession(session.label)}
             >
               {session.label}
             </SelectItem>
@@ -38,13 +40,13 @@ export default function ToggleOptions({ onSelectSession }) {
 
 const frameworks = createListCollection({
   items: [
-    { label: "보컬", value: "vocal" },
-    { label: "피아노", value: "piano" },
-    { label: "신시사이저", value: "synthesizer" },
-    { label: "어쿠스틱 기타", value: "acoustic_guitar" },
-    { label: "일렉트릭 기타", value: "electric_guitar" },
-    { label: "베이스", value: "bass" },
-    { label: "드럼", value: "drum" },
+    { label: "VOCAL", value: "vocal" },
+    { label: "PIANO", value: "piano" },
+    { label: "SYNTHESIZER", value: "synthesizer" },
+    { label: "ACOUSTIC GUITAR", value: "acoustic_guitar" },
+    { label: "ELECTRIC GUITAR", value: "electric_guitar" },
+    { label: "BASS", value: "bass" },
+    { label: "DRUM", value: "drum" },
     // { label: "etc.", value: "etc." },
   ],
 });

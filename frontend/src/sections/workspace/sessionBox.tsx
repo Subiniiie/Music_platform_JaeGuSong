@@ -9,9 +9,9 @@ interface SessionBoxProps {
     type: string;
     url: string;
   };
-  workspaceSeq: number; // workspaceSeq를 props로 추가
-  // onDeleteSession: (sessionId: string) => void; // 삭제 핸들러 추가
+  workspaceSeq: number;
   onSessionDelete: (sessionId: number) => void;
+  role: string;
 }
 
 // export default function SessionBox({ sessions, workspaceSeq, onDeleteSession }: SessionBoxProps) {
@@ -19,6 +19,7 @@ export default function SessionBox({
   sessions,
   workspaceSeq,
   onSessionDelete,
+  role,
 }: SessionBoxProps) {
   return (
     <Stack>
@@ -31,8 +32,9 @@ export default function SessionBox({
           startPoint={session.startPoint}
           endPoint={session.endPoint}
           workspaceSeq={workspaceSeq}
-          // onDelete={onDeleteSession} // 삭제 핸들러 전달
-          onSessionDelete={onSessionDelete}
+          // onSessionDelete={onSessionDelete}
+          onSessionDelete={role === "MASTER" ? onSessionDelete : undefined}
+          role={role}
         />
       ))}
     </Stack>

@@ -1,5 +1,6 @@
 import { Text, Stack, Flex } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
+import ForkButton from "@/components/workspace/forkButton";
 import { useState } from "react";
 import axios from "axios";
 
@@ -10,10 +11,11 @@ interface WsHeaderProps {
     originSinger: string;
     state: string;
   };
-  workspaceSeq: number; // workspaceSeq를 props로 추가
+  workspaceSeq: number;
+  role: string;
 }
 
-export default function WsHeader({ wsDetails, workspaceSeq }: WsHeaderProps) {
+export default function WsHeader({ wsDetails, workspaceSeq, role }: WsHeaderProps) {
   const [isPublic, setIsPublic] = useState(wsDetails.state === "PUBLIC");
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -46,14 +48,21 @@ export default function WsHeader({ wsDetails, workspaceSeq }: WsHeaderProps) {
             {wsDetails.originTitle || "제목 없음"} -{" "}
             {wsDetails.originSinger || "아티스트 없음"}
           </Text>
-
-          <Text fontSize="sm" color="gray.400">
-            최종 저장일시: 2024-10-24 23:10
-          </Text>
+          {role === "MASTER" && (
+            <Text fontSize="sm" color="gray.400">
+              최종 저장일시: 2024-10-24 23:10
+            </Text>
+          )}
         </Stack>
         <Flex>
-          <Button>저장</Button>
-          <Button onClick={toggleState}>{isPublic ? "비공개" : "공유"}</Button>
+          {role === "MASTER" ? (
+            <>
+              <Button>저장</Button>
+              <Button onClick={toggleState}>{isPublic ? "비공개" : "공유"}</Button>
+            </>
+          ) : (
+            <ForkButton />
+          )}
         </Flex>
       </Flex>
     </Stack>
