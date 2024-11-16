@@ -1,7 +1,9 @@
 import { Text, Stack, Flex, Heading } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import ForkButton from "@/components/workspace/forkButton";
+import { toaster } from "@/components/ui/toaster";
 import { useState } from "react";
+import { useWsDetailStore } from "@/stores/wsDetailStore";
 import axios from "axios";
 
 interface WsHeaderProps {
@@ -23,6 +25,9 @@ export default function WsHeader({
 }: WsHeaderProps) {
   const [isPublic, setIsPublic] = useState(wsDetails.state === "PUBLIC");
 
+  const sessions = useWsDetailStore((state) => state.sessions)
+  const checkedSessions = useWsDetailStore((state) => state.checkedSessions)
+
   const API_URL = import.meta.env.VITE_API_URL;
 
   const toggleState = async () => {
@@ -34,6 +39,7 @@ export default function WsHeader({
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -52,6 +58,59 @@ export default function WsHeader({
     hour: "2-digit",
     minute: "2-digit",
   });
+
+  const handleSaveButton = async () => {
+    try {
+      const storedToken = localStorage.getItem("jwtToken");
+
+      // 체크된 세션 정보만 저장하거나, 체크된 세션이 없으면 모든 세션 저장
+      const sessionsToSave = checkedSessions.length
+      ? checkedSessions.map((id) => ({
+          soundSeq: parseInt(id, 10), // key를 soundSeq로 사용
+          startPoint: parseFloat(sessions[id].startPoint), // Double로 변환
+          endPoint: parseFloat(sessions[id].endPoint), // Double로 변환
+          type: sessions[id].type || "vocal", // type 값이 없다면 기본값 "ETC"으로 설정
+        }))
+      : Object.entries(sessions).map(([key, value]) => ({
+          soundSeq: parseInt(key, 10), // key를 soundSeq로 사용
+          startPoint: parseFloat(value.startPoint), // Double로 변환
+          endPoint: parseFloat(value.endPoint), // Double로 변환
+          type: value.type || "vocal", // type 값이 없다면 기본값 "ETC"으로 설정
+        }));
+
+      // const requestBody = {
+      //   sessions: sessionsToSave,
+      // };
+
+
+      console.log("sessionsToSave:", sessionsToSave); // 전송 데이터 확인
+
+      await axios.post(
+        `${API_URL}/api/workspaces/${workspaceSeq}/point`,
+        // requestBody,
+        {
+          sessions: sessionsToSave,
+        },
+        // formData,
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+            // "Content-Type": "multipart/form-data", // 멀티파트 요청
+          },
+        }
+      );
+      toaster.create({
+        description: "변경사항 저장이 되었습니다.",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error updating workspace state:", error);
+      toaster.create({
+        description: "변경사항 저장에 실패했습니다.",
+        type: "error",
+      });
+    }
+  };
 
   return (
     <Stack>
@@ -86,6 +145,7 @@ export default function WsHeader({
                 width="60px"
                 height="40px"
                 fontWeight="bold"
+                onClick={handleSaveButton}
               >
                 저장
               </Button>

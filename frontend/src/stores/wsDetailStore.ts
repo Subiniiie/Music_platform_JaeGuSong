@@ -4,6 +4,7 @@ import WaveSurfer from "wavesurfer.js";
 interface SessionData {
   startPoint: number;
   endPoint: number;
+  type: number;
   check: boolean;
   player: WaveSurfer | null;
   duration: number;
@@ -66,6 +67,7 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
         originalSessions[session.soundSeq] = {
           startPoint: session.startPoint,
           endPoint: session.endPoint,
+          type: session.type,
           check: false,
           player: null, // wavesurfer는 null로 초기화
           duration: 0,
