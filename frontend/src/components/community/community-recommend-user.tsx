@@ -9,7 +9,6 @@ import {
   } from "@/components/ui/pagination";
   import useCommon from '@/hooks/common/common';
 
-const mockDataInitial = Array.from({ length: 20 }, (_, i) => `아이템 ${i + 1}`);
 
 const CommunityRecommendUser: React.FC = () => {
     const { API_URL, storeMySeq, storedToken, getMySeq } = useCommon();
@@ -41,6 +40,10 @@ const CommunityRecommendUser: React.FC = () => {
         getRecommentUserByMe();
     }, [API_URL, storeMySeq])
 
+    useEffect(() => {
+        console.log('추천받은 유저', recommendedByUsers, recommendedByUsers.length)
+    }, [recommendedByUsers])
+
     const pageSize = 8; // 한 페이지에 보여줄 아이템 수 (2행 x 2열)
     const autoPageSize = 1;
 
@@ -48,30 +51,32 @@ const CommunityRecommendUser: React.FC = () => {
     const [autoInitialCurrentPage, setAutoInitialCurrentPage] = useState(1);
     const [followlCurrentPage, setFollowlCurrentPage] = useState(1);
     const startIdx = (initialCurrentPage - 1) * pageSize;
-    const InitialCurrentData = mockDataInitial.slice(startIdx, startIdx + pageSize);
-    const autoInitialCurrentData = mockDataInitial.slice((autoInitialCurrentPage - 1) * autoPageSize, autoInitialCurrentPage * autoPageSize);
+    const InitialCurrentData = recommendedByUsers.slice(startIdx, startIdx + pageSize);
+    const autoInitialCurrentData = recommendedByUsers.slice((autoInitialCurrentPage - 1) * autoPageSize, autoInitialCurrentPage * autoPageSize);
 
     const handlePageChange = (page: number) => {
     setInitialCurrentPage(page);
     };
     
     const startAutoIdx = (autoInitialCurrentPage - 1) * pageSize;
-    const autoInitialData = mockDataInitial.slice(startAutoIdx, startAutoIdx + pageSize);
+    const autoInitialData = recommendedByUsers.slice(startAutoIdx, startAutoIdx + pageSize);
     
     useEffect(() => {
-    // 페이지네이션을 자동으로 변경하기 위한 setInterval
-    const intervalId = setInterval(() => {
-        setAutoInitialCurrentPage((prevPage) => {
-        if (prevPage * autoPageSize >= mockDataInitial.length) {
-            return 1; // 마지막 페이지에 도달하면 첫 번째 페이지로 돌아감
-        }
-        return prevPage + 1;
-        });
-    }, 2000); // 2초 간격으로 페이지 변경
-
-    // 컴포넌트가 언마운트될 때 interval을 정리
-    return () => clearInterval(intervalId);
-    }, []);
+        if (recommendedByUsers.length === 0) return; // 데이터가 없으면 자동 페이지 변경을 하지 않음
+    
+        // 페이지 전환을 위한 setInterval
+        const intervalId = setInterval(() => {
+            setAutoInitialCurrentPage((prevPage) => {
+                if (prevPage * autoPageSize >= recommendedByUsers.length) {
+                    return 1; // 마지막 페이지에 도달하면 첫 번째 페이지로 돌아감
+                }
+                return prevPage + 1;
+            });
+        }, 2000); // 2초 간격으로 페이지 변경
+    
+        // 컴포넌트가 언마운트되거나 데이터 변경 시 interval을 정리
+        return () => clearInterval(intervalId);
+    }, [recommendedByUsers]); // recommendedByUsers가 변경될 때마다 interval을 새로 설정
 
       
     return (
@@ -80,7 +85,7 @@ const CommunityRecommendUser: React.FC = () => {
             {recommendedByUsers.length > 0 ? (
                 <Box marginTop="15px" display="flex" flexDirection="row" height="100%">
                     <Box width="50%" height="100%" paddingLeft="200px">
-                        <PaginationRoot count={mockDataInitial.length} pageSize={pageSize} defaultPage={1}>
+                        <PaginationRoot count={recommendedByUsers.length} pageSize={pageSize} defaultPage={1}>
                             <HStack gap="4" justifyContent="flex-end" mt="4">
                                 <PaginationPrevTrigger 
                                     onClick={() => handlePageChange(followlCurrentPage - 1)}
@@ -93,16 +98,18 @@ const CommunityRecommendUser: React.FC = () => {
                         </PaginationRoot>
                         {/* 2열 그리드 레이아웃 */}
                         <Grid templateColumns="repeat(4, 1fr)" gap={2} marginTop="15px">
-                            {InitialCurrentData.map((item, index) => (
+                            {recommendedByUsers.map((user, index) => (
                                 <Box key={index} background="gray.100" borderRadius="md" width="95px" height="95px">
-                                <Text color="black">{item}</Text>
+                                <Text color="black">{user.name}</Text>
                                 </Box>
                             ))}
                         </Grid>
                     </Box>
                     <Box width="50%" height="100%" display="flex" marginLeft="20px">
                         <Box background="white" borderRadius="md" padding="10px" width="185px" height="260px" margin="20px 0">
-                            <Text color="black">{autoInitialCurrentData}</Text>
+                        {autoInitialCurrentData.map((user: any, index: number) => (
+        <Text key={index} color="black">{user.name}</Text>
+    ))}
                         </Box>
                     </Box>
                 </Box>
