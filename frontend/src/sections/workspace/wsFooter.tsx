@@ -34,7 +34,8 @@ export default function WsFooter({
   role,
 }: WsFooterProps) {
   // Zustand store에서 전체 재생 및 정지 제어를 위한 상태와 함수 가져오기
-  const isPlaying = useWsDetailStore((state) => state.isPlaying);
+  const isGlobalPlaying = useWsDetailStore((state) => state.isGlobalPlaying);
+  const checkedSessions = useWsDetailStore((state) => state.checkedSessions);
   const playAll = useWsDetailStore((state) => state.playAll);
   const pauseAll = useWsDetailStore((state) => state.pauseAll);
   const stopAll = useWsDetailStore((state) => state.stopAll);
@@ -42,15 +43,23 @@ export default function WsFooter({
   const globalStartPoint = useWsDetailStore((state) => state.globalStartPoint);
   const globalEndPoint = useWsDetailStore((state) => state.globalEndPoint);
   const globalDuration = useWsDetailStore((state) => state.globalDuration);
-  const sessions = useWsDetailStore((state) => state.sessions);
 
-  // 전체 재생 및 일시정지 제어 함수
-  const handlePlayPause = () => {
-    if (isPlaying) {
-      pauseAll(); // 전체 일시정지
+  const handleGlobalPlayPause = () => {
+    console.log('안녕, 난 handleGlobalPlayPause. 지금 내 mode는 글로벌이야. 여기는 wsFooter.')
+    console.log('globalStartPoint는', globalStartPoint)
+    console.log('globalEndPoint는', globalEndPoint)
+    console.log('체크된 세션들은', checkedSessions)
+
+    if (isGlobalPlaying) {
+      pauseAll();
     } else {
-      playAll(); // 전체 재생
+      playAll();
     }
+  }
+
+  const handleStop = () => {
+    console.log('안녕, 난 handleStop. 지금 내 mode는 글로벌이야. 여기는 wsFooter.')
+    stopAll();
   };
 
   const formatSecondsToMinutes = (seconds: number): string => {
@@ -63,9 +72,9 @@ export default function WsFooter({
     <Stack>
       <Flex justifyContent="space-between" position="relative" gap="16px">
         <Play
-          isPlaying={isPlaying} // 전체 재생 상태 전달
-          onPlayPause={handlePlayPause} // 전체 재생 및 일시정지 함수 전달
-          onStop={stopAll} // 전체 정지 함수 전달
+          isPlaying={isGlobalPlaying} // 전체 재생 상태 전달
+          onPlayPause={handleGlobalPlayPause} // 전체 재생 및 일시정지 함수 전달
+          onStop={handleStop} // 전체 정지 함수 전달
           mode="all" // 전체 모드로 설정
         />
 

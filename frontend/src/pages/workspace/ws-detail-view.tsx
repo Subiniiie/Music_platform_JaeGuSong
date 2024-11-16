@@ -19,6 +19,9 @@ export default function WsDetailView() {
   const sessions = useWsDetailStore((state) => state.sessions)
   const setSessions = useWsDetailStore((state) => state.setSessions);
   const resetStore = useWsDetailStore((state) => state.resetStore);
+  const globalStartPoint = useWsDetailStore((state) => state.globalStartPoint);
+  const globalEndPoint = useWsDetailStore((state) => state.globalEndPoint);
+  const globalDuration = useWsDetailStore((state) => state.globalDuration);
   const location = useLocation();
 
   const [wsDetails, setWsDetails] = useState<{
@@ -83,6 +86,9 @@ export default function WsDetailView() {
     if (workspaceSeq) {
       fetchWorkspaceDetail();
       console.log('store 의 sessions:', sessions)
+      console.log('globalStartPoint :', globalStartPoint)
+      console.log('globalEndPoint :', globalEndPoint)
+      console.log('globalDuration :', globalDuration)
     }
   }, [workspaceSeq, setSessions, shouldReloadSessionBox]);
 

@@ -13,8 +13,10 @@ interface wsDetailStore {
   sessions: Record<string, SessionData>;
   globalStartPoint: number;
   globalEndPoint: number;
-  globalPlayPoint: number;
+  globalCurrentTime: number;
   globalDuration: number;
+  isGlobalPlaying: boolean;
+  checkedSessions: string[];
   shouldReloadSessionBox: boolean,
 
   setSessions: (newSessions) => void;
@@ -24,7 +26,8 @@ interface wsDetailStore {
     sessionId: string,
     data: Partial<SessionData>
   ) => void;
-  toggleCheck: (sessionId: string) => void;
+  // toggleCheck: (sessionId: string) => void;
+  setCheck: (sessionId: string, isChecked: boolean) => void;
 
   updateGlobalStartPoint: (newStartPoint?: number) => void;
   updateGlobalEndPoint: (newEndPoint?: number) => void;
@@ -35,15 +38,22 @@ interface wsDetailStore {
   resetStore: () => void;
 
   triggerSessionBoxReload: () => void;
+
+  playAll: () => void;
+  pauseAll: () => void;
+  stopAll: () => void;
+  resetGlobalPlayback: () => void;
 }
 
 export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
   sessions: {},
 
-  globalStartPoint: 0, // 초기값은 세션의 최소값으로 설정될 예정
+  globalStartPoint: Infinity, // 초기값은 세션의 최소값으로 설정될 예정
   globalEndPoint: 0,
-  globalPlayPoint: 0,
+  globalCurrentTime: 0,
   globalDuration: 180,
+  isGlobalPlaying: false,
+  checkedSessions: [],
   shouldReloadSessionBox: false,
 
   // 서버에서 받은 세션 데이터를 초기화
@@ -69,21 +79,38 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
   addSession: (sessionId, player) =>
     set((state) => {
       const duration = player.getDuration();
+      console.log('duration :', duration)
 
       const newSessions = {
         ...state.sessions,
-        [sessionId]: { startPoint: 0, endPoint: 0, check: false, player, duration },
-      };
+        [sessionId]: {
+          ...state.sessions[sessionId],
+          player, // WaveSurfer 인스턴스 저장
+          duration,
+        },      };
+
+      const checkedSessions = state.checkedSessions;
+      console.log('checkedSessions :', checkedSessions)
+      
+      // checkedSessions를 기반으로 globalStartPoint와 globalEndPoint 재계산
+      const checkedStartPoints = checkedSessions.map(
+        (id) => newSessions[id]?.startPoint ?? Infinity
+      );
+      const checkedEndPoints = checkedSessions.map(
+        (id) => newSessions[id]?.endPoint ?? -Infinity
+      );
+
+      console.log('checkedStartPoints :', checkedStartPoints)
 
       // 세션 추가 후 글로벌 값 재계산
       return {
         sessions: newSessions,
-        globalStartPoint: Math.min(
-          ...Object.values(newSessions).map((s) => s.startPoint)
-        ),
-        globalEndPoint: Math.max(
-          ...Object.values(newSessions).map((s) => s.endPoint)
-        ),
+        globalStartPoint: checkedStartPoints.length
+          ? Math.min(...checkedStartPoints)
+          : Infinity, // checkedSessions가 없으면 0으로 초기화
+        globalEndPoint: checkedEndPoints.length
+          ? Math.max(...checkedEndPoints)
+          : 0, // checkedSessions가 없으면 0으로 초기화
         globalDuration: Math.max(
           ...Object.values(newSessions).map((s) => s.duration || 1800) // duration 중 가장 큰 값
         ),
@@ -94,16 +121,25 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
     set((state) => {
       const newSessions = { ...state.sessions };
       delete newSessions[sessionId];
+
+      const checkedSessions = state.checkedSessions;
+
+      const checkedStartPoints = checkedSessions.map(
+        (id) => newSessions[id]?.startPoint ?? Infinity
+      );
+      const checkedEndPoints = checkedSessions.map(
+        (id) => newSessions[id]?.endPoint ?? -Infinity
+      );
       
       // 세션 제거 후 글로벌 값 재계산
       return {
         sessions: newSessions,
-        globalStartPoint: Object.keys(newSessions).length
-          ? Math.min(...Object.values(newSessions).map((s) => s.startPoint))
-          : 0,
-        globalEndPoint: Object.values(newSessions).length
-          ? Math.max(...Object.values(newSessions).map((s) => s.endPoint))
-          : 0,
+        globalStartPoint: checkedStartPoints.length
+          ? Math.min(...checkedStartPoints)
+          : Infinity, // checkedSessions가 없으면 0으로 초기화
+        globalEndPoint: checkedEndPoints.length
+          ? Math.max(...checkedEndPoints)
+          : 0, // checkedSessions가 없으면 0으로 초기화
         globalDuration: Object.keys(newSessions).length
           ? Math.max(...Object.values(newSessions).map((s) => s.duration || 1800))
           : 0, // 세션이 없으면 0으로 초기화
@@ -119,28 +155,138 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
           ...data,
         },
       };
+      console.log('여기는 store. updateSession 실행했고, 글로벌 값 재계산 전이야.')
+      console.log("Updated sessions:", updatedSessions); // 세션 업데이트 상태 확인
 
-      // 세션 업데이트 후 글로벌 값 재계산
+      const checkedSessions = state.checkedSessions;
+      console.log('checkedSessions :', checkedSessions)
+
+      // checkedSessions를 기반으로 globalStartPoint와 globalEndPoint 재계산
+      const checkedStartPoints = checkedSessions.map(
+        (id) => updatedSessions[id]?.startPoint ?? Infinity
+      );
+      const checkedEndPoints = checkedSessions.map(
+        (id) => updatedSessions[id]?.endPoint ?? -Infinity
+      );
+
+      console.log('checkedStartPoints :', checkedStartPoints)
+
       return {
         sessions: updatedSessions,
-        globalStartPoint: Math.min(
-          ...Object.values(updatedSessions).map((s) => s.startPoint)
-        ),
-        globalEndPoint: Math.max(
-          ...Object.values(updatedSessions).map((s) => s.endPoint)
-        ),
+        globalStartPoint: checkedStartPoints.length
+          ? Math.min(...checkedStartPoints)
+          : Infinity, // checkedSessions가 없으면 0으로 초기화
+        globalEndPoint: checkedEndPoints.length
+          ? Math.max(...checkedEndPoints)
+          : 0, // checkedSessions가 없으면 0으로 초기화
       };
     }),
 
-  ToggleCheck: (sessionId) =>
-    set((state) => ({
-      sessions: {
-        ...state.sessions,
-        [sessionId]: {
-          ...state.sessions[sessionId],
-          check: !state.sessions[sessionId]?.check,
-        },
-      },
+  // toggleCheck: (sessionId) =>
+  //   set((state) => {
+  //     const session = state.sessions[sessionId];
+  //     if (!session) return {};
+  //     session.check = !session.check;
+
+  //     const newCheckedSessions = session.check
+  //       ? [...state.checkedSessions, sessionId]
+  //       : state.checkedSessions.filter((id) => id !== sessionId);
+
+  //     return {
+  //       sessions: { ...state.sessions, [sessionId]: session },
+  //       checkedSessions: newCheckedSessions,
+  //     };
+  //   }),
+
+  // 세션 체크 상태를 업데이트하는 메서드
+  setCheck: (sessionId, isChecked) =>
+    set((state) => {
+      const session = state.sessions[sessionId];
+      if (!session) return {};
+
+      // 체크 상태 업데이트
+      session.check = isChecked;
+
+      const newCheckedSessions = isChecked
+        ? [...state.checkedSessions, sessionId]
+        : state.checkedSessions.filter((id) => id !== sessionId);
+
+      // 글로벌 시작/종료 지점 계산
+      const checkedSessions = newCheckedSessions.map((id) => state.sessions[id]);
+      const globalStartPoint = Math.min(
+        ...checkedSessions.map((s) => s.startPoint),
+        Infinity
+      );
+      const globalEndPoint = Math.max(
+        ...checkedSessions.map((s) => s.endPoint),
+        -Infinity
+      );
+
+      return {
+        sessions: { ...state.sessions, [sessionId]: session },
+        checkedSessions: newCheckedSessions,
+        globalStartPoint: isFinite(globalStartPoint) ? globalStartPoint : 0,
+        globalEndPoint: isFinite(globalEndPoint) ? globalEndPoint : 0,
+      };
+    }),
+
+  playAll: () => {
+    const { sessions, checkedSessions, globalStartPoint, globalEndPoint } = get();
+    checkedSessions.forEach((sessionId) => {
+      const session = sessions[sessionId];
+      if (!session || !session.player) return;
+
+      // 기존 "audioprocess" 이벤트 제거
+      session.player.un("audioprocess");
+      
+      session.player.on("audioprocess", () => {
+        const currentTime = session.player?.getCurrentTime() || 0;
+        if (currentTime < session.startPoint || currentTime > session.endPoint) {
+          session.player?.setVolume(0);
+        } else {
+          session.player.setVolume(1);
+        }
+        
+        if (currentTime > globalEndPoint) {
+          session.player.stop();
+          set({ isGlobalPlaying: false });
+        }
+      });
+
+      session.player.setVolume(0);
+      session.player.setTime(globalStartPoint);
+      session.player.play();
+    });
+
+    set({ isGlobalPlaying: true });
+  },
+
+  pauseAll: () => {
+    const { sessions, checkedSessions } = get();
+    checkedSessions.forEach((sessionId) => {
+      const session = sessions[sessionId];
+      session?.player?.pause();
+    });
+
+    set({ isGlobalPlaying: false });
+  },
+
+  stopAll: () => {
+    const { sessions, checkedSessions, globalStartPoint } = get();
+    checkedSessions.forEach((sessionId) => {
+      const session = sessions[sessionId];
+      session?.player?.stop();
+      session?.player?.setTime(globalStartPoint);
+    })
+
+    set({ isGlobalPlaying: false, globalCurrentTime: globalStartPoint });
+  },
+
+  resetGlobalPlayback: () =>
+    set(() => ({
+      globalCurrentTime: 0,
+      isGlobalPlaying: false,
+      checkedSessions: [],
     })),
 
   // 유저가 직접 설정하는 경우
@@ -175,7 +321,7 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
       sessions: {},
       globalStartPoint: 0,
       globalEndPoint: 0,
-      globalPlayPoint: 0,
+      globalCurrentTime: 0,
       globalDuration: 1800, // 초기화
     })),
 

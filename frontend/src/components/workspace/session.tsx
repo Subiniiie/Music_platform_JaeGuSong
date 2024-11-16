@@ -49,18 +49,23 @@ export default function Session({
   const [currentTime, setCurrentTime] = useState(0);
   const [cursor1, setCursor1] = useState(initialStartPoint); // 시작 커서 위치
   const [cursor2, setCursor2] = useState(initialEndPoint); // 종료 커서 위치
-
-  // startPoint, endPoint - 재렌더링 방지
-  const startPointRef = useRef(initialStartPoint);
-  const endPointRef = useRef(initialEndPoint);
-
+  
   // 상태 관리 및 store 관련
   const addSession = useWsDetailStore((state) => state.addSession);
   const removeSession = useWsDetailStore((state) => state.removeSession);
   const updateSession = useWsDetailStore((state) => state.updateSession);
-  const toggleCheck = useWsDetailStore((state) => state.toggleCheck);
+  // const toggleCheck = useWsDetailStore((state) => state.toggleCheck);
+  const setCheck = useWsDetailStore((state) => state.setCheck);
+  const sessions = useWsDetailStore((state) => state.sessions);
+  const storeStartPoint = useWsDetailStore((state) => state.sessions[sessionId]?.startPoint);
+  const storeEndPoint = useWsDetailStore((state) => state.sessions[sessionId]?.endPoint);
+  const storeCheck = useWsDetailStore((state) => state.sessions[sessionId]?.check);
   const API_URL = import.meta.env.VITE_API_URL;
 
+  // startPoint, endPoint - 재렌더링 방지
+  const startPointRef = useRef(storeStartPoint !== 0 ? storeStartPoint : initialStartPoint);
+  const endPointRef = useRef(storeEndPoint !== 0 ? storeEndPoint : initialEndPoint);
+  
   // toggleOptions
   const sessionTypeRef = useRef(type);
   const [, forceUpdate] = useState(0); // 이 상태는 재렌더링을 위한 용도로만 사용합니다.
@@ -103,6 +108,8 @@ export default function Session({
       if (endPointRef.current > audioDuration) {
         endPointRef.current = audioDuration;
       }
+      addSession(sessionId, wavesurferRef.current);
+      console.log('after addSession', useWsDetailStore.getState().sessions)
     });
 
     // audioprocess | An alias of timeupdate but only when the audio is playing
@@ -143,17 +150,12 @@ export default function Session({
     };
     waveformRef.current.addEventListener("click", updateCurrentTimeOnClick);
 
-    addSession(sessionId, wavesurferRef.current);
-
     return () => {
       wavesurferRef.current?.destroy();
       waveformRef.current?.removeEventListener(
         "click",
         updateCurrentTimeOnClick
       );
-      // console.log('useEffect return')
-      // console.log('globalStartPoint :', globalStartPoint)
-      // console.log('globalEndPoint :', globalEndPoint)
     };
   }, [sessionId, addSession, removeSession, url]);
 
@@ -221,18 +223,21 @@ export default function Session({
 
     if (waveformRef.current) {
       const currentTime = wavesurferRef.current?.getCurrentTime() || 0;
+
       // 새로운 startPoint 계산
       const newStartPoint = (d.x / waveformRef.current.clientWidth) * duration;
 
       if (newStartPoint <= endPointRef.current) {
         setCursor1(newStartPoint); // 커서 위치 갱신
         startPointRef.current = newStartPoint;
+
         // 현재 재생 위치가 새 startPoint보다 이전이라면 위치를 맞춥니다.
         if (currentTime < newStartPoint) {
           wavesurferRef.current?.setTime(newStartPoint);
         }
+
+        updateSession(sessionId, { startPoint: newStartPoint });
       }
-      console.log("newStartPoint :", newStartPoint);
     }
   };
 
@@ -245,6 +250,7 @@ export default function Session({
       if (newEndPoint >= startPointRef.current) {
         setCursor2(newEndPoint); // 커서 위치 갱신
         endPointRef.current = newEndPoint;
+        updateSession(sessionId, { endPoint: newEndPoint });
       }
       console.log("newEndPoint :", newEndPoint);
 
@@ -258,6 +264,15 @@ export default function Session({
     }
   };
 
+  // const handleToggleCheck = () => {
+  //   toggleCheck(sessionId);
+  // }
+
+  const handleSetCheck = (isChecked: boolean) => {
+    setCheck(sessionId, isChecked);
+  };
+   
+
   return (
     <Card.Root
       bg="transparent"
@@ -270,7 +285,8 @@ export default function Session({
       <Flex gap={3}>
         <Checkbox
           colorPalette="purple"
-          onChange={() => toggleCheck(sessionId)}
+          // onChange={() => handleToggleCheck()}
+          onChange={(e) => handleSetCheck(e.target.checked)}
         />
         <Stack width="150px" justifyContent="center">
           <Stack width="150px" justifyContent="center" alignItems="start">
@@ -370,7 +386,7 @@ export default function Session({
                 <div
                   style={{
                     position: "absolute",
-                    top: -8, // 바의 위쪽에 삼각형이 위치하도록
+                    top: -6, // 바의 위쪽에 삼각형이 위치하도록
                     left: "50%",
                     transform: "translateX(-50%)",
                     width: 0,
@@ -414,7 +430,7 @@ export default function Session({
                 <div
                   style={{
                     position: "absolute",
-                    top: -8, // 바의 위쪽에 삼각형이 위치하도록
+                    top: -6, // 바의 위쪽에 삼각형이 위치하도록
                     left: "50%",
                     transform: "translateX(-50%)",
                     width: 0,
@@ -431,6 +447,96 @@ export default function Session({
                     width: "100%",
                     height: "100%",
                     backgroundColor: "red",
+                  }}
+                ></div>
+              </div>
+            </Rnd>
+
+            {/* notDraggable globalStartPoint 커서 */}
+            <Rnd
+              bounds="parent"
+              size={{ width: 2, height: 100 }}
+              position={{
+                x:
+                  waveformRef.current && duration > 0
+                    ? (globalStartPoint / duration) * waveformRef.current.clientWidth
+                    : 0,
+                y: 0,
+              }}
+              enableDragging={false} // 드래그 비활성화
+              enableResizing={false} // 크기 조정 비활성화
+              style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
+            >
+              {/* 커서 모양을 위한 Wrapper */}
+              <div
+                style={{ position: "relative", height: "100%", width: "100%" }}
+              >
+                {/* 삼각형 부분 */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 94, // 바의 위쪽에 삼각형이 위치하도록
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: 0,
+                    height: 0,
+                    borderLeft: "10px solid transparent",
+                    borderRight: "10px solid transparent",
+                    borderBottom: "10px solid grey", // 삼각형 색상
+                  }}
+                ></div>
+
+                {/* 바 부분 */}
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "grey",
+                  }}
+                ></div>
+              </div>
+            </Rnd>
+
+            {/* notDraggable globalEndPoint 커서 */}
+            <Rnd
+              bounds="parent"
+              size={{ width: 2, height: 100 }}
+              position={{
+                x:
+                  waveformRef.current && duration > 0
+                    ? (globalEndPoint / duration) * waveformRef.current.clientWidth
+                    : 0,
+                y: 0,
+              }}
+              enableDragging={false} // 드래그 비활성화
+              enableResizing={false} // 크기 조정 비활성화
+              style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
+            >
+              {/* 커서 모양을 위한 Wrapper */}
+              <div
+                style={{ position: "relative", height: "100%", width: "100%" }}
+              >
+                {/* 삼각형 부분 */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 94, // 바의 위쪽에 삼각형이 위치하도록
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: 0,
+                    height: 0,
+                    borderLeft: "10px solid transparent",
+                    borderRight: "10px solid transparent",
+                    borderBottom: "10px solid grey", // 삼각형 색상
+                  }}
+                ></div>
+
+                {/* 바 부분 */}
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "grey",
                   }}
                 ></div>
               </div>
