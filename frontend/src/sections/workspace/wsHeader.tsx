@@ -112,6 +112,30 @@ export default function WsHeader({
     }
   };
 
+  const getWsTree = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/workspaces/${workspaceSeq}/tree`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
+        }
+      );
+      console.log('족보 :', response.data);
+      toaster.create({
+        description: "데이터 업로드가 완료 되었습니다.",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error fetching workspace details:", error);
+      toaster.create({
+        description: "데이터 업로드에 실패했습니다.",
+        type: "error",
+      });
+    }
+  };
+
   return (
     <Stack>
       <Flex justifyContent="space-between">
@@ -165,6 +189,23 @@ export default function WsHeader({
                 onClick={toggleState}
               >
                 {isPublic ? "비공개" : "공유"}
+              </Button>
+              <Button
+                bg="blackAlpha.900" // 검은 배경
+                color="white" // 텍스트 색상
+                border="1.5px solid" // 테두리 두께
+                borderColor="purple.700" // 보라색 테두리
+                borderRadius={13} // 모서리 둥글게
+                _hover={{ bg: "purple.700" }} // 호버 효과
+                _active={{ bg: "purple.800" }} // 클릭 효과
+                paddingX="4"
+                paddingY="2"
+                width="60px"
+                height="40px"
+                fontWeight="bold"
+                onClick={getWsTree}
+              >
+                더보기
               </Button>
             </>
           ) : (
