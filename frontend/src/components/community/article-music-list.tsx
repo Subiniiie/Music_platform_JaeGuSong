@@ -3,7 +3,6 @@ import { Box, Grid, GridItem } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import MusicArticleItems from "./musicArticleItems";
-import CommunityPagination from "./communityPagination";
 
 export interface MyMusicFeedList {
   name: string;
@@ -69,6 +68,7 @@ const ArticleMusicList: React.FC = () => {
         // 데이터가 배열인지 확인하고 설정
         if (Array.isArray(response.data.workspaceDto)) {
           setMyMusicFeedList(response.data.workspaceDto);
+          console.log('음원리스트', response.data)
         } else {
           console.warn("Expected an array but received:", response.data);
           setError("Failed to fetch valid data.");
