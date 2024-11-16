@@ -39,7 +39,6 @@ const ChatModal: React.FC<ChatModalProps> = ({
 }) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });

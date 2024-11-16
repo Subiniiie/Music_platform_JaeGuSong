@@ -42,9 +42,13 @@ const ChatList = () => {
   const userSeq = authStorage
     ? JSON.parse(authStorage)?.state?.artistSeq
     : null;
-  console.log(userSeq);
   const jwtToken = localStorage.getItem("jwtToken");
-  const chatList = useChatList(API_URL, userSeq, jwtToken, modalOpen);
+  const { chatList, setChatList } = useChatList(
+    API_URL,
+    userSeq,
+    jwtToken,
+    modalOpen
+  );
 
   const handleChatButtonClick = () => {
     setModalOpen(!modalOpen);
@@ -84,6 +88,7 @@ const ChatList = () => {
 
   // 채팅방 누구 있는지 ?
   const handleFetchChatRoomUsers = (roomSeq: number) => {
+    setChatRoomUsers([]);
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
     }
@@ -124,7 +129,7 @@ const ChatList = () => {
 
     eventSource.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
-      console.log(newMessage);
+      console.log("gdgdg", newMessage);
       setChatMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
@@ -154,7 +159,7 @@ const ChatList = () => {
         setSelectedRoom(null);
         setChatMessages([]);
         setChatRoomUsers([]);
-
+        setChatList([]);
         if (eventSourceRef.current) {
           eventSourceRef.current.close();
           eventSourceRef.current = null;

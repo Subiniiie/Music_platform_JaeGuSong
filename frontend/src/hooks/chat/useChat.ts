@@ -28,7 +28,6 @@ export const useChat = ({
 }: UseChatProps) => {
   const [roomSeq, setRoomSeq] = useState<number | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  console.log(chatMessages);
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [chatRoomUsers, setChatRoomUsers] = useState<ChatRoomUser[]>([]);
@@ -53,7 +52,6 @@ export const useChat = ({
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
       setRoomSeq(response.data);
       setIsChatModalOpen(true);
     } catch (error) {
@@ -85,13 +83,13 @@ export const useChat = ({
 
   // 채팅방 유저 누구있는지 ?
   const handleFetchChatRoomUsers = () => {
+    setChatRoomUsers([]);
     const eventSource = new EventSource(
       `${API_URL}/api/chats/webflux/artistInfo/${roomSeq}?token=${jwtToken}`
     );
 
     eventSource.onmessage = (event) => {
       const user: ChatRoomUser = JSON.parse(event.data);
-      console.log(user);
       if (user.artistSeq !== String(userSeq)) {
         setChatRoomUsers((prevUsers) => {
           if (
@@ -121,6 +119,7 @@ export const useChat = ({
     );
     eventSource.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
+      console.log(newMessage);
       setChatMessages((prevMessages) => [...prevMessages, newMessage]);
     };
     eventSource.onerror = (error) => {
