@@ -3,6 +3,7 @@ import { Box, Text, Button } from "@chakra-ui/react";
 import { useLocation } from "react-router-dom";
 import { useChat } from "@/hooks/chat/useChat";
 import ChatModal from "../chat/chat";
+import useCommunityFollow from "@/hooks/community/useCommunityFollow";
 
 const OtherHeader: React.FC = () => {
   const location = useLocation();
@@ -25,6 +26,7 @@ const OtherHeader: React.FC = () => {
     userSeq,
     OtherUserSeq: artistSeq,
   });
+  const { makeFollow } = useCommunityFollow();
 
   return (
     <Box
@@ -66,6 +68,7 @@ const OtherHeader: React.FC = () => {
               color: "#9000ff",
               border: "solid 2px white",
             }}
+            onClick={makeFollow}
           >
             팔로우
           </Button>
