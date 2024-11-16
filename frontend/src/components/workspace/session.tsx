@@ -24,6 +24,8 @@ interface SessionProps {
   startPoint: number;
   endPoint: number;
   workspaceSeq: number; // workspaceSeq를 props로 추가
+  globalStartPoint: number;
+  globalEndPoint: number;
   onSessionDelete: (sessionId: string) => void; // 삭제 핸들러 추가
 }
 
@@ -34,6 +36,8 @@ export default function Session({
   startPoint: initialStartPoint,
   endPoint: initialEndPoint,
   workspaceSeq,
+  globalStartPoint,
+  globalEndPoint,
   onSessionDelete,
 }: SessionProps & { onSessionDelete: (sessionId: number) => void }) {
   const waveformRef = useRef<HTMLDivElement | null>(null);
@@ -53,7 +57,7 @@ export default function Session({
   // 상태 관리 및 store 관련
   const addSession = useWsDetailStore((state) => state.addSession);
   const removeSession = useWsDetailStore((state) => state.removeSession);
-  const toggleSession = useWsDetailStore((state) => state.toggleSession);
+  const toggleCheck = useWsDetailStore((state) => state.toggleCheck);
   const API_URL = import.meta.env.VITE_API_URL;
 
   // toggleOptions
@@ -141,12 +145,15 @@ export default function Session({
     addSession(sessionId, wavesurferRef.current);
 
     return () => {
-      removeSession(sessionId);
+      removeSession(sessionId);   // WsDetailStore 에서 session 정보 제거
       wavesurferRef.current?.destroy();
       waveformRef.current?.removeEventListener(
         "click",
         updateCurrentTimeOnClick
       );
+      console.log('useEffect return')
+      console.log('globalStartPoint :', globalStartPoint)
+      console.log('globalEndPoint :', globalEndPoint)
     };
   }, [sessionId, addSession, removeSession, url]);
 
@@ -262,7 +269,7 @@ export default function Session({
       <Flex gap={3}>
         <Checkbox
           colorPalette="purple"
-          onChange={() => toggleSession(sessionId)}
+          onChange={() => toggleCheck(sessionId)}
         />
         <Stack width="150px" justifyContent="center">
           <Stack width="150px" justifyContent="center" alignItems="start">

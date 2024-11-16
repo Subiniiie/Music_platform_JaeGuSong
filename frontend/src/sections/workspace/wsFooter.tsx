@@ -4,7 +4,7 @@ import Play from "./play";
 import ButtonBox from "./buttonBox";
 import ForkButton from "@/components/workspace/forkButton";
 import { useWsDetailStore } from "@/stores/wsDetailStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   PopoverArrow,
   PopoverBody,
@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { WsGlobalSlider } from "./wsGlobalSlider";
 
 interface WsFooterProps {
   wsDetails: {
@@ -38,6 +39,11 @@ export default function WsFooter({
   const pauseAll = useWsDetailStore((state) => state.pauseAll);
   const stopAll = useWsDetailStore((state) => state.stopAll);
 
+  const globalStartPoint = useWsDetailStore((state) => state.globalStartPoint);
+  const globalEndPoint = useWsDetailStore((state) => state.globalEndPoint);
+  const globalDuration = useWsDetailStore((state) => state.globalDuration);
+  const sessions = useWsDetailStore((state) => state.sessions);
+
   // 전체 재생 및 일시정지 제어 함수
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -46,6 +52,19 @@ export default function WsFooter({
       playAll(); // 전체 재생
     }
   };
+
+  const formatSecondsToMinutes = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`; // 예: 1:05
+  };
+
+  useEffect(() => {
+    return () => {
+      console.log('globalStartPoint', globalStartPoint)
+      console.log('sessions', sessions)
+    };
+  }, []);
 
   return (
     <Stack>
@@ -70,8 +89,21 @@ export default function WsFooter({
           flex="1"
         >
           <Flex gap="4" justifyContent="center" width="100%">
-            재생 바
-            <Slider width="90%" defaultValue={[30, 60]} />
+            <Stack width="100%">
+              <Text>전체 재생 컨트롤</Text>
+              <Text truncate color="purple.100" fontSize="13px">전체 재생 시작 지점과 종료 지점을 설정해주세요.</Text>
+              <WsGlobalSlider
+                width="100%"
+                defaultValue={[globalStartPoint, globalEndPoint]}
+                min={0}
+                max={globalDuration}
+                marks={[
+                  { value: globalStartPoint, label: formatSecondsToMinutes(globalStartPoint) }, // Start를 분:초로 표시
+                  { value: globalEndPoint, label: formatSecondsToMinutes(globalEndPoint) },   // End를 분:초로 표시
+                ]}
+                onClick={(e) => console.log(globalDuration)}
+              />
+            </Stack>
           </Flex>
         </Stack>
 
@@ -114,40 +146,6 @@ export default function WsFooter({
                 </PopoverBody>
               </PopoverContent>
             </PopoverRoot>
-
-            {/* 오버레이 레이어 */}
-            {/* <Box
-              position="absolute"
-              top="0"
-              left="0"
-              right="0"
-              bottom="0"
-              background="rgba(0, 0, 0, 0.5)"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              onClick={() => setShowOverlay(true)}
-            /> */}
-            {/* 클릭 시 보여줄 메시지 */}
-            {/* {showOverlay && (
-              <Box
-                position="absolute"
-                top="20%"
-                left="50%"
-                transform="translate(-50%, -50%)"
-                bg="white"
-                color="blue"
-                py={7}
-                px={10}
-                borderRadius={12}
-                textAlign="center"
-              >
-                <Text fontSize="14px" mb={4}>
-                  추가 작업을 원하시면 해당 워크스페이스를 포크 떠주세요.
-                </Text>
-                <ForkButton workspaceSeq={workspaceSeq} />
-              </Box>
-            )} */}
           </>
         )}
       </Flex>
