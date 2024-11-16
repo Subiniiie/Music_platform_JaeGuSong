@@ -3,6 +3,7 @@ import { Box, Text, Flex, Button, Input, VStack } from "@chakra-ui/react";
 import Modal from "@/components/common/Modal";
 import useChatList from "@/hooks/chat/useChatList";
 import axios from "axios";
+import ChatSearch from "./chatSearch";
 
 interface ChatListResponse {
   roomSeq: number;
@@ -448,7 +449,7 @@ const ChatList = () => {
         ) : (
           <Box padding="0" width="600px" height="600px" overflowY="auto">
             <Box
-              padding="20px"
+              padding="0 20px 20px 20px"
               backgroundColor="white"
               position="sticky"
               top="0"
@@ -458,7 +459,11 @@ const ChatList = () => {
                 <Text fontSize="24px" fontWeight="bold" color="black">
                   채팅
                 </Text>
-
+                <ChatSearch
+                  onUserSelect={(user) => {
+                    console.log("선택된 유저:", user);
+                  }}
+                />
                 <select
                   value={sortOrder}
                   onChange={(e) =>
