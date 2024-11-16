@@ -15,6 +15,7 @@ export interface FollowUserList {
 const useFollow = () => {
     const { API_URL, storedToken } = useCommon();
     const [ followingUserList, setFollowingUserList ] = useState<FollowUserList[]>([]);
+    const [ followerUserList, setFollowwerUserList ] = useState<FollowUserList[]>([]);
     const navigate = useNavigate();
 
     const goFollowingFeed = async () => {
@@ -33,6 +34,23 @@ const useFollow = () => {
             console.error(error)
         }
     };
+
+    const goFollowerFeed = async () => {
+        try {
+            const response = await axios.get(
+                `${API_URL}/api/follow/fan`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${storedToken}`
+                    }
+                }
+            )
+            console.log('나를 팔로우한 사람들', response.data)
+            setFollowwerUserList(response.data)
+        } catch(error) {
+            console.error(error)
+        }
+    }
 
     const goOtherUserFeed = async (artistSeq: number) => {
         navigate(paths.community.generalCommunity(artistSeq))
@@ -61,7 +79,9 @@ const useFollow = () => {
         goFollowingFeed,
         goOtherUserFeed,
         goUnfollow,
-        followingUserList
+        goFollowerFeed,
+        followingUserList,
+        followerUserList
     }
 }
 

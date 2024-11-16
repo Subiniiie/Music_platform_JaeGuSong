@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import useAuthStore from "@/stores/authStore";
 import useFollow from "@/hooks/navbar/useFollow";
 import FollowingListContainer from "@/components/navbar/followingLIstContainer";
+import FollowerListContainer from "@/components/navbar/followerListContainer";
 
 export default function Navbar() {
   const { goSignupPage, goSignInPage, goLogout } = useAuth();
@@ -32,7 +33,7 @@ export default function Navbar() {
     handleSearchSubmit,
     goOtherFeed,
   } = useSearch();
-  const { goFollowingFeed, followingUserList } = useFollow();
+  const { goFollowingFeed, followingUserList, followerUserList, goFollowerFeed } = useFollow();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const artistNickname = useAuthStore((state) => state.artistNickname);
 
@@ -58,7 +59,7 @@ export default function Navbar() {
     goFollowingFeed
   }, [followingUserList]);
 
-  
+
   const items = [
     {
       value: "a",
@@ -255,6 +256,7 @@ export default function Navbar() {
                           color: "#9000ff",
                           border: "solid 2px white",
                         }}
+                        onClick={goFollowerFeed}
                       >
                         팔로워
                       </Button>
@@ -266,12 +268,14 @@ export default function Navbar() {
                         width: "400px",
                         maxWidth: "400px",
                         background: "white",
+                        zIndex: 10,
                         height: "300px",
                         borderRadius: "20px"
                       }}
                     >
                       <Box padding="4" borderWidth="1px" color="black">
                         팔로워 목록
+                        <FollowerListContainer followerUserList={followerUserList} />
                       </Box>
                     </Collapsible.Content>
                   </Collapsible.Root>
