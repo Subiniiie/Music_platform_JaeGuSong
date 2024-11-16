@@ -118,11 +118,13 @@ const ArticleMusicList: React.FC = () => {
         margin="60px"
         marginLeft="90px"
       >
-        {myMusicFeedList.map((myMusic, index) => (
-          <GridItem key={index}>
-            <MusicArticleItems myMusic={myMusic} />
-          </GridItem>
-        ))}
+        {myMusicFeedList
+          .filter(myMusic => id !== undefined && myMusic.state === 'PUBLIC') // 조건 필터링
+          .map((myMusic, index) => (
+            <GridItem key={index}>
+              <MusicArticleItems myMusic={myMusic} />
+            </GridItem>
+          ))}
       </Grid>
     </Box>
   );
