@@ -16,9 +16,9 @@ interface Sound {
 }
 
 export default function WsDetailView() {
+  const sessions = useWsDetailStore((state) => state.sessions)
+  const setSessions = useWsDetailStore((state) => state.setSessions);
   const resetStore = useWsDetailStore((state) => state.resetStore);
-  const globalStartPoint = useWsDetailStore((state) => state.globalStartPoint);
-  const sessions = useWsDetailStore((state) => state.sessions);
   const location = useLocation();
 
   const [wsDetails, setWsDetails] = useState<{
@@ -41,6 +41,10 @@ export default function WsDetailView() {
     thumbnail: "",
   });
 
+  const shouldReloadSessionBox = useWsDetailStore(
+    (state) => state.shouldReloadSessionBox
+  );
+
   // API URL 설정
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -55,7 +59,6 @@ export default function WsDetailView() {
 
   useEffect(() => {
     const fetchWorkspaceDetail = async () => {
-      console.log("나 된다", workspaceSeq);
       try {
         const response = await axios.get(
           `${API_URL}/api/workspaces/${workspaceSeq}`,
@@ -65,9 +68,13 @@ export default function WsDetailView() {
             },
           }
         );
-        console.log("Workspace Details:", response.data);
+        setSessions(response.data.sounds);
         setWsDetails(response.data);
-        // setSessions(response.data.sounds || []); // 세션 목록 초기화
+        console.log('워크스페이스 디테일 페이지 렌더링 완료');
+        
+        
+        console.log('store 의 sessions :', useWsDetailStore.getState().sessions);
+        console.log('response.data :', response.data);
       } catch (error) {
         console.error("Error fetching workspace details:", error);
       }
@@ -75,15 +82,14 @@ export default function WsDetailView() {
 
     if (workspaceSeq) {
       fetchWorkspaceDetail();
+      console.log('store 의 sessions:', sessions)
     }
-  }, [workspaceSeq, API_URL]);
+  }, [workspaceSeq, setSessions, shouldReloadSessionBox]);
 
   // 페이지 이동 시 resetStore 호출
   useEffect(() => {
     return () => {
       resetStore(); // 주소가 변경되면 스토어 초기화
-      console.log('globalStartPoint', globalStartPoint)
-      console.log('sessions', sessions)
     };
   }, [location, resetStore]);
 

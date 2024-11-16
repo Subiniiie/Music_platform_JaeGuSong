@@ -15,7 +15,9 @@ interface wsDetailStore {
   globalEndPoint: number;
   globalPlayPoint: number;
   globalDuration: number;
+  shouldReloadSessionBox: boolean,
 
+  setSessions: (newSessions) => void;
   addSession: (sessionId: string, player: WaveSurfer) => void;
   removeSession: (sessionId: string) => void;
   updateSession: (
@@ -31,6 +33,8 @@ interface wsDetailStore {
   recalculateGlobalEndPoint: () => void;
 
   resetStore: () => void;
+
+  triggerSessionBoxReload: () => void;
 }
 
 export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
@@ -40,6 +44,27 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
   globalEndPoint: 0,
   globalPlayPoint: 0,
   globalDuration: 180,
+  shouldReloadSessionBox: false,
+
+  // 서버에서 받은 세션 데이터를 초기화
+  setSessions: (newSessions) => 
+    set((state) => {
+    const originalSessions = { ...state.sessions }; // 기존 데이터를 복사
+
+    newSessions.forEach((session) => {
+      if (!originalSessions[session.soundSeq]) {
+        originalSessions[session.soundSeq] = {
+          startPoint: session.startPoint,
+          endPoint: session.endPoint,
+          check: false,
+          player: null, // wavesurfer는 null로 초기화
+          duration: 0,
+        };
+      }
+    });
+
+    return { sessions: originalSessions };
+  }),
 
   addSession: (sessionId, player) =>
     set((state) => {
@@ -152,5 +177,8 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
       globalEndPoint: 0,
       globalPlayPoint: 0,
       globalDuration: 1800, // 초기화
-    }))
+    })),
+
+  triggerSessionBoxReload: () =>
+    set((state) => ({ shouldReloadSessionBox: !state.shouldReloadSessionBox })),
 }));

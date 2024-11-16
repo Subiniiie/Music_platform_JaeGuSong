@@ -59,13 +59,6 @@ export default function WsFooter({
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`; // 예: 1:05
   };
 
-  useEffect(() => {
-    return () => {
-      console.log('globalStartPoint', globalStartPoint)
-      console.log('sessions', sessions)
-    };
-  }, []);
-
   return (
     <Stack>
       <Flex justifyContent="space-between" position="relative" gap="16px">

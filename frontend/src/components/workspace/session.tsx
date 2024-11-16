@@ -57,6 +57,7 @@ export default function Session({
   // 상태 관리 및 store 관련
   const addSession = useWsDetailStore((state) => state.addSession);
   const removeSession = useWsDetailStore((state) => state.removeSession);
+  const updateSession = useWsDetailStore((state) => state.updateSession);
   const toggleCheck = useWsDetailStore((state) => state.toggleCheck);
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -145,15 +146,14 @@ export default function Session({
     addSession(sessionId, wavesurferRef.current);
 
     return () => {
-      removeSession(sessionId);   // WsDetailStore 에서 session 정보 제거
       wavesurferRef.current?.destroy();
       waveformRef.current?.removeEventListener(
         "click",
         updateCurrentTimeOnClick
       );
-      console.log('useEffect return')
-      console.log('globalStartPoint :', globalStartPoint)
-      console.log('globalEndPoint :', globalEndPoint)
+      // console.log('useEffect return')
+      // console.log('globalStartPoint :', globalStartPoint)
+      // console.log('globalEndPoint :', globalEndPoint)
     };
   }, [sessionId, addSession, removeSession, url]);
 
@@ -186,8 +186,6 @@ export default function Session({
   };
 
   const handleDeleteSession = async () => {
-    console.log("세션 삭제 요청 api 날려볼게");
-
     try {
       const storedToken = localStorage.getItem("jwtToken");
       await axios.delete(
@@ -199,6 +197,9 @@ export default function Session({
           },
         }
       );
+
+      removeSession(sessionId);
+      console.log('store 의 sessions :', useWsDetailStore.getState().sessions);
 
       toaster.create({
         description: "세션이 성공적으로 삭제되었습니다.",
