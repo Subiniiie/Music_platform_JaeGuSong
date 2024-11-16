@@ -4,7 +4,7 @@ import Play from "./play";
 import ButtonBox from "./buttonBox";
 import ForkButton from "@/components/workspace/forkButton";
 import { useWsDetailStore } from "@/stores/wsDetailStore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   PopoverArrow,
   PopoverBody,
@@ -68,15 +68,35 @@ export default function WsFooter({
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`; // 예: 1:05
   };
 
+  const [playWidth, setPlayWidth] = useState(0); // Play 컴포넌트 가로 길이
+  const playRef = useRef<HTMLDivElement>(null); // Play 컴포넌트의 ref
+
+  useEffect(() => {
+    if (playRef.current) {
+      // Play 컴포넌트의 실제 가로 길이를 가져와서 상태에 저장
+      setPlayWidth(playRef.current.offsetWidth);
+    }
+  }, []);
+
   return (
     <Stack>
-      <Flex justifyContent="space-between" position="relative" gap="16px">
+      <Flex alignItems="center" justifyContent="space-between" position="relative" gap="16px">
+{/* 
         <Play
           isPlaying={isGlobalPlaying} // 전체 재생 상태 전달
           onPlayPause={handleGlobalPlayPause} // 전체 재생 및 일시정지 함수 전달
           onStop={handleStop} // 전체 정지 함수 전달
           mode="all" // 전체 모드로 설정
-        />
+        /> */}
+
+        <Box ref={playRef}>
+          <Play
+            isPlaying={isGlobalPlaying} // 전체 재생 상태 전달
+            onPlayPause={handleGlobalPlayPause} // 전체 재생 및 일시정지 함수 전달
+            onStop={handleStop} // 전체 정지 함수 전달
+            mode="all" // 전체 모드로 설정
+          />
+        </Box>
 
         <Stack
           direction="row"
@@ -89,6 +109,7 @@ export default function WsFooter({
           alignItems="center"
           background="rgba(0, 0, 0, 0.3)"
           flex="1"
+          // mx="6"
         >
           <Flex gap="4" justifyContent="center" width="100%">
             <Stack width="100%">
@@ -118,14 +139,16 @@ export default function WsFooter({
                 <Box
                   position="absolute"
                   top="0"
-                  left="0"
+                  // left="0"
+                  left={`${playWidth}px`} // Play 컴포넌트의 가로 길이만큼 이동
                   right="0"
                   bottom="0"
                   background="rgba(0, 0, 0, 0.5)"
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
-                />
+                >
+                </Box>
               </PopoverTrigger>
               <PopoverContent borderRadius={12}>
                 <PopoverArrow />
