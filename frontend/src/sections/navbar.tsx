@@ -10,13 +10,14 @@ import {
   Collapsible,
   VStack,
   HStack,
-  Avatar,
 } from "@chakra-ui/react";
 import paths from "@/configs/paths";
 import useAuth from "@/hooks/auth/useAuth";
 import useSearch from "@/hooks/search/useSearch";
 import { useEffect, useState } from "react";
 import useAuthStore from "@/stores/authStore";
+import useFollow from "@/hooks/navbar/useFollow";
+import FollowingListContainer from "@/components/navbar/followingLIstContainer";
 
 export default function Navbar() {
   const { goSignupPage, goSignInPage, goLogout } = useAuth();
@@ -31,6 +32,7 @@ export default function Navbar() {
     handleSearchSubmit,
     goOtherFeed,
   } = useSearch();
+  const { goFollowingFeed, followingUserList } = useFollow();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const artistNickname = useAuthStore((state) => state.artistNickname);
 
@@ -52,6 +54,11 @@ export default function Navbar() {
     goLogout();
   };
 
+  useEffect(() => {
+    goFollowingFeed
+  }, [followingUserList]);
+
+  
   const items = [
     {
       value: "a",
@@ -256,9 +263,11 @@ export default function Navbar() {
                       style={{
                         position: "absolute",
                         top: "225px",
-                        width: "230px",
-                        maxWidth: "230px",
+                        width: "400px",
+                        maxWidth: "400px",
                         background: "white",
+                        height: "300px",
+                        borderRadius: "20px"
                       }}
                     >
                       <Box padding="4" borderWidth="1px" color="black">
@@ -277,6 +286,7 @@ export default function Navbar() {
                           color: "#9000ff",
                           border: "solid 2px white",
                         }}
+                        onClick={goFollowingFeed}
                       >
                         팔로잉
                       </Button>
@@ -286,14 +296,17 @@ export default function Navbar() {
                         position: "absolute",
                         top: "225px",
                         left: "16px",
-                        width: "230px",
-                        maxWidth: "230px",
+                        width: "400px",
+                        maxWidth: "400px",
                         background: "white",
                         zIndex: 10,
+                        height: "300px",
+                        borderRadius: "20px"
                       }}
                     >
                       <Box padding="4" borderWidth="1px" color="black">
                         팔로잉 목록
+                        <FollowingListContainer followingUserList={followingUserList} />
                       </Box>
                     </Collapsible.Content>
                   </Collapsible.Root>
@@ -301,7 +314,6 @@ export default function Navbar() {
                     border="solid 2px #9000FF"
                     borderRadius="15px"
                     height="30px"
-                    width="80px"
                     onClick={handleLogout}
                     _hover={{
                       color: "#9000ff",
