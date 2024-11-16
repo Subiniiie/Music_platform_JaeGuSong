@@ -1,4 +1,5 @@
 import Session from "@/components/workspace/session";
+import { useWsDetailStore } from "@/stores/wsDetailStore";
 import { Stack } from "@chakra-ui/react";
 import { Global } from "@emotion/react";
 
@@ -15,13 +16,15 @@ interface SessionBoxProps {
   role: string;
 }
 
-// export default function SessionBox({ sessions, workspaceSeq, onDeleteSession }: SessionBoxProps) {
 export default function SessionBox({
   sessions,
   workspaceSeq,
   onSessionDelete,
   role,
 }: SessionBoxProps) {
+  const globalStartPoint = useWsDetailStore((state) => state.globalStartPoint);
+  const globalEndPoint = useWsDetailStore((state) => state.globalEndPoint);
+
   return (
     <>
       {/* Global 스타일 적용 */}
@@ -58,7 +61,8 @@ export default function SessionBox({
             startPoint={session.startPoint}
             endPoint={session.endPoint}
             workspaceSeq={workspaceSeq}
-            // onSessionDelete={onSessionDelete}
+            globalStartPoint={globalStartPoint} // 글로벌 시작 지점 전달
+            globalEndPoint={globalEndPoint} // 글로벌 종료 지점 전달
             onSessionDelete={role === "MASTER" ? onSessionDelete : undefined}
             role={role}
           />
