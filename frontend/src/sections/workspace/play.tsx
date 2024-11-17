@@ -3,9 +3,9 @@ import { useWsDetailStore } from "@/stores/wsDetailStore";
 
 interface PlayProps {
   isPlaying: boolean;
-  onPlayPause: () => void;
-  onStop: () => void;
-  mode: "individual" | "all";
+  onPlayPause: (playMode: "all" | "individual") => void;
+  onStop: (playMode: "all" | "individual") => void;
+  mode: "all" | "individual";
 }
 
 export default function Play({
@@ -14,27 +14,6 @@ export default function Play({
   onStop,
   mode,
 }: PlayProps) {
-  const { playAll, pauseAll, stopAll } = useWsDetailStore();
-
-  const handlePlayPause = () => {
-    if (mode === "all") {
-      if (isPlaying) {
-        pauseAll();
-      } else {
-        playAll();
-      }
-    } else {
-      onPlayPause(); // 개별 세션 재생/일시정지 실행
-    }
-  };
-
-  const handleStop = () => {
-    if (mode === "all") {
-      stopAll();
-    } else {
-      onStop(); // 개별 세션 정지 실행
-    }
-  };
 
   return (
     <Stack
@@ -59,7 +38,7 @@ export default function Play({
           aria-label={isPlaying ? "일시정지" : "재생"}
           colorScheme="teal"
           color="white"
-          onClick={handlePlayPause}
+          onClick={onPlayPause}
           width="46px"
           height="46px"
           padding="0"
@@ -88,7 +67,7 @@ export default function Play({
           aria-label="정지"
           colorScheme="red"
           color="white"
-          onClick={handleStop}
+          onClick={onStop}
           width="46px"
           height="46px"
           padding="0"
