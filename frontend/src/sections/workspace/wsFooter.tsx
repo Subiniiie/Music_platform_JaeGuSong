@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { WsGlobalSlider } from "./wsGlobalSlider";
+import { toaster } from "@/components/ui/toaster";
 
 interface WsFooterProps {
   wsDetails: {
@@ -49,6 +50,14 @@ export default function WsFooter({
     console.log('globalStartPoint는', globalStartPoint)
     console.log('globalEndPoint는', globalEndPoint)
     console.log('체크된 세션들은', checkedSessions)
+
+    if (checkedSessions.length === 0) {
+      toaster.create({
+        description: "재생할 세션을 선택해주세요.",
+        type: "error",
+      });
+      return
+    }
 
     if (isGlobalPlaying) {
       pauseAll();
