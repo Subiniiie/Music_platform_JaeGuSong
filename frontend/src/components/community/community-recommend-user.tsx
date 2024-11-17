@@ -146,7 +146,6 @@ const CommunityRecommendUser: React.FC = () => {
                                 display="flex"
                                 alignItems="flex-end"
                                 cursor="pointer"
-                                
                             >
                                 <Box
                                     width="100%"
@@ -165,14 +164,14 @@ const CommunityRecommendUser: React.FC = () => {
                                     <Text color="white" fontSize="lg" fontFamily="KotraHope">{user.region}</Text>
                                 </Box>
                             </Box>    
-    ))}
-                        </Box>
+                        ))}
+                    </Box>
                 </Box>
                 ) : (
-                    "추천받은 유저가 없습니다."
-                )}
+                    <Text marginLeft="30px">추천받은 유저가 없습니다.</Text>
+            )}
         </>
-  );
+    );
 };
 
 export default CommunityRecommendUser;

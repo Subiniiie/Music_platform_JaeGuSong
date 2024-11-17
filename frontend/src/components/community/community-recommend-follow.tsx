@@ -8,8 +8,7 @@ import {
     PaginationRoot,
   } from "@/components/ui/pagination";
   import useCommon from '@/hooks/common/common';
-
-const mockDataInitial = Array.from({ length: 20 }, (_, i) => `아이템 ${i + 1}`);
+  import useSearch from '@/hooks/search/useSearch';
 
 
 const CommunityRecommendFollow: React.FC = () => {
@@ -17,7 +16,7 @@ const CommunityRecommendFollow: React.FC = () => {
     const autoPageSize = 1;
     const { API_URL, storeMySeq, storedToken, getMySeq } = useCommon();
     const [recommendedByFollows, setRecommendedByFollows] = useState<any[]>([]);
-
+    const { goOtherFeed } = useSearch();
 
     useEffect(() => {
         const getRecommentUserByFollow = async () => {
@@ -45,6 +44,10 @@ const CommunityRecommendFollow: React.FC = () => {
         getRecommentUserByFollow();
     }, [API_URL, storeMySeq])
 
+    useEffect(() => {
+        console.log('추천받은 유저', recommendedByFollows, recommendedByFollows.length)
+    }, [recommendedByFollows])
+
     // 팔로우 기반으로
   const [followlCurrentPage, setFollowlCurrentPage] = useState(1);
 
@@ -53,9 +56,9 @@ const CommunityRecommendFollow: React.FC = () => {
 
   // 현재 페이지에 해당하는 데이터 계산
   const followStartIdx = (followlCurrentPage - 1) * pageSize;
-  const followlCurrentData = mockDataInitial.slice(followStartIdx, followStartIdx + pageSize);
+  const followlCurrentData = recommendedByFollows.slice(followStartIdx, followStartIdx + pageSize);
 
-  const autofollowlCurrentData = mockDataInitial.slice((autofollowlCurrentPage - 1) * autoPageSize, autofollowlCurrentPage * autoPageSize);
+  const autofollowlCurrentData = recommendedByFollows.slice((autofollowlCurrentPage - 1) * autoPageSize, autofollowlCurrentPage * autoPageSize);
 
   // 페이지 변경 핸들러
   const handleFollowPageChange = (page: number) => {
@@ -63,13 +66,15 @@ const CommunityRecommendFollow: React.FC = () => {
   };
 
   const startAutoFollowIdx = (autofollowlCurrentPage - 1) * pageSize;
-  const autoFollowData = mockDataInitial.slice(startAutoFollowIdx, startAutoFollowIdx + pageSize);
+  const autoFollowData = recommendedByFollows.slice(startAutoFollowIdx, startAutoFollowIdx + pageSize);
 
   useEffect(() => {
+    if (recommendedByFollows.length === 0) return;
+
     // 페이지네이션을 자동으로 변경하기 위한 setInterval
     const intervalId = setInterval(() => {
       setAutofollowlCurrentPage((prevPage) => {
-        if (prevPage * autoPageSize >= mockDataInitial.length) {
+        if (prevPage * autoPageSize >= recommendedByFollows.length) {
           return 1; // 마지막 페이지에 도달하면 첫 번째 페이지로 돌아감
         }
         return prevPage + 1;
@@ -78,16 +83,18 @@ const CommunityRecommendFollow: React.FC = () => {
 
     // 컴포넌트가 언마운트될 때 interval을 정리
     return () => clearInterval(intervalId);
-  }, []);
+  }, [recommendedByFollows]);
 
 
     return (
         <>
-            <Text textStyle="2xl">추천 유저 - 팔로우 기반</Text>
+            <Box>
+                <Text textStyle="2xl" fontWeight="bold" marginLeft="30px" font-family= "MiceMyungjo">추천 유저</Text>
+            </Box>     
             {recommendedByFollows.length > 0 ? (
                 <Box marginTop="15px" display="flex" flexDirection="row" height="100%">
                     <Box width="50%" height="100%" paddingLeft="200px">
-                        <PaginationRoot count={mockDataInitial.length} pageSize={pageSize} defaultPage={1}>
+                        <PaginationRoot count={recommendedByFollows.length} pageSize={pageSize} defaultPage={1}>
                             <HStack gap="4" justifyContent="flex-end" mt="4">
                                 <PaginationPrevTrigger 
                                 onClick={() => handleFollowPageChange(followlCurrentPage - 1)}
@@ -100,21 +107,73 @@ const CommunityRecommendFollow: React.FC = () => {
                         </PaginationRoot>
                         {/* 2열 그리드 레이아웃 */}
                         <Grid templateColumns="repeat(4, 1fr)" gap={2} marginTop="15px">
-                            {followlCurrentData.map((item, index) => (
-                                <Box key={index} background="gray.100" borderRadius="md" width="95px" height="95px">
-                                <Text color="black">{item}</Text>
+                            {recommendedByFollows.map((user, index) => (
+                                <Box 
+                                    key={index} 
+                                    width="95px" 
+                                    height="95px"
+                                    background="white"
+                                    borderRadius="10px"
+                                    backgroundImage={`url(https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${user.profileImage})`} // 이미지 URL 사용
+                                    backgroundSize="contain"
+                                    backgroundPosition="center"
+                                    backgroundRepeat="no-repeat" 
+                                    display="flex"
+                                    alignItems="flex-end"
+                                    cursor="pointer"
+                                    onClick={() => goOtherFeed(user.artistSeq, user.nickname, user.profileImage)}
+                                >
+                                    <Box
+                                        width="100%"
+                                        background="rgba(0, 0, 0, 0.3)"
+                                        display="flex"
+                                        justifyContent="center"
+                                    > 
+                                        <Text color="white" fontFamily="KotraHope">{user.nickname}</Text>
+                                    </Box>
                                 </Box>
                             ))}
                         </Grid>
                     </Box>
                     <Box width="50%" height="100%" display="flex" marginLeft="20px">
-                        <Box background="white" borderRadius="md" padding="10px" width="185px" height="260px" margin="20px 0">
-                        <Text color="black">{autofollowlCurrentData}</Text>
-                        </Box>
+                    {autofollowlCurrentData.map((user: any, index: number) => (
+                            <Box 
+                                key={index}
+                                background="white" 
+                                borderRadius="md" 
+                                width="185px" 
+                                height="260px" 
+                                margin="20px 0"
+                                backgroundImage={`url(https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${user.profileImage})`} // 이미지 URL 사용
+                                backgroundSize="contain"
+                                backgroundPosition="center" 
+                                backgroundRepeat="no-repeat"
+                                display="flex"
+                                alignItems="flex-end"
+                                cursor="pointer"
+                            >
+                                <Box
+                                    width="100%"
+                                    height="80px"
+                                    background="rgba(0, 0, 0, 0.3)"
+                                    display="flex"
+                                    flexDirection="column"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                >
+                                    <Text color="white" fontSize="lg" fontFamily="KotraHope">{user.nickname}</Text>
+                                    <Box display="flex" flexDirection="row">
+                                        <Text color="white" fontSize="lg" fontFamily="KotraHope">{user.genre}</Text>
+                                        <Text color="white" fontSize="lg" fontFamily="KotraHope" marginLeft="5px">{user.position}</Text>
+                                    </Box>
+                                    <Text color="white" fontSize="lg" fontFamily="KotraHope">{user.region}</Text>
+                                </Box>
+                            </Box>    
+                        ))}
                     </Box>
                 </Box>
             ) : (
-                "추천받은 유저가 없습니다."
+                <Text marginLeft="30px">추천받은 유저가 없습니다.</Text>
             )}
         </>
     );
