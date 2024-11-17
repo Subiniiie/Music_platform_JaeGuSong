@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Text } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { CrewData } from './crew-member-list-modal';
 import axios from 'axios';
 import  CrewMemeberListFeed from './crew-member-list-feed';
 import  CrewMemberListChat  from './crew-member-list-chat';
 import useCommon from '@/hooks/common/common';
+import paths from '@/configs/paths';
 
 
 interface CrewMemeberListContainerProps {
@@ -18,11 +20,12 @@ const CrewMemeberListCotainer: React.FC<CrewMemeberListContainerProps> = ({ crew
     const chatUserSeq = crewData?.crews.find((item) => item.crewUserState === "CHAT")?.seq;
     const [ checkManagerSeq, setCheckManagerSeq ] = useState(false);
 
-    const { API_URL, storedToken, id } = useCommon();
+    const { API_URL, storedToken, id, storeMySeq, getMySeq } = useCommon();
 
     const [feedValue, setFeedValue] = useState<string>(boardUserSeq?.toString() || '');  // Feed value state
     const [chatValue, setChatValue] = useState<string>(chatUserSeq?.toString() || '');  // Chat value state
 
+    const navigate = useNavigate()
 
 
       useEffect(() => {
@@ -86,6 +89,18 @@ const CrewMemeberListCotainer: React.FC<CrewMemeberListContainerProps> = ({ crew
         console.error(error)
         }
         }
+
+    const goCrewOtherFeed = async (checkSeq: number, checkNickname: string, checkProfileImage: string) => {
+        getMySeq()
+
+        if (storeMySeq) {
+            if (checkSeq === parseInt(storeMySeq)) {
+                navigate(paths.community.myCommunity)
+            } else {
+                navigate(paths.community.generalCommunity(checkSeq), { state: { artistSeq: checkSeq, otherNickname: checkNickname, otherProfileImage: checkProfileImage} })
+            }
+        }
+    };
     
   return (
     <>
@@ -127,6 +142,7 @@ const CrewMemeberListCotainer: React.FC<CrewMemeberListContainerProps> = ({ crew
             boxShadow: "md",
             }}
             cursor="pointer"
+            onClick={() => goCrewOtherFeed(crewData?.manager.seq, crewData?.manager.nickname, crewData?.manager.profileImage)}
         >
             <Box
             width="40px"
@@ -164,6 +180,7 @@ const CrewMemeberListCotainer: React.FC<CrewMemeberListContainerProps> = ({ crew
                 boxShadow: "md",
             }}
             cursor="pointer"
+            onClick={() => goCrewOtherFeed(crewMember.seq, crewMember.nickname, crewMember.profileImage)}
             >
             <Box
                 width="40px"

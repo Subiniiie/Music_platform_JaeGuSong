@@ -17,7 +17,7 @@ const useCommon = () => {
         if (authStorage) {
             try {
             const parsedData = JSON.parse(authStorage);
-            setStoreMySeq(parsedData?.state?.artistSeq || null);
+            setStoreMySeq(parsedData?.state?.artistSeq || "");
             } catch (error) {
             console.error("Failed to parse auth-storage:", error);
             }

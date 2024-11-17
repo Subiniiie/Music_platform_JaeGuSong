@@ -23,12 +23,19 @@ const CrewMemeberListChat: React.FC<CrewMemeberListContainerProps> = ({ crewData
       alignItems="center"
       marginTop="80px"
       gap="45px"
-      value={chatValue || chatUserSeq.toString()}
-      onChange={(e) => setChatValue((e.target as HTMLInputElement).value)}
+      value={chatValue || (chatUserSeq ? chatUserSeq.toString() : '')}
+      onChange={(e) => {
+        const target = e.target as HTMLInputElement;
+        if (target && target.value) {
+          setChatValue(target.value);
+        } else {
+          console.error("Invalid target in onChange event:", e);
+        }
+      }}
       disabled={!checkManagerSeq}
     >
-      {crewData?.crews.map((crewMember, index) => (
-          <Radio key={crewMember.seq} value={crewMember.seq.toString()} margin="2px 0"></Radio>
+      {crewData?.crews.map((crewMember) => (
+          <Radio key={crewMember.seq} value={crewMember.seq.toString()|| ''} margin="2px 0"></Radio>
         ))}
     </RadioGroup>
   </Box>
