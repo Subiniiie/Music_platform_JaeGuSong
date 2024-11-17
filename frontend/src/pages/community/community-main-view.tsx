@@ -73,7 +73,7 @@ const CommunityMainView: React.FC = () => {
     if (crewSeq !== 0) {
       getCrewInfo();
     }
-  }, [id, crewSeq]); // crewSeq 값이 변경될 때마다 API 요청을 보냄
+  }, [id, crewSeq, checkBoardSeq]); // crewSeq 값이 변경될 때마다 API 요청을 보냄
 
   return (
     <>

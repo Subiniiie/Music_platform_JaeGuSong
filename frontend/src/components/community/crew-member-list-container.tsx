@@ -90,14 +90,14 @@ const CrewMemeberListCotainer: React.FC<CrewMemeberListContainerProps> = ({ crew
         }
         }
 
-    const goCrewOtherFeed = async (checkSeq: number) => {
+    const goCrewOtherFeed = async (checkSeq: number, checkNickname: string, checkProfileImage: string) => {
         getMySeq()
 
         if (storeMySeq) {
             if (checkSeq === parseInt(storeMySeq)) {
                 navigate(paths.community.myCommunity)
             } else {
-                navigate(paths.community.generalCommunity(checkSeq))
+                navigate(paths.community.generalCommunity(checkSeq), { state: { artistSeq: checkSeq, otherNickname: checkNickname, otherProfileImage: checkProfileImage} })
             }
         }
     };
@@ -142,7 +142,7 @@ const CrewMemeberListCotainer: React.FC<CrewMemeberListContainerProps> = ({ crew
             boxShadow: "md",
             }}
             cursor="pointer"
-            onClick={() => goCrewOtherFeed(crewData?.manager.seq)}
+            onClick={() => goCrewOtherFeed(crewData?.manager.seq, crewData?.manager.nickname, crewData?.manager.profileImage)}
         >
             <Box
             width="40px"
@@ -180,7 +180,7 @@ const CrewMemeberListCotainer: React.FC<CrewMemeberListContainerProps> = ({ crew
                 boxShadow: "md",
             }}
             cursor="pointer"
-            onClick={() => goCrewOtherFeed(crewMember.seq)}
+            onClick={() => goCrewOtherFeed(crewMember.seq, crewMember.nickname, crewMember.profileImage)}
             >
             <Box
                 width="40px"

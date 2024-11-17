@@ -19,7 +19,7 @@ const CrewHeader: React.FC<CrewHeaderProps> = ({checkBoardSeq}) => {
   const { id } = useParams<{ id: string }>();
   const setGetCrewSeqStore = useCrewSeqStore((state) => state.setGetCrewSeqStore);
   const getCrewSeqStore = useCrewSeqStore((state) => state.getCrewSeqStore);
-
+  
   const {
     openCrewFollowModal,
     openCrewJoinModal,
@@ -45,17 +45,21 @@ const CrewHeader: React.FC<CrewHeaderProps> = ({checkBoardSeq}) => {
     preGetCrewInfo,
     getCrewInfo
   } = UseCommunityCrew();
-  const { artistSeq } = useCommon();
-
+  const { storeMySeq, getMySeq } = useCommon();
+  
   useEffect(() => {
     if (!myCrewsSeq || !crewNameSeq) {
       preGetCrewInfo();
     } else {
       getCrewInfo();
     }
-  }, [myCrewsSeq, crewNameSeq, getCrewSeqStore, id]);
-
-
+    getMySeq()
+  }, [myCrewsSeq, crewNameSeq, getCrewSeqStore, id, storeMySeq]);
+  
+  useEffect(() => {
+    console.log('피드장', checkBoardSeq, storeMySeq)
+  }, [storeMySeq])
+  
   useEffect(() => {
     if (id) {
       setGetCrewSeqStore(Number(id));
@@ -138,7 +142,7 @@ const CrewHeader: React.FC<CrewHeaderProps> = ({checkBoardSeq}) => {
           justifyContent="flex-end"
           gap="5px"
         >
-          {checkBoardSeq === artistSeq && (
+          {checkBoardSeq === parseInt(storeMySeq) && (
             <Box marginRight="3px" display="flex" gap="7px">
               <CommunityButton title="글쓰기" onClick={goCreateArticle} />
               <CommunityButton

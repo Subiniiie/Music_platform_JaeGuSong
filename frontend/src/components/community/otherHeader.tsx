@@ -28,6 +28,8 @@ const OtherHeader: React.FC = () => {
   });
   const { makeFollow } = useCommunityFollow();
 
+  console.log('팔로우에서 다른 사람 커뮤니티', artistSeq, otherNickname, otherProfileImage)
+
   return (
     <Box
       position="fixed"

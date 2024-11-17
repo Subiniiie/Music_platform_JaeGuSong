@@ -25,12 +25,19 @@ const CrewMemeberListFeed: React.FC<CrewMemeberListContainerProps> = ({ crewData
       alignItems="center"
       marginTop="80px"
       gap="45px"
-      value={feedValue ||boardUserSeq.toString()}
-      onChange={(e) => setFeedValue((e.target as HTMLInputElement).value)}
+      value={feedValue || (boardUserSeq ? boardUserSeq.toString() : '')}
+      onChange={(e) => {
+        const target = e.target as HTMLInputElement;
+        if (target && target.value) {
+          setFeedValue(target.value);
+        } else {
+          console.error("Invalid target in onChange event:", e);
+        }
+      }}
       disabled={!checkManagerSeq}
     >
-      {crewData?.crews.map((crewMember, index) => (
-          <Radio key={crewMember.seq} value={crewMember.seq.toString()} margin="2px 0"></Radio>
+      {crewData?.crews.map((crewMember) => (
+          <Radio key={crewMember.seq} value={crewMember.seq.toString() || ''} margin="2px 0"></Radio>
         ))}
     </RadioGroup>
   </Box>
