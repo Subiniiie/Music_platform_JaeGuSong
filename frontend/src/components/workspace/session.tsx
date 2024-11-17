@@ -264,10 +264,6 @@ export default function Session({
     }
   };
 
-  // const handleToggleCheck = () => {
-  //   toggleCheck(sessionId);
-  // }
-
   const handleSetCheck = (isChecked: boolean) => {
     setCheck(sessionId, isChecked);
   };
@@ -285,7 +281,6 @@ export default function Session({
       <Flex gap={3}>
         <Checkbox
           colorPalette="purple"
-          // onChange={() => handleToggleCheck()}
           onChange={(e) => handleSetCheck(e.target.checked)}
         />
         <Stack width="150px" justifyContent="center">
