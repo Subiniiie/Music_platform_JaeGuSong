@@ -44,7 +44,7 @@ const Input: React.FC = () => {
 
   return (
     <Box width="100%" maxW="md" mx="auto">
-      <form onSubmit={handleSubmit}>
+      <form>
         {currentStep === 0 && (
           <>
             <Box mb={4}>
@@ -333,6 +333,7 @@ const Input: React.FC = () => {
                     width="150px"
                     _hover={{ backgroundColor: "gray", color: "black" }}
                     disabled={!isChecked}
+                    onClick={handleSubmit}
                   >
                     회원가입 하기
                   </Button>
