@@ -3,6 +3,7 @@ import { Box, Grid, GridItem } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import MusicArticleItems from "./musicArticleItems";
+import { useMusicFeedStore } from "@/stores/musicListStore";
 
 export interface MyMusicFeedList {
   name: string;
@@ -16,7 +17,8 @@ export interface MyMusicFeedList {
 const ArticleMusicList: React.FC = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
-  const [myMusicFeedList, setMyMusicFeedList] = useState<MyMusicFeedList[]>([]);
+  const { setMyMusicFeedList, myMusicFeedList } = useMusicFeedStore()
+  // const [myMusicFeedList, setMyMusicFeedList] = useState<MyMusicFeedList[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("ALL");
@@ -82,7 +84,7 @@ const ArticleMusicList: React.FC = () => {
     };
 
     getMusicFeed();
-  }, [API_URL, id]);
+  }, [API_URL, id, setMyMusicFeedList]);
   
 
   if (loading) {
@@ -119,7 +121,12 @@ const ArticleMusicList: React.FC = () => {
         marginLeft="90px"
       >
         {myMusicFeedList
-          .filter(myMusic => id !== undefined && myMusic.state === 'PUBLIC') // 조건 필터링
+          .filter((myMusic) => {
+            if (id === undefined) {
+              return true; // id가 undefined일 때는 모든 데이터 표시
+            }
+            return myMusic.state === "PUBLIC"; // id가 있을 때는 state가 PUBLIC인 것만 표시
+          })
           .map((myMusic, index) => (
             <GridItem key={index}>
               <MusicArticleItems myMusic={myMusic} />
