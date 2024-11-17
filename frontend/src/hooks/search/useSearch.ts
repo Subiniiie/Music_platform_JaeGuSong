@@ -69,6 +69,8 @@ export default function useSearch() {
     setOtherUserNickname(otherNickname);
     setOtherUserProfileImage(otherProfileImage);
 
+    console.log('나 다른 사람 꺼 보러 간다', artistSeq, otherNickname, otherProfileImage)
+
     // artistSeq를 URL에 포함해 전달
     navigate(paths.community.generalCommunity(artistSeq), {
       state: { artistSeq, otherNickname, otherProfileImage },

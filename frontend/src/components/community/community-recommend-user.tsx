@@ -8,11 +8,13 @@ import {
     PaginationRoot,
   } from "@/components/ui/pagination";
   import useCommon from '@/hooks/common/common';
+  import useSearch from '@/hooks/search/useSearch';
 
 
 const CommunityRecommendUser: React.FC = () => {
     const { API_URL, storeMySeq, storedToken, getMySeq } = useCommon();
     const [recommendedByUsers, setRecommendedByUsers] = useState<any[]>([]);
+    const { goOtherFeed } = useSearch();
 
     useEffect(() => {
         const getRecommentUserByMe = async () => {
@@ -81,7 +83,9 @@ const CommunityRecommendUser: React.FC = () => {
       
     return (
         <>
-            <Text textStyle="2xl">추천 유저 - 자기 기준</Text>
+            <Box>
+                <Text textStyle="2xl" fontWeight="bold" marginLeft="30px" font-family= "MiceMyungjo">추천 유저</Text>
+            </Box>                
             {recommendedByUsers.length > 0 ? (
                 <Box marginTop="15px" display="flex" flexDirection="row" height="100%">
                     <Box width="50%" height="100%" paddingLeft="200px">
@@ -99,19 +103,70 @@ const CommunityRecommendUser: React.FC = () => {
                         {/* 2열 그리드 레이아웃 */}
                         <Grid templateColumns="repeat(4, 1fr)" gap={2} marginTop="15px">
                             {recommendedByUsers.map((user, index) => (
-                                <Box key={index} background="gray.100" borderRadius="md" width="95px" height="95px">
-                                <Text color="black">{user.name}</Text>
+                                <Box
+                                    key={index} 
+                                    width="95px" 
+                                    height="95px"
+                                    background="white"
+                                    borderRadius="10px"
+                                    backgroundImage={`url(https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${user.profileImage})`} // 이미지 URL 사용
+                                    backgroundSize="contain"
+                                    backgroundPosition="center"
+                                    backgroundRepeat="no-repeat" 
+                                    display="flex"
+                                    alignItems="flex-end"
+                                    cursor="pointer"
+                                    onClick={() => goOtherFeed(user.artistSeq, user.nickname, user.profileImage)}
+                                >
+                                    <Box
+                                        width="100%"
+                                        background="rgba(0, 0, 0, 0.3)"
+                                        display="flex"
+                                        justifyContent="center"
+                                    > 
+                                        <Text color="white" fontFamily="KotraHope">{user.nickname}</Text>
+                                    </Box>
                                 </Box>
                             ))}
                         </Grid>
                     </Box>
                     <Box width="50%" height="100%" display="flex" marginLeft="20px">
-                        <Box background="white" borderRadius="md" padding="10px" width="185px" height="260px" margin="20px 0">
                         {autoInitialCurrentData.map((user: any, index: number) => (
-        <Text key={index} color="black">{user.name}</Text>
+                            <Box 
+                                key={index}
+                                background="white" 
+                                borderRadius="md" 
+                                width="185px" 
+                                height="260px" 
+                                margin="20px 0"
+                                backgroundImage={`url(https://file-bucket-l.s3.ap-northeast-2.amazonaws.com/${user.profileImage})`} // 이미지 URL 사용
+                                backgroundSize="contain"
+                                backgroundPosition="center" 
+                                backgroundRepeat="no-repeat"
+                                display="flex"
+                                alignItems="flex-end"
+                                cursor="pointer"
+                                
+                            >
+                                <Box
+                                    width="100%"
+                                    height="80px"
+                                    background="rgba(0, 0, 0, 0.3)"
+                                    display="flex"
+                                    flexDirection="column"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                >
+                                    <Text color="white" fontSize="lg" fontFamily="KotraHope">{user.nickname}</Text>
+                                    <Box display="flex" flexDirection="row">
+                                        <Text color="white" fontSize="lg" fontFamily="KotraHope">{user.genre}</Text>
+                                        <Text color="white" fontSize="lg" fontFamily="KotraHope" marginLeft="5px">{user.position}</Text>
+                                    </Box>
+                                    <Text color="white" fontSize="lg" fontFamily="KotraHope">{user.region}</Text>
+                                </Box>
+                            </Box>    
     ))}
                         </Box>
-                    </Box>
                 </Box>
                 ) : (
                     "추천받은 유저가 없습니다."
