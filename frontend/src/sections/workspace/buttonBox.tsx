@@ -27,14 +27,18 @@ export default function ButtonBox({ workspaceSeq, wsDetails }: ButtonBoxProps) {
       background="rgba(0, 0, 0, 0.3)"
     >
       <Flex gap="4">
-        {wsDetails.role === "MASTER" && (
-          <>
+        {/* {wsDetails.role === "MASTER" && ( */}
+          {/* <> */}
             {/* <WsButton>시작지점 설정</WsButton> */}
             {/* <WsButton>종료지점 설정</WsButton> */}
-            <WsButton>설정 리셋</WsButton>
+            {/* <WsButton>설정 리셋</WsButton>
             <SessionUploadButton workspaceSeq={workspaceSeq} />
-          </>
-        )}
+          </> */}
+        {/* // )} */}
+
+        <WsButton>설정 리셋</WsButton>
+        <SessionUploadButton workspaceSeq={workspaceSeq} />
+
       </Flex>
     </Stack>
   );
