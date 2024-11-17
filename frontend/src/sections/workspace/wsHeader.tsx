@@ -32,7 +32,9 @@ export default function WsHeader({
   role,
 }: WsHeaderProps) {
   const [isPublic, setIsPublic] = useState(wsDetails.state === "PUBLIC");
-  const [wsTree, setWsTree] = useState(null);
+  const [wsTree, setWsTree] = useState([]);
+  const [originTitle, setOriginTitle] = useState('');
+  const [originSinger, setOriginSinger] = useState('');
 
   const sessions = useWsDetailStore((state) => state.sessions)
   const checkedSessions = useWsDetailStore((state) => state.checkedSessions)
@@ -127,7 +129,15 @@ export default function WsHeader({
           },
         }
       );
-      setWsTree(response.data)
+
+      // treeInfoResponseList를 wsTree로 설정
+      const treeData = Array.isArray(response.data.treeInfoResponseList)
+      ? response.data.treeInfoResponseList
+      : [];
+
+      setWsTree(treeData)
+      setOriginTitle(response.data.originTitle)
+      setOriginSinger(response.data.originSinger)
       console.log(wsTree)
     } catch (error) {
       console.error("Error fetching workspace details:", error);
@@ -224,24 +234,17 @@ export default function WsHeader({
                         </Text>
                       ) : (
                         <Box color={"white"} px={4}>
-                          {/* {wsTree} */}
                           <Text mb={2}>부모 워크스페이스</Text>
-                          {wsTree ? (
+                          {Array.isArray(wsTree) && wsTree.length > 0 ? (
                             wsTree.map((item, index) => (
-                              <Stack px={4}>
-                                <Text key={index} fontSize="13px">
-                                  {`워크스페이스명 : ${item.workspaceName}`}
-                                </Text>
-                                <Text key={index} fontSize="13px">
-                                  {`원곡 : ${item}`}
-                                </Text>
-                                <Text key={index} fontSize="13px">
-                                  {`원곡자 : ${item.artistName}`}
-                                </Text>
+                              <Stack key={index} px={4}>
+                                <Text fontSize="13px">{`워크스페이스명 : ${item.workspaceName}`}</Text>
+                                <Text fontSize="13px">{`원곡 : ${originTitle}`}</Text>
+                                <Text fontSize="13px">{`원곡자 : ${originSinger}`}</Text>
                               </Stack>
                             ))
                           ) : (
-                            <Text>데이터가 없습니다.</Text>
+                            <Text color={"white"}>데이터가 없습니다.</Text>
                           )}
                         </Box>
                       )}
