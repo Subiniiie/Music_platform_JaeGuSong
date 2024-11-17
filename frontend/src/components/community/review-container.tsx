@@ -18,6 +18,17 @@ interface ReviewcontainerProps {
   onCommentAdded: () => void; // 댓글 추가 후 부모 컴포넌트에서 댓글 목록 갱신
 }
 
+interface Comment {
+  id: number;
+  content: string;
+  replies: Reply[];
+}
+
+interface Reply {
+  id: number;
+  content: string;
+}
+
 const Reviewcontainer: React.FC<ReviewcontainerProps> = ({
   comments,
   boardSeq,
