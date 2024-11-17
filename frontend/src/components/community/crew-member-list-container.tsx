@@ -7,7 +7,7 @@ import  CrewMemeberListFeed from './crew-member-list-feed';
 import  CrewMemberListChat  from './crew-member-list-chat';
 import useCommon from '@/hooks/common/common';
 import paths from '@/configs/paths';
-
+import { toaster } from "@/components/ui/toaster"
 
 interface CrewMemeberListContainerProps {
     crewData: CrewData | null;
@@ -84,6 +84,10 @@ const CrewMemeberListCotainer: React.FC<CrewMemeberListContainerProps> = ({ crew
             }
         )
         console.log('나 권한 준다', response.data)
+        toaster.create({
+            description: "권한 수정이 완료되었습니다.",
+            type: "success"
+        })
         onClose()
         } catch(error) {
         console.error(error)
