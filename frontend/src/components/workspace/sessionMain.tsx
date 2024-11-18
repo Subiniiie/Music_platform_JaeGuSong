@@ -179,14 +179,35 @@ export default function SessionMain({
   useEffect(() => {
     if (storeStartPoint !== undefined) {
       setCursor1(storeStartPoint); // Store 값 변경 시 cursor1 업데이트
+      // currentTime 유효성 검사 및 업데이트
+      if (wavesurferRef.current) {
+        const currentTime = wavesurferRef.current.getCurrentTime() || 0;
+  
+        if (currentTime < storeStartPoint) {
+          wavesurferRef.current.setTime(storeStartPoint);
+          setCurrentTime(storeStartPoint); // currentTime을 startPoint로 업데이트
+          console.log("currentTime이 startPoint보다 작아 업데이트되었습니다.");
+        }
+      }
     }
   }, [storeStartPoint]);
   
   useEffect(() => {
     if (storeEndPoint !== undefined) {
       setCursor2(storeEndPoint); // Store 값 변경 시 cursor2 업데이트
+      // currentTime 유효성 검사 및 업데이트
+      if (wavesurferRef.current) {
+        const currentTime = wavesurferRef.current.getCurrentTime() || 0;
+  
+        if (currentTime > storeEndPoint) {
+          wavesurferRef.current.setTime(storeEndPoint);
+          setCurrentTime(storeEndPoint); // currentTime을 endPoint로 업데이트
+          console.log("currentTime이 endPoint보다 커 업데이트되었습니다.");
+        }
+      }
     }
   }, [storeEndPoint]);
+  
   
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);

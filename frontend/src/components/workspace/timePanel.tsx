@@ -1,5 +1,6 @@
 import { Flex, Stack } from "@chakra-ui/react";
 import { Input, Text } from "@chakra-ui/react";
+import { toaster } from "@/components/ui/toaster";
 import { useState, useEffect } from "react";
 import { useWsDetailStore } from "@/stores/wsDetailStore";
 
@@ -38,24 +39,20 @@ export default function TimePanel({
       const seconds = parseInt(match[2], 10);
       return minutes * 60 + seconds;
     } else {
-      console.warn("유효하지 않은 형식입니다:", value);
+      // console.warn("유효하지 않은 형식입니다:", value);
       return null;
     }
   };
 
   const formatInput = (value: string): string => {
-    console.log("formatInput 입력값:", value);
     const digits = value.replace(/\D/g, "");
-    console.log("추출된 숫자:", digits);
   
     if (digits.length <= 2) {
-      console.log("최종 포맷:", digits);
       return digits;
     }
   
     const minutes = digits.slice(0, -2);
     const seconds = digits.slice(-2);
-    console.log("분:", minutes, "초:", seconds);
     return `${minutes}:${seconds}`;
   };
   
@@ -76,32 +73,46 @@ export default function TimePanel({
     setEndTime(formatToMMSS(endPoint));
   }, [endPoint]);
 
-  // 시간 입력이 완료되었을 때
-  // const handleBlur = (
-  //   value: string,
-  //   setTime: (value: string) => void,
-  //   onChange: (time: number) => void
-  // ) => {
-  
-  //   const timeInSeconds = parseMMSS(value);
-  
-  //   if (timeInSeconds !== null && timeInSeconds <= duration) {
-  //     setTime(formatToMMSS(timeInSeconds));
-  //     onChange(timeInSeconds); // 부모에게 전달
-  //   } else {
-  //     console.warn("유효하지 않은 값. 기본값으로 초기화.");
-  //     setTime(formatToMMSS(0));
-  //     onChange(0); // 기본값 전달
-  //   }
-  // };
-
-  const handleBlur = (value: string, setTime: (value: string) => void, updatePoint: (id: string, point: number) => void) => {
+  const handleBlur = (
+    value: string,
+    setTime: (value: string) => void,
+    updatePoint: (id: string, point: number) => void,
+    isStartPoint: boolean // true면 startPoint 업데이트, false면 endPoint 업데이트
+  ) => {
     const timeInSeconds = parseMMSS(value);
 
     if (timeInSeconds !== null && timeInSeconds <= duration) {
+      // 유효성 검사
+      if (isStartPoint) {
+        // startPoint 업데이트 시
+        if (timeInSeconds >= endPoint) {
+          toaster.create({
+            description: "시작 지점은 종료 지점보다 이전이어야 합니다.",
+            type: "error",
+          });
+          setTime(formatToMMSS(startPoint)); // 이전 값으로 복원
+          return;
+        }
+      } else {
+        // endPoint 업데이트 시
+        if (timeInSeconds <= startPoint) {
+          toaster.create({
+            description: "종료 지점은 시작 지점보다 이후여야 합니다.",
+            type: "error",
+          });
+          setTime(formatToMMSS(endPoint)); // 이전 값으로 복원
+          return;
+        }
+      }
+
+      // 조건에 맞으면 업데이트
       setTime(formatToMMSS(timeInSeconds));
       updatePoint(sessionId, timeInSeconds); // store 업데이트
     } else {
+      toaster.create({
+        description: "유효하지 않은 값입니다.",
+        type: "error",
+      });
       setTime(formatToMMSS(0));
       updatePoint(sessionId, 0); // 기본값
     }
@@ -113,9 +124,10 @@ export default function TimePanel({
     value: string,
     setTime: (value: string) => void,
     updatePoint: (id: string, point: number) => void,
+    isStartPoint: boolean // true면 startPoint 업데이트, false면 endPoint 업데이트
   ) => {
     if (e.key === "Enter") {
-      handleBlur(value, setTime, updatePoint); // Enter 키 입력 시 handleBlur 호출
+      handleBlur(value, setTime, updatePoint, isStartPoint); // Enter 키 입력 시 handleBlur 호출
     }
   };
 
@@ -138,9 +150,9 @@ export default function TimePanel({
           value={startTime}
           //   onChange={(e) => setStartTime(e.target.value)} // 입력 중에는 자유롭게 값 업데이트
           onChange={(e) => handleInputChange(e.target.value, setStartTime)} // 입력 시 자동 포맷 적용
-          onBlur={() => handleBlur(startTime, setStartTime, updateStartPoint)} // 포커스 잃을 때 유효성 검사
+          onBlur={() => handleBlur(startTime, setStartTime, updateStartPoint, true)} // 포커스 잃을 때 유효성 검사
           onKeyDown={(e) =>
-            handleKeyDown(e, startTime, setStartTime, updateStartPoint)
+            handleKeyDown(e, startTime, setStartTime, updateStartPoint, true)
           } // Enter 키 입력 시 유효성 검사
           placeholder="00:00"
           width="90px"
@@ -153,8 +165,8 @@ export default function TimePanel({
           value={endTime}
           //   onChange={(e) => setEndTime(e.target.value)} // 입력 중에는 자유롭게 값 업데이트
           onChange={(e) => handleInputChange(e.target.value, setEndTime)} // 입력 시 자동 포맷 적용
-          onBlur={() => handleBlur(endTime, setEndTime, updateEndPoint)} // 포커스 잃을 때 유효성 검사
-          onKeyDown={(e) => handleKeyDown(e, endTime, setEndTime, updateEndPoint)} // Enter 키 입력 시 유효성 검사
+          onBlur={() => handleBlur(endTime, setEndTime, updateEndPoint, false)} // 포커스 잃을 때 유효성 검사
+          onKeyDown={(e) => handleKeyDown(e, endTime, setEndTime, updateEndPoint, false)} // Enter 키 입력 시 유효성 검사
           placeholder="00:00"
           width="90px"
           borderRadius="15px"

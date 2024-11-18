@@ -48,8 +48,8 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    console.log("runSearch 상태:", runSearch);
-    console.log("searchResults 상태:", searchResults);
+    // console.log("runSearch 상태:", runSearch);
+    // console.log("searchResults 상태:", searchResults);
   }, [runSearch, searchResults]);
 
   const handleLogout = () => {
@@ -149,7 +149,6 @@ export default function Navbar() {
               type="submit"
               borderWidth="1px"
               borderColor="#c5e4f3"
-              ㅁ
               background="none"
             >
               검색
