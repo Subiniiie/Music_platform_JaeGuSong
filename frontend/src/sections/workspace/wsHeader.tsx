@@ -10,6 +10,10 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Icon } from "@chakra-ui/react";
+import { Switch } from "@/components/ui/switch";
+import { MdPublic, MdPublicOff } from "react-icons/md";
+
 import { useState } from "react";
 import { useWsDetailStore } from "@/stores/wsDetailStore";
 import axios from "axios";
@@ -148,9 +152,29 @@ export default function WsHeader({
     <Stack>
       <Flex justifyContent="space-between">
         <Stack>
-          <Heading fontFamily="MiceGothic" size="xl">
-            {wsDetails.name || "제목 없음"}
-          </Heading>
+          <Flex>
+            <Heading fontFamily="MiceGothic" size="xl">
+              {wsDetails.name || "제목 없음"}
+            </Heading>
+            <Switch
+              ml={3}
+              colorPalette="green"
+              size="lg"
+              trackLabel={{
+                on: (
+                  <Icon color="white">
+                    <MdPublic />
+                  </Icon>
+                ),
+                off: (
+                  <Icon color="gray.400">
+                    <MdPublicOff />
+                  </Icon>
+                ),
+              }}
+              onClick={toggleState}
+            />
+          </Flex>
           <Heading fontFamily="MiceGothic" size="md">
             {wsDetails.originTitle || "제목 없음"} -{" "}
             {wsDetails.originSinger || "아티스트 없음"}
@@ -181,7 +205,7 @@ export default function WsHeader({
               >
                 저장
               </Button>
-              <Button
+              {/* <Button
                 bg="blackAlpha.900" // 검은 배경
                 color="white" // 텍스트 색상
                 border="1.5px solid" // 테두리 두께
@@ -196,8 +220,8 @@ export default function WsHeader({
                 fontWeight="bold"
                 onClick={toggleState}
               >
-                {isPublic ? "비공개" : "공유"}
-              </Button>
+                {isPublic ? "비공개" : "공개"}
+              </Button> */}
               <PopoverRoot>
                 <PopoverTrigger asChild>
                   <Button
