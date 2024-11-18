@@ -46,6 +46,10 @@ export default function WsHeader({
   const API_URL = import.meta.env.VITE_API_URL;
 
   const toggleState = async () => {
+    console.log("안녕, 난 toggleState");
+    console.log("현재 props :", wsDetails);
+    console.log("axios 요청 전 :", isPublic);
+
     const newState = isPublic ? "PRIVATE" : "PUBLIC";
     try {
       await axios.post(
@@ -59,6 +63,7 @@ export default function WsHeader({
         }
       );
       setIsPublic(!isPublic); // 상태 토글
+      console.log("상태 반영 성공 :", isPublic);
     } catch (error) {
       console.error("Error updating workspace state:", error);
       toaster.create({
@@ -66,6 +71,7 @@ export default function WsHeader({
         type: "error",
       });
     }
+    console.log("상태 반영 성공 :", isPublic);
   };
 
   // 날짜 포맷팅 (YYYY-MM-DD HH:MM)
@@ -172,7 +178,8 @@ export default function WsHeader({
                   </Icon>
                 ),
               }}
-              onClick={toggleState}
+              onCheckedChange={toggleState}
+              checked={!isPublic}
             />
           </Flex>
           <Heading fontFamily="MiceGothic" size="md">
