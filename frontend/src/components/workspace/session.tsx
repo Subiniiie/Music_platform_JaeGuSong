@@ -293,6 +293,40 @@ export default function Session({
     setCheck(sessionId, isChecked);
   };
 
+  // const handleSessionTypeChange = async () => {
+
+  //   try {
+  //     const storedToken = localStorage.getItem("jwtToken");
+  //     const response = await axios.post(
+  //       `${API_URL}/api/workspaces/${workspaceSeq}/session/${sessionId}`,
+  //       {
+  //         name: workspaceName,
+  //         originSinger,
+  //         originTitle,
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${storedToken}`,
+  //         },
+  //       }
+  //     );
+
+  //     toaster.create({
+  //       description: "워크스페이스가 성공적으로 생성되었습니다.",
+  //       type: "success",
+  //     });
+
+  //     onWorkspaceCreated(response.data);
+  //   } catch (error) {
+  //     console.error("Error creating workspace:", error);
+  //     toaster.create({
+  //       description: "워크스페이스 생성에 실패했습니다.",
+  //       type: "error",
+  //     });
+  //   }
+  // };
+
   return (
     <Card.Root
       bg="transparent"
@@ -349,17 +383,21 @@ export default function Session({
                       >
                         세션 정보 변경
                       </PopoverTitle>
-                      <ToggleOptions onSelectSession={handleSelectSession} />
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        fontFamily="MiceGothic"
-                        fontSize={11}
-                        mt={4}
-                        onClick={() => console.log("변경하기")}
-                      >
-                        변경하기
-                      </Button>
+                      <Flex justifyContent="center" alignItems="center" gap={2}>
+                        <ToggleOptions onSelectSession={handleSelectSession} />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          fontFamily="MiceGothic"
+                          fontSize={11}
+                          onClick={() => {
+                            console.log("변경하기")
+                            // handleSessionTypeChange
+                          }}
+                        >
+                          변경하기
+                        </Button>
+                      </Flex>
                     </PopoverBody>
                   </PopoverContent>
                 </PopoverRoot>

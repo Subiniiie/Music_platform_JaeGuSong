@@ -1,7 +1,6 @@
 import { Box, Stack, Flex, Center } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Search from "@/sections/workspace/search";
 import CardList from "@/sections/workspace/cardList";
 import WsCreateButton from "@/sections/workspace/wsCreateButton";
 import { useNavigate } from "react-router-dom";
