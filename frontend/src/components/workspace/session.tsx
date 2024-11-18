@@ -55,7 +55,6 @@ export default function Session({
   const addSession = useWsDetailStore((state) => state.addSession);
   const removeSession = useWsDetailStore((state) => state.removeSession);
   const updateSession = useWsDetailStore((state) => state.updateSession);
-  // const toggleCheck = useWsDetailStore((state) => state.toggleCheck);
   const setCheck = useWsDetailStore((state) => state.setCheck);
   const sessions = useWsDetailStore((state) => state.sessions);
   const storeStartPoint = useWsDetailStore(
@@ -68,6 +67,7 @@ export default function Session({
     (state) => state.sessions[sessionId]?.check
   );
   const isGlobalPlaying = useWsDetailStore((state) => state.isGlobalPlaying);
+  const globalDuration = useWsDetailStore((state) => state.globalDuration);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -94,6 +94,8 @@ export default function Session({
     sessionTypeRef.current = type;
     forceUpdate((prev) => prev + 1); // 강제로 재렌더링
   };
+
+  const waveformWidth = (globalDuration !== 0) && (duration !== 0) ? (duration / globalDuration) * 100 : 100
 
   useEffect(() => {
     if (!waveformRef.current) return;
@@ -376,10 +378,13 @@ export default function Session({
           </Stack>
         </Stack>
 
-        <Stack width="100%" height="150px" justify="center" pt="10px">
+        <Stack
+          // width="100%"
+          flex={1}
+          height="150px" justify="center" pt="10px" mr="12px">
           <Box
             ref={waveformRef}
-            width="100%"
+            width={`${waveformWidth}%`}
             height="100px"
             position="relative"
           >
@@ -395,6 +400,7 @@ export default function Session({
                 y: 0,
               }}
               onDragStop={handleStartCursorDragStop}
+              enableResizing={false} // 크기 조정 비활성화
               style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
             >
               {/* 커서 모양을 위한 Wrapper */}
@@ -439,6 +445,7 @@ export default function Session({
                 y: 0,
               }}
               onDragStop={handleEndCursorDragStop}
+              enableResizing={false} // 크기 조정 비활성화
               style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
             >
               {/* 커서 모양을 위한 Wrapper */}
@@ -564,7 +571,7 @@ export default function Session({
             </Rnd>
           </Box>
 
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" width={`${waveformWidth}%`}>
             <Text fontSize={10}>{formatTime(currentTime)}</Text>
             <Text fontSize={10}>{formatTime(duration)}</Text>
           </Flex>

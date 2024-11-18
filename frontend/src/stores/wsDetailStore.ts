@@ -49,7 +49,7 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
   globalStartPoint: Infinity, // 초기값은 세션의 최소값으로 설정될 예정
   globalEndPoint: 0,
   globalCurrentTime: 0,
-  globalDuration: 180,
+  globalDuration: 0,
   isGlobalPlaying: false,
   checkedSessions: [],
   shouldReloadSessionBox: false,
@@ -90,7 +90,6 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
       };
 
       const checkedSessions = state.checkedSessions;
-      console.log("checkedSessions :", checkedSessions);
 
       // checkedSessions를 기반으로 globalStartPoint와 globalEndPoint 재계산
       const checkedStartPoints = checkedSessions.map(
@@ -99,8 +98,6 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
       const checkedEndPoints = checkedSessions.map(
         (id) => newSessions[id]?.endPoint ?? -Infinity
       );
-
-      console.log("checkedStartPoints :", checkedStartPoints);
 
       // 세션 추가 후 글로벌 값 재계산
       return {
@@ -220,7 +217,6 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
         -Infinity
       );
 
-      console.log("after setCheck :", session);
       return {
         sessions: { ...state.sessions, [sessionId]: session },
         checkedSessions: newCheckedSessions,
