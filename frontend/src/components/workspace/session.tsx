@@ -415,205 +415,225 @@ export default function Session({
             </Flex>
           </Stack>
         </Stack>
-
-        <Stack
-          // width="100%"
+              
+        <Flex
           flex={1}
-          height="150px" justify="center" pt="10px" mr="12px">
-          <Box
-            ref={waveformRef}
+          align="center"
+        >
+          <Stack
+            // width="100%"
             width={`${waveformWidth}%`}
-            height="100px"
-            position="relative"
+            // flex={1}
+            height="150px"
+            justify="center"
+            pt="10px"
+            mr="12px"
           >
-            {/* Draggable startPoint 커서 */}
-            <Rnd
-              bounds="parent"
-              size={{ width: 2, height: 100 }}
-              position={{
-                x:
-                  waveformRef.current && duration > 0
-                    ? (cursor1 / duration) * waveformRef.current.clientWidth
-                    : 0,
-                y: 0,
-              }}
-              onDragStop={handleStartCursorDragStop}
-              enableResizing={false} // 크기 조정 비활성화
-              style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
-            >
-              {/* 커서 모양을 위한 Wrapper */}
-              <div
-                style={{ position: "relative", height: "100%", width: "100%" }}
+            <Stack>
+              <Box
+                ref={waveformRef}
+                // width={`${waveformWidth}%`}
+                width="100%"
+                height="100px"
+                position="relative"
               >
-                {/* 삼각형 부분 */}
-                <div
-                  style={{
-                    position: "absolute",
-                    top: -6, // 바의 위쪽에 삼각형이 위치하도록
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: 0,
-                    height: 0,
-                    borderLeft: "10px solid transparent",
-                    borderRight: "10px solid transparent",
-                    borderTop: "10px solid green", // 삼각형 색상
+                {/* Draggable startPoint 커서 */}
+                <Rnd
+                  bounds="parent"
+                  size={{ width: 2, height: 100 }}
+                  position={{
+                    x:
+                      waveformRef.current && duration > 0
+                        ? (cursor1 / duration) * waveformRef.current.clientWidth
+                        : 0,
+                    y: 0,
                   }}
-                ></div>
+                  onDragStop={handleStartCursorDragStop}
+                  enableResizing={false} // 크기 조정 비활성화
+                  style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
+                >
+                  {/* 커서 모양을 위한 Wrapper */}
+                  <div
+                    style={{ position: "relative", height: "100%", width: "100%" }}
+                  >
+                    {/* 삼각형 부분 */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: -6, // 바의 위쪽에 삼각형이 위치하도록
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: 0,
+                        height: 0,
+                        borderLeft: "10px solid transparent",
+                        borderRight: "10px solid transparent",
+                        borderTop: "10px solid green", // 삼각형 색상
+                      }}
+                    ></div>
 
-                {/* 바 부분 */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "green",
+                    {/* 바 부분 */}
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "green",
+                      }}
+                    ></div>
+                  </div>
+                </Rnd>
+
+                {/* Draggable endPoint 커서 */}
+                <Rnd
+                  bounds="parent"
+                  size={{ width: 2, height: 100 }}
+                  position={{
+                    x:
+                      waveformRef.current && duration > 0
+                        ? (cursor2 / duration) * waveformRef.current.clientWidth
+                        : 0,
+                    y: 0,
                   }}
-                ></div>
-              </div>
-            </Rnd>
+                  onDragStop={handleEndCursorDragStop}
+                  enableResizing={false} // 크기 조정 비활성화
+                  style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
+                >
+                  {/* 커서 모양을 위한 Wrapper */}
+                  <div
+                    style={{ position: "relative", height: "100%", width: "100%" }}
+                  >
+                    {/* 삼각형 부분 */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: -6, // 바의 위쪽에 삼각형이 위치하도록
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: 0,
+                        height: 0,
+                        borderLeft: "10px solid transparent",
+                        borderRight: "10px solid transparent",
+                        borderTop: "10px solid red", // 삼각형 색상
+                      }}
+                    ></div>
 
-            {/* Draggable endPoint 커서 */}
-            <Rnd
-              bounds="parent"
-              size={{ width: 2, height: 100 }}
-              position={{
-                x:
-                  waveformRef.current && duration > 0
-                    ? (cursor2 / duration) * waveformRef.current.clientWidth
-                    : 0,
-                y: 0,
-              }}
-              onDragStop={handleEndCursorDragStop}
-              enableResizing={false} // 크기 조정 비활성화
-              style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
-            >
-              {/* 커서 모양을 위한 Wrapper */}
-              <div
-                style={{ position: "relative", height: "100%", width: "100%" }}
-              >
-                {/* 삼각형 부분 */}
-                <div
-                  style={{
-                    position: "absolute",
-                    top: -6, // 바의 위쪽에 삼각형이 위치하도록
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: 0,
-                    height: 0,
-                    borderLeft: "10px solid transparent",
-                    borderRight: "10px solid transparent",
-                    borderTop: "10px solid red", // 삼각형 색상
+                    {/* 바 부분 */}
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "red",
+                      }}
+                    ></div>
+                  </div>
+                </Rnd>
+
+                {/* notDraggable globalStartPoint 커서 */}
+                <Rnd
+                  bounds="parent"
+                  size={{ width: 2, height: 100 }}
+                  position={{
+                    x:
+                      waveformRef.current && duration > 0
+                        ? (globalStartPoint / duration) *
+                          waveformRef.current.clientWidth
+                        : 0,
+                    y: 0,
                   }}
-                ></div>
+                  enableDragging={false} // 드래그 비활성화
+                  enableResizing={false} // 크기 조정 비활성화
+                  style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
+                >
+                  {/* 커서 모양을 위한 Wrapper */}
+                  <div
+                    style={{ position: "relative", height: "100%", width: "100%" }}
+                  >
+                    {/* 삼각형 부분 */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 94, // 바의 위쪽에 삼각형이 위치하도록
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: 0,
+                        height: 0,
+                        borderLeft: "10px solid transparent",
+                        borderRight: "10px solid transparent",
+                        borderBottom: "10px solid grey", // 삼각형 색상
+                      }}
+                    ></div>
 
-                {/* 바 부분 */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "red",
+                    {/* 바 부분 */}
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "grey",
+                      }}
+                    ></div>
+                  </div>
+                </Rnd>
+
+                {/* notDraggable globalEndPoint 커서 */}
+                <Rnd
+                  bounds="parent"
+                  size={{ width: 2, height: 100 }}
+                  position={{
+                    x:
+                      waveformRef.current && duration > 0
+                        ? (globalEndPoint / duration) *
+                          waveformRef.current.clientWidth
+                        : 0,
+                    y: 0,
                   }}
-                ></div>
-              </div>
-            </Rnd>
+                  enableDragging={false} // 드래그 비활성화
+                  enableResizing={false} // 크기 조정 비활성화
+                  style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
+                >
+                  {/* 커서 모양을 위한 Wrapper */}
+                  <div
+                    style={{ position: "relative", height: "100%", width: "100%" }}
+                  >
+                    {/* 삼각형 부분 */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 94, // 바의 위쪽에 삼각형이 위치하도록
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: 0,
+                        height: 0,
+                        borderLeft: "10px solid transparent",
+                        borderRight: "10px solid transparent",
+                        borderBottom: "10px solid grey", // 삼각형 색상
+                      }}
+                    ></div>
 
-            {/* notDraggable globalStartPoint 커서 */}
-            <Rnd
-              bounds="parent"
-              size={{ width: 2, height: 100 }}
-              position={{
-                x:
-                  waveformRef.current && duration > 0
-                    ? (globalStartPoint / duration) *
-                      waveformRef.current.clientWidth
-                    : 0,
-                y: 0,
-              }}
-              enableDragging={false} // 드래그 비활성화
-              enableResizing={false} // 크기 조정 비활성화
-              style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
-            >
-              {/* 커서 모양을 위한 Wrapper */}
-              <div
-                style={{ position: "relative", height: "100%", width: "100%" }}
-              >
-                {/* 삼각형 부분 */}
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 94, // 바의 위쪽에 삼각형이 위치하도록
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: 0,
-                    height: 0,
-                    borderLeft: "10px solid transparent",
-                    borderRight: "10px solid transparent",
-                    borderBottom: "10px solid grey", // 삼각형 색상
-                  }}
-                ></div>
+                    {/* 바 부분 */}
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "grey",
+                      }}
+                    ></div>
+                  </div>
+                </Rnd>
+              </Box>
 
-                {/* 바 부분 */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "grey",
-                  }}
-                ></div>
-              </div>
-            </Rnd>
+              <Flex justifyContent="space-between" width="100%">
+                <Text fontSize={10}>{formatTime(currentTime)}</Text>
+                <Text fontSize={10}>{formatTime(duration)}</Text>
+              </Flex>
+            </Stack>
+          </Stack>
 
-            {/* notDraggable globalEndPoint 커서 */}
-            <Rnd
-              bounds="parent"
-              size={{ width: 2, height: 100 }}
-              position={{
-                x:
-                  waveformRef.current && duration > 0
-                    ? (globalEndPoint / duration) *
-                      waveformRef.current.clientWidth
-                    : 0,
-                y: 0,
-              }}
-              enableDragging={false} // 드래그 비활성화
-              enableResizing={false} // 크기 조정 비활성화
-              style={{ backgroundColor: "transparent", cursor: "pointer" }} // Rnd 자체 배경 제거
-            >
-              {/* 커서 모양을 위한 Wrapper */}
-              <div
-                style={{ position: "relative", height: "100%", width: "100%" }}
-              >
-                {/* 삼각형 부분 */}
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 94, // 바의 위쪽에 삼각형이 위치하도록
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: 0,
-                    height: 0,
-                    borderLeft: "10px solid transparent",
-                    borderRight: "10px solid transparent",
-                    borderBottom: "10px solid grey", // 삼각형 색상
-                  }}
-                ></div>
-
-                {/* 바 부분 */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "grey",
-                  }}
-                ></div>
-              </div>
-            </Rnd>
-          </Box>
-
-          <Flex justifyContent="space-between" width={`${waveformWidth}%`}>
-            <Text fontSize={10}>{formatTime(currentTime)}</Text>
-            <Text fontSize={10}>{formatTime(duration)}</Text>
-          </Flex>
-        </Stack>
+          {waveformWidth < 100 && (
+            <Stack width={`(${100 - waveformWidth})%`}>
+              <Text fontSize={12}>이 공간을 활용해서 드래그 가능하게</Text>
+              <Text>{`(${100 - waveformWidth})%`}</Text>
+            </Stack>
+          )}
+        </Flex>
 
         <Stack>
           <TimePanel
