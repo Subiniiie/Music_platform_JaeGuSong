@@ -20,7 +20,7 @@ interface ChatMessage {
 }
 
 interface ChatRoomUser {
-  artistSeq: string;
+  artistSeq: number;
   nickname: string;
   profilePicUrl: string;
 }
@@ -71,7 +71,6 @@ const ChatList = () => {
   // 메시지 전송
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !selectedRoom) return;
-
     const data: ChatMessage = {
       artistSeq: userSeq!,
       roomSeq: selectedRoom.roomSeq,
@@ -100,7 +99,7 @@ const ChatList = () => {
 
     eventSource.onmessage = (event) => {
       const user: ChatRoomUser = JSON.parse(event.data);
-      if (user.artistSeq !== String(userSeq)) {
+      if (user.artistSeq !== Number(userSeq)) {
         setChatRoomUsers((prevUsers) => {
           if (
             prevUsers.some(

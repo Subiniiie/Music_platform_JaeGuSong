@@ -3,7 +3,7 @@ import { Flex, VStack, Text, Input, Button, Box } from "@chakra-ui/react";
 import Modal from "../common/Modal";
 
 interface ChatRoomUser {
-  artistSeq: string;
+  artistSeq: number;
   nickname: string;
   profilePicUrl: string;
 }

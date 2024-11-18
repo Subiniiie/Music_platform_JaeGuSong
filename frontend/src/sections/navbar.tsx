@@ -133,14 +133,15 @@ export default function Navbar() {
               borderColor="white"
               color="white"
             />
-            <Button
+            {/* <Button
               type="submit"
               borderWidth="1px"
               borderColor="#c5e4f3"
+              ㅁ
               background="none"
             >
               검색
-            </Button>
+            </Button> */}
           </Box>
         </form>
         {runSearch ? (

@@ -15,7 +15,7 @@ interface UseChatProps {
 }
 
 interface ChatRoomUser {
-  artistSeq: string;
+  artistSeq: number;
   nickname: string;
   profilePicUrl: string;
 }
@@ -44,7 +44,7 @@ export const useChat = ({
       receiversSeq: [OtherUserSeq],
       senderSeq: userSeq,
     };
-
+    console.log(data);
     try {
       const response = await axios.post(`${API_URL}/api/chats/single`, data, {
         headers: {
@@ -90,7 +90,7 @@ export const useChat = ({
 
     eventSource.onmessage = (event) => {
       const user: ChatRoomUser = JSON.parse(event.data);
-      if (user.artistSeq !== String(userSeq)) {
+      if (user.artistSeq !== Number(userSeq)) {
         setChatRoomUsers((prevUsers) => {
           if (
             prevUsers.some(
