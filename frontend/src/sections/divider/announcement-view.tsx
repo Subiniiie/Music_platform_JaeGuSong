@@ -20,7 +20,7 @@ export default function DividerAnnouncementView() {
           파일 업로드가 성공적으로 완료 되었습니다.
         </Text>
         <Text fontFamily="MiceGothic" fontSize={15} color="white">
-          세션 추출이 완료되면 알려드리겠습니다.
+          세션 추출이 완료되는동안 다른 서비스를 이용하시겠습니까?
         </Text>
       </Stack>
 

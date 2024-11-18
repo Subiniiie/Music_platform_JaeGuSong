@@ -49,7 +49,7 @@ export default function Session({
   const [currentTime, setCurrentTime] = useState(0);
   const [cursor1, setCursor1] = useState(initialStartPoint); // 시작 커서 위치
   const [cursor2, setCursor2] = useState(initialEndPoint); // 종료 커서 위치
-  
+
   // 상태 관리 및 store 관련
   const addSession = useWsDetailStore((state) => state.addSession);
   const removeSession = useWsDetailStore((state) => state.removeSession);
@@ -57,15 +57,25 @@ export default function Session({
   // const toggleCheck = useWsDetailStore((state) => state.toggleCheck);
   const setCheck = useWsDetailStore((state) => state.setCheck);
   const sessions = useWsDetailStore((state) => state.sessions);
-  const storeStartPoint = useWsDetailStore((state) => state.sessions[sessionId]?.startPoint);
-  const storeEndPoint = useWsDetailStore((state) => state.sessions[sessionId]?.endPoint);
-  const storeCheck = useWsDetailStore((state) => state.sessions[sessionId]?.check);
+  const storeStartPoint = useWsDetailStore(
+    (state) => state.sessions[sessionId]?.startPoint
+  );
+  const storeEndPoint = useWsDetailStore(
+    (state) => state.sessions[sessionId]?.endPoint
+  );
+  const storeCheck = useWsDetailStore(
+    (state) => state.sessions[sessionId]?.check
+  );
   const API_URL = import.meta.env.VITE_API_URL;
 
   // startPoint, endPoint - 재렌더링 방지
-  const startPointRef = useRef(storeStartPoint !== 0 ? storeStartPoint : initialStartPoint);
-  const endPointRef = useRef(storeEndPoint !== 0 ? storeEndPoint : initialEndPoint);
-  
+  const startPointRef = useRef(
+    storeStartPoint !== 0 ? storeStartPoint : initialStartPoint
+  );
+  const endPointRef = useRef(
+    storeEndPoint !== 0 ? storeEndPoint : initialEndPoint
+  );
+
   // toggleOptions
   const sessionTypeRef = useRef(type);
   const [, forceUpdate] = useState(0); // 이 상태는 재렌더링을 위한 용도로만 사용합니다.
@@ -109,7 +119,7 @@ export default function Session({
         endPointRef.current = audioDuration;
       }
       addSession(sessionId, wavesurferRef.current);
-      console.log('after addSession', useWsDetailStore.getState().sessions)
+      console.log("after addSession", useWsDetailStore.getState().sessions);
     });
 
     // audioprocess | An alias of timeupdate but only when the audio is playing
@@ -201,7 +211,7 @@ export default function Session({
       );
 
       removeSession(sessionId);
-      console.log('store 의 sessions :', useWsDetailStore.getState().sessions);
+      console.log("store 의 sessions :", useWsDetailStore.getState().sessions);
 
       toaster.create({
         description: "세션이 성공적으로 삭제되었습니다.",
@@ -267,7 +277,6 @@ export default function Session({
   const handleSetCheck = (isChecked: boolean) => {
     setCheck(sessionId, isChecked);
   };
-   
 
   return (
     <Card.Root
@@ -281,7 +290,9 @@ export default function Session({
       <Flex gap={3}>
         <Checkbox
           colorPalette="purple"
+          checked={storeCheck} // store에서 현재 세션의 체크 상태를 가져옴
           onChange={(e) => handleSetCheck(e.target.checked)}
+          cursor="pointer"
         />
         <Stack width="150px" justifyContent="center">
           <Stack width="150px" justifyContent="center" alignItems="start">
@@ -454,7 +465,8 @@ export default function Session({
               position={{
                 x:
                   waveformRef.current && duration > 0
-                    ? (globalStartPoint / duration) * waveformRef.current.clientWidth
+                    ? (globalStartPoint / duration) *
+                      waveformRef.current.clientWidth
                     : 0,
                 y: 0,
               }}
@@ -499,7 +511,8 @@ export default function Session({
               position={{
                 x:
                   waveformRef.current && duration > 0
-                    ? (globalEndPoint / duration) * waveformRef.current.clientWidth
+                    ? (globalEndPoint / duration) *
+                      waveformRef.current.clientWidth
                     : 0,
                 y: 0,
               }}

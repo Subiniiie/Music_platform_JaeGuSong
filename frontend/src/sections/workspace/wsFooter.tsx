@@ -1,5 +1,5 @@
 import { Stack, Flex, Box, Text } from "@chakra-ui/react";
-import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import Play from "./play";
 import ButtonBox from "./buttonBox";
 import ForkButton from "@/components/workspace/forkButton";
@@ -10,10 +10,8 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverRoot,
-  PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { WsGlobalSlider } from "./wsGlobalSlider";
 import { toaster } from "@/components/ui/toaster";
 
@@ -46,17 +44,19 @@ export default function WsFooter({
   const globalDuration = useWsDetailStore((state) => state.globalDuration);
 
   const handleGlobalPlayPause = () => {
-    console.log('안녕, 난 handleGlobalPlayPause. 지금 내 mode는 글로벌이야. 여기는 wsFooter.')
-    console.log('globalStartPoint는', globalStartPoint)
-    console.log('globalEndPoint는', globalEndPoint)
-    console.log('체크된 세션들은', checkedSessions)
+    console.log(
+      "안녕, 난 handleGlobalPlayPause. 지금 내 mode는 글로벌이야. 여기는 wsFooter."
+    );
+    console.log("globalStartPoint는", globalStartPoint);
+    console.log("globalEndPoint는", globalEndPoint);
+    console.log("체크된 세션들은", checkedSessions);
 
     if (checkedSessions.length === 0) {
       toaster.create({
         description: "재생할 세션을 선택해주세요.",
         type: "error",
       });
-      return
+      return;
     }
 
     if (isGlobalPlaying) {
@@ -64,10 +64,12 @@ export default function WsFooter({
     } else {
       playAll();
     }
-  }
+  };
 
   const handleStop = () => {
-    console.log('안녕, 난 handleStop. 지금 내 mode는 글로벌이야. 여기는 wsFooter.')
+    console.log(
+      "안녕, 난 handleStop. 지금 내 mode는 글로벌이야. 여기는 wsFooter."
+    );
     stopAll();
   };
 
@@ -89,8 +91,13 @@ export default function WsFooter({
 
   return (
     <Stack>
-      <Flex alignItems="center" justifyContent="space-between" position="relative" gap="16px">
-{/* 
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        position="relative"
+        gap="16px"
+      >
+        {/* 
         <Play
           isPlaying={isGlobalPlaying} // 전체 재생 상태 전달
           onPlayPause={handleGlobalPlayPause} // 전체 재생 및 일시정지 함수 전달
@@ -98,14 +105,16 @@ export default function WsFooter({
           mode="all" // 전체 모드로 설정
         /> */}
 
-        <Box ref={playRef}>
-          <Play
-            isPlaying={isGlobalPlaying} // 전체 재생 상태 전달
-            onPlayPause={handleGlobalPlayPause} // 전체 재생 및 일시정지 함수 전달
-            onStop={handleStop} // 전체 정지 함수 전달
-            mode="all" // 전체 모드로 설정
-          />
-        </Box>
+        <Stack>
+          <Box ref={playRef}>
+            <Play
+              isPlaying={isGlobalPlaying} // 전체 재생 상태 전달
+              onPlayPause={handleGlobalPlayPause} // 전체 재생 및 일시정지 함수 전달
+              onStop={handleStop} // 전체 정지 함수 전달
+              mode="all" // 전체 모드로 설정
+            />
+          </Box>
+        </Stack>
 
         <Stack
           direction="row"
@@ -123,15 +132,23 @@ export default function WsFooter({
           <Flex gap="4" justifyContent="center" width="100%">
             <Stack width="100%">
               <Text>전체 재생 컨트롤</Text>
-              <Text truncate color="purple.100" fontSize="13px">전체 재생 시작 지점과 종료 지점을 설정해주세요.</Text>
+              <Text truncate color="purple.100" fontSize="13px">
+                전체 재생 시작 지점과 종료 지점을 설정해주세요.
+              </Text>
               <WsGlobalSlider
                 width="100%"
                 defaultValue={[globalStartPoint, globalEndPoint]}
                 min={0}
                 max={globalDuration}
                 marks={[
-                  { value: globalStartPoint, label: formatSecondsToMinutes(globalStartPoint) }, // Start를 분:초로 표시
-                  { value: globalEndPoint, label: formatSecondsToMinutes(globalEndPoint) },   // End를 분:초로 표시
+                  {
+                    value: globalStartPoint,
+                    label: formatSecondsToMinutes(globalStartPoint),
+                  }, // Start를 분:초로 표시
+                  {
+                    value: globalEndPoint,
+                    label: formatSecondsToMinutes(globalEndPoint),
+                  }, // End를 분:초로 표시
                 ]}
                 onClick={(e) => console.log(globalDuration)}
               />
@@ -156,8 +173,7 @@ export default function WsFooter({
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
-                >
-                </Box>
+                ></Box>
               </PopoverTrigger>
               <PopoverContent borderRadius={12}>
                 <PopoverArrow />
