@@ -66,6 +66,8 @@ export default function Session({
   const storeCheck = useWsDetailStore(
     (state) => state.sessions[sessionId]?.check
   );
+  const isGlobalPlaying = useWsDetailStore((state) => state.isGlobalPlaying);
+
   const API_URL = import.meta.env.VITE_API_URL;
 
   // startPoint, endPoint - 재렌더링 방지
@@ -153,26 +155,41 @@ export default function Session({
   }, [sessionId, addSession, removeSession, url]);
 
   const handlePlayPause = () => {
-    // audioprocess | An alias of timeupdate but only when the audio is playing
-    wavesurferRef.current?.on("audioprocess", () => {
-      const currentTime = wavesurferRef.current?.getCurrentTime() || 0;
+    console.log("넌 플레이 버튼을 눌렀지.");
+    console.log("isPlaying :", isPlaying);
 
-      if (isPlaying) {
-        wavesurferRef.current?.pause();
-      } else {
-        if (currentTime > endPointRef.current) {
-          console.log("종료 지점 지났당!");
-          console.log("endPointRef.current :", endPointRef.current);
-          wavesurferRef.current?.pause();
-          wavesurferRef.current?.setTime(startPointRef.current);
-          setCurrentTime(startPointRef.current);
-        } else if (currentTime < startPointRef.current) {
-          wavesurferRef.current?.setTime(startPointRef.current);
-          setCurrentTime(startPointRef.current);
+    if (!wavesurferRef.current) return; // WaveSurfer 인스턴스가 없는 경우 처리
+
+    if (isPlaying) {
+      wavesurferRef.current?.pause();
+    } else {
+      // 종료 지점을 넘지 않았는지 확인하기 위해 audioprocess 이벤트 등록
+      if (!isGlobalPlaying) {
+        console.log(
+          "여기는 session. handlePlayPause. isGlobalPlaying :",
+          isGlobalPlaying
+        );
+        wavesurferRef.current.on("audioprocess", () => {
+          const currentTime = wavesurferRef.current?.getCurrentTime() || 0;
+
+          if (currentTime > endPointRef.current) {
+            console.log("종료 지점에 도달, 재생 정지");
+            wavesurferRef.current?.pause(); // 정지
+            wavesurferRef.current?.setTime(startPointRef.current); // 시작 지점으로 되돌리기
+            setCurrentTime(startPointRef.current); // 상태 업데이트
+            setIsPlaying(false); // 재생 상태 업데이트
+          }
+        });
+
+        // 재생 시작
+        if (wavesurferRef.current.getCurrentTime() < startPointRef.current) {
+          wavesurferRef.current.setTime(startPointRef.current); // 시작 지점 설정
         }
+        wavesurferRef.current.play();
       }
-      setIsPlaying(!isPlaying);
-    });
+    }
+
+    setIsPlaying(!isPlaying);
   };
 
   const handleStop = () => {

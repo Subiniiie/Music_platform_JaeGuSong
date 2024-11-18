@@ -263,6 +263,7 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
 
         if (currentTime > globalEndPoint) {
           session.player.stop();
+          session.player.setTime(globalStartPoint);
           set({ isGlobalPlaying: false });
         }
       });
