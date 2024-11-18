@@ -186,22 +186,6 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
       };
     }),
 
-  // toggleCheck: (sessionId) =>
-  //   set((state) => {
-  //     const session = state.sessions[sessionId];
-  //     if (!session) return {};
-  //     session.check = !session.check;
-
-  //     const newCheckedSessions = session.check
-  //       ? [...state.checkedSessions, sessionId]
-  //       : state.checkedSessions.filter((id) => id !== sessionId);
-
-  //     return {
-  //       sessions: { ...state.sessions, [sessionId]: session },
-  //       checkedSessions: newCheckedSessions,
-  //     };
-  //   }),
-
   // 세션 체크 상태를 업데이트하는 메서드
   setCheck: (sessionId, isChecked) =>
     set((state) => {
@@ -249,6 +233,9 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
   playAll: () => {
     const { sessions, checkedSessions, globalStartPoint, globalEndPoint } =
       get();
+
+    console.log("여기는 store. playAll. globalStartPoint :", globalStartPoint);
+
     checkedSessions.forEach((sessionId) => {
       const session = sessions[sessionId];
       if (!session || !session.player) return;
@@ -258,6 +245,13 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
 
       session.player.on("audioprocess", () => {
         const currentTime = session.player?.getCurrentTime() || 0;
+
+        // 글로벌 범위에 맞게 재생 위치 강제 설정 (초기 위치에서만 적용)
+        if (currentTime < globalStartPoint) {
+          session.player.setTime(globalStartPoint);
+          return; // setTime 호출 후 종료
+        }
+
         if (
           currentTime < session.startPoint ||
           currentTime > session.endPoint
@@ -273,7 +267,6 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
         }
       });
 
-      session.player.setVolume(0);
       session.player.setTime(globalStartPoint);
       session.player.play();
     });

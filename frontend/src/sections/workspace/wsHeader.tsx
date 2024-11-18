@@ -33,11 +33,11 @@ export default function WsHeader({
 }: WsHeaderProps) {
   const [isPublic, setIsPublic] = useState(wsDetails.state === "PUBLIC");
   const [wsTree, setWsTree] = useState([]);
-  const [originTitle, setOriginTitle] = useState('');
-  const [originSinger, setOriginSinger] = useState('');
+  const [originTitle, setOriginTitle] = useState("");
+  const [originSinger, setOriginSinger] = useState("");
 
-  const sessions = useWsDetailStore((state) => state.sessions)
-  const checkedSessions = useWsDetailStore((state) => state.checkedSessions)
+  const sessions = useWsDetailStore((state) => state.sessions);
+  const checkedSessions = useWsDetailStore((state) => state.checkedSessions);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -79,20 +79,20 @@ export default function WsHeader({
 
       // 체크된 세션 정보만 저장하거나, 체크된 세션이 없으면 모든 세션 저장
       const sessionsToSave = checkedSessions.length
-      ? checkedSessions.map((id) => ({
-          soundSeq: parseInt(id, 10), // key를 soundSeq로 사용
-          startPoint: parseFloat(sessions[id].startPoint), // Double로 변환
-          endPoint: parseFloat(sessions[id].endPoint), // Double로 변환
-          // type: sessions[id].type || "vocals", // type 값이 없다면 기본값 "ETC"으로 설정
-          type: "etc", // type 값이 없다면 기본값 "ETC"으로 설정
-        }))
-      : Object.entries(sessions).map(([key, value]) => ({
-          soundSeq: parseInt(key, 10), // key를 soundSeq로 사용
-          startPoint: parseFloat(value.startPoint), // Double로 변환
-          endPoint: parseFloat(value.endPoint), // Double로 변환
-          // type: value.type || "vocals", // type 값이 없다면 기본값 "ETC"으로 설정
-          type: "etc", // type 값이 없다면 기본값 "ETC"으로 설정
-        }));
+        ? checkedSessions.map((id) => ({
+            soundSeq: parseInt(id, 10), // key를 soundSeq로 사용
+            startPoint: parseFloat(sessions[id].startPoint), // Double로 변환
+            endPoint: parseFloat(sessions[id].endPoint), // Double로 변환
+            // type: sessions[id].type || "vocals", // type 값이 없다면 기본값 "ETC"으로 설정
+            type: "etc", // type 값이 없다면 기본값 "ETC"으로 설정
+          }))
+        : Object.entries(sessions).map(([key, value]) => ({
+            soundSeq: parseInt(key, 10), // key를 soundSeq로 사용
+            startPoint: parseFloat(value.startPoint), // Double로 변환
+            endPoint: parseFloat(value.endPoint), // Double로 변환
+            // type: value.type || "vocals", // type 값이 없다면 기본값 "ETC"으로 설정
+            type: "etc", // type 값이 없다면 기본값 "ETC"으로 설정
+          }));
 
       console.log("sessionsToSave:", sessionsToSave); // 전송 데이터 확인
 
@@ -132,13 +132,13 @@ export default function WsHeader({
 
       // treeInfoResponseList를 wsTree로 설정
       const treeData = Array.isArray(response.data.treeInfoResponseList)
-      ? response.data.treeInfoResponseList
-      : [];
+        ? response.data.treeInfoResponseList
+        : [];
 
-      setWsTree(treeData)
-      setOriginTitle(response.data.originTitle)
-      setOriginSinger(response.data.originSinger)
-      console.log(wsTree)
+      setWsTree(treeData);
+      setOriginTitle(response.data.originTitle);
+      setOriginSinger(response.data.originSinger);
+      console.log(wsTree);
     } catch (error) {
       console.error("Error fetching workspace details:", error);
     }
@@ -199,58 +199,56 @@ export default function WsHeader({
                 {isPublic ? "비공개" : "공유"}
               </Button>
               <PopoverRoot>
-                  <PopoverTrigger asChild>
-                    <Button
-                      bg="blackAlpha.900" // 검은 배경
-                      color="white" // 텍스트 색상
-                      border="1.5px solid" // 테두리 두께
-                      borderColor="purple.700" // 보라색 테두리
-                      borderRadius={13} // 모서리 둥글게
-                      _hover={{ bg: "purple.700" }} // 호버 효과
-                      _active={{ bg: "purple.800" }} // 클릭 효과
-                      paddingX="4"
-                      paddingY="2"
-                      width="60px"
-                      height="40px"
-                      fontWeight="bold"
-                      onClick={getWsTree}
+                <PopoverTrigger asChild>
+                  <Button
+                    bg="blackAlpha.900" // 검은 배경
+                    color="white" // 텍스트 색상
+                    border="1.5px solid" // 테두리 두께
+                    borderColor="purple.700" // 보라색 테두리
+                    borderRadius={13} // 모서리 둥글게
+                    _hover={{ bg: "purple.700" }} // 호버 효과
+                    _active={{ bg: "purple.800" }} // 클릭 효과
+                    paddingX="4"
+                    paddingY="2"
+                    width="60px"
+                    height="40px"
+                    fontWeight="bold"
+                    onClick={getWsTree}
+                  >
+                    정보
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverBody>
+                    <PopoverTitle
+                      fontWeight="medium"
+                      fontSize="16px"
+                      marginBottom={3}
                     >
-                      더보기
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverBody color={"white"}>
-                      <PopoverTitle
-                        fontWeight="medium"
-                        fontSize="16px"
-                        marginBottom={3}
-                      >
-                        워크스페이스 정보
-                      </PopoverTitle>
-                      {Array.isArray(wsTree) && wsTree.length === 0 ? (
-                        <Text color={"white"}>
-                          원본 워크스페이스입니다.
-                        </Text>
-                      ) : (
-                        <Box color={"white"} px={4}>
-                          <Text mb={2}>부모 워크스페이스</Text>
-                          {Array.isArray(wsTree) && wsTree.length > 0 ? (
-                            wsTree.map((item, index) => (
-                              <Stack key={index} px={4}>
-                                <Text fontSize="13px">{`워크스페이스명 : ${item.workspaceName}`}</Text>
-                                <Text fontSize="13px">{`원곡 : ${originTitle}`}</Text>
-                                <Text fontSize="13px">{`원곡자 : ${originSinger}`}</Text>
-                              </Stack>
-                            ))
-                          ) : (
-                            <Text color={"white"}>데이터가 없습니다.</Text>
-                          )}
-                        </Box>
-                      )}
-                    </PopoverBody>
-                  </PopoverContent>
-                </PopoverRoot>
+                      워크스페이스 정보
+                    </PopoverTitle>
+                    {Array.isArray(wsTree) && wsTree.length === 0 ? (
+                      <Text>원본 워크스페이스입니다.</Text>
+                    ) : (
+                      <Box px={4}>
+                        <Text mb={2}>부모 워크스페이스</Text>
+                        {Array.isArray(wsTree) && wsTree.length > 0 ? (
+                          wsTree.map((item, index) => (
+                            <Stack key={index} px={4}>
+                              <Text fontSize="13px">{`워크스페이스명 : ${item.workspaceName}`}</Text>
+                              <Text fontSize="13px">{`원곡 : ${originTitle}`}</Text>
+                              <Text fontSize="13px">{`원곡자 : ${originSinger}`}</Text>
+                            </Stack>
+                          ))
+                        ) : (
+                          <Text color={"white"}>데이터가 없습니다.</Text>
+                        )}
+                      </Box>
+                    )}
+                  </PopoverBody>
+                </PopoverContent>
+              </PopoverRoot>
             </>
           ) : (
             <ForkButton workspaceSeq={workspaceSeq} />

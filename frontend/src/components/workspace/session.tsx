@@ -122,23 +122,6 @@ export default function Session({
       console.log("after addSession", useWsDetailStore.getState().sessions);
     });
 
-    // audioprocess | An alias of timeupdate but only when the audio is playing
-    wavesurferRef.current.on("audioprocess", () => {
-      const currentTime = wavesurferRef.current?.getCurrentTime() || 0;
-      console.log("재생 중 | 현재 currentTime :", currentTime);
-
-      if (currentTime > endPointRef.current) {
-        console.log("종료 지점 지났당!");
-        console.log("endPointRef.current :", endPointRef.current);
-        wavesurferRef.current?.pause();
-        wavesurferRef.current?.setTime(startPointRef.current);
-        setCurrentTime(startPointRef.current);
-      } else if (currentTime < startPointRef.current) {
-        wavesurferRef.current?.setTime(startPointRef.current);
-        setCurrentTime(startPointRef.current);
-      }
-    });
-
     wavesurferRef.current.on("interaction", () => {
       const newCurrentTime = wavesurferRef.current?.getCurrentTime() || 0;
       console.log("interaction 발생! newCurrentTime :", newCurrentTime);
@@ -170,15 +153,26 @@ export default function Session({
   }, [sessionId, addSession, removeSession, url]);
 
   const handlePlayPause = () => {
-    if (wavesurferRef.current) {
+    // audioprocess | An alias of timeupdate but only when the audio is playing
+    wavesurferRef.current?.on("audioprocess", () => {
+      const currentTime = wavesurferRef.current?.getCurrentTime() || 0;
+
       if (isPlaying) {
-        wavesurferRef.current.pause();
+        wavesurferRef.current?.pause();
       } else {
-        setCurrentTime(cursor1);
-        wavesurferRef.current.play();
+        if (currentTime > endPointRef.current) {
+          console.log("종료 지점 지났당!");
+          console.log("endPointRef.current :", endPointRef.current);
+          wavesurferRef.current?.pause();
+          wavesurferRef.current?.setTime(startPointRef.current);
+          setCurrentTime(startPointRef.current);
+        } else if (currentTime < startPointRef.current) {
+          wavesurferRef.current?.setTime(startPointRef.current);
+          setCurrentTime(startPointRef.current);
+        }
       }
       setIsPlaying(!isPlaying);
-    }
+    });
   };
 
   const handleStop = () => {
