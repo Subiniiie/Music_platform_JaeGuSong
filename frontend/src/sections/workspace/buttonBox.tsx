@@ -12,9 +12,14 @@ interface ButtonBoxProps {
     role: string;
     state: string;
   };
+  buttonBoxHeight: string;
 }
 
-export default function ButtonBox({ workspaceSeq, wsDetails }: ButtonBoxProps) {
+export default function ButtonBox({
+  workspaceSeq,
+  wsDetails,
+  buttonBoxHeight,
+}: ButtonBoxProps) {
   const checkedSessions = useWsDetailStore((state) => state.checkedSessions);
   const updateSession = useWsDetailStore((state) => state.updateSession);
 
@@ -41,13 +46,14 @@ export default function ButtonBox({ workspaceSeq, wsDetails }: ButtonBoxProps) {
       justifyContent="center"
       alignItems="center"
       background="rgba(0, 0, 0, 0.3)"
+      height={buttonBoxHeight}
     >
       <Flex gap="4" onClick={(e) => e.stopPropagation()}>
         {/* {wsDetails.role === "MASTER" && ( */}
-          {/* <> */}
-            {/* <WsButton>시작지점 설정</WsButton> */}
-            {/* <WsButton>종료지점 설정</WsButton> */}
-            {/* <WsButton>설정 리셋</WsButton>
+        {/* <> */}
+        {/* <WsButton>시작지점 설정</WsButton> */}
+        {/* <WsButton>종료지점 설정</WsButton> */}
+        {/* <WsButton>설정 리셋</WsButton>
             <SessionUploadButton workspaceSeq={workspaceSeq} />
           </> */}
         {/* // )} */}
@@ -71,7 +77,6 @@ export default function ButtonBox({ workspaceSeq, wsDetails }: ButtonBoxProps) {
           설정 리셋
         </Button>
         <SessionUploadButton workspaceSeq={workspaceSeq} />
-
       </Flex>
     </Stack>
   );

@@ -42,15 +42,14 @@ export default function WsFooter({
   const globalStartPoint = useWsDetailStore((state) => state.globalStartPoint);
   const globalEndPoint = useWsDetailStore((state) => state.globalEndPoint);
   const globalDuration = useWsDetailStore((state) => state.globalDuration);
+  const updateGlobalStartPoint = useWsDetailStore(
+    (state) => state.updateGlobalStartPoint
+  );
+  const updateGlobalEndPoint = useWsDetailStore(
+    (state) => state.updateGlobalEndPoint
+  );
 
   const handleGlobalPlayPause = () => {
-    console.log(
-      "안녕, 난 handleGlobalPlayPause. 지금 내 mode는 글로벌이야. 여기는 wsFooter."
-    );
-    console.log("globalStartPoint는", globalStartPoint);
-    console.log("globalEndPoint는", globalEndPoint);
-    console.log("체크된 세션들은", checkedSessions);
-
     if (checkedSessions.length === 0) {
       toaster.create({
         description: "재생할 세션을 선택해주세요.",
@@ -79,13 +78,29 @@ export default function WsFooter({
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`; // 예: 1:05
   };
 
-  const [playWidth, setPlayWidth] = useState(0); // Play 컴포넌트 가로 길이
-  const playRef = useRef<HTMLDivElement>(null); // Play 컴포넌트의 ref
+  const handleSliderChange = ([start, end]: [number, number]) => {
+    console.log("안녕 난 handleSliderChange");
+    updateGlobalStartPoint(start);
+    updateGlobalEndPoint(end);
+  };
+
+  const [buttonBoxWidth, setbuttonBoxWidth] = useState(0); // Play 컴포넌트 가로 길이
+  const buttonBoxRef = useRef<HTMLDivElement>(null); // Play 컴포넌트의 ref
 
   useEffect(() => {
-    if (playRef.current) {
+    if (buttonBoxRef.current) {
       // Play 컴포넌트의 실제 가로 길이를 가져와서 상태에 저장
-      setPlayWidth(playRef.current.offsetWidth);
+      setbuttonBoxWidth(buttonBoxRef.current.offsetWidth);
+    }
+  }, []);
+
+  const [playHeight, setPlayHeight] = useState(0); // Play 컴포넌트 가로 길이
+  const playHeightRef = useRef<HTMLDivElement>(null); // Play 컴포넌트의 ref
+
+  useEffect(() => {
+    if (playHeightRef.current) {
+      // Play 컴포넌트의 실제 가로 길이를 가져와서 상태에 저장
+      setPlayHeight(playHeightRef.current.offsetWidth);
     }
   }, []);
 
@@ -97,16 +112,8 @@ export default function WsFooter({
         position="relative"
         gap="16px"
       >
-        {/* 
-        <Play
-          isPlaying={isGlobalPlaying} // 전체 재생 상태 전달
-          onPlayPause={handleGlobalPlayPause} // 전체 재생 및 일시정지 함수 전달
-          onStop={handleStop} // 전체 정지 함수 전달
-          mode="all" // 전체 모드로 설정
-        /> */}
-
         <Stack>
-          <Box ref={playRef}>
+          <Box ref={playHeightRef}>
             <Play
               isPlaying={isGlobalPlaying} // 전체 재생 상태 전달
               onPlayPause={handleGlobalPlayPause} // 전체 재생 및 일시정지 함수 전달
@@ -116,7 +123,7 @@ export default function WsFooter({
           </Box>
         </Stack>
 
-        <Stack
+        {/* <Stack
           direction="row"
           bg="gray.800"
           padding="6"
@@ -150,13 +157,20 @@ export default function WsFooter({
                     label: formatSecondsToMinutes(globalEndPoint),
                   }, // End를 분:초로 표시
                 ]}
-                onClick={(e) => console.log(globalDuration)}
+                // onChange={handleSliderChange}
+                onClick={handleSliderChange}
               />
             </Stack>
           </Flex>
-        </Stack>
+        </Stack> */}
 
-        <ButtonBox wsDetails={wsDetails} workspaceSeq={workspaceSeq} />
+        <Box ref={buttonBoxRef}>
+          <ButtonBox
+            wsDetails={wsDetails}
+            workspaceSeq={workspaceSeq}
+            buttonBoxHeight={`${playHeight}px`}
+          />
+        </Box>
 
         {role === "VIEWER" && (
           <>
@@ -165,14 +179,16 @@ export default function WsFooter({
                 <Box
                   position="absolute"
                   top="0"
-                  // left="0"
-                  left={`${playWidth}px`} // Play 컴포넌트의 가로 길이만큼 이동
+                  // left={`${buttonBoxWidth}px`} // Play 컴포넌트의 가로 길이만큼 이동
                   right="0"
                   bottom="0"
                   background="rgba(0, 0, 0, 0.5)"
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
+                  border="0.5px solid rgba(255, 255, 255, 0.2)"
+                  borderRadius="15px"
+                  width={`${buttonBoxWidth}px`}
                 ></Box>
               </PopoverTrigger>
               <PopoverContent borderRadius={12}>
@@ -192,7 +208,6 @@ export default function WsFooter({
                     해당 워크스페이스를 포크 떠주세요.
                   </Text>
                   <ForkButton workspaceSeq={workspaceSeq} />
-                  {/* </Box> */}
                 </PopoverBody>
               </PopoverContent>
             </PopoverRoot>
