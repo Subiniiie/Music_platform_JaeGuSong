@@ -3,7 +3,7 @@ import { Flex, VStack, Text, Input, Button, Box } from "@chakra-ui/react";
 import Modal from "../common/Modal";
 
 interface ChatRoomUser {
-  artistSeq: string;
+  artistSeq: number;
   nickname: string;
   profilePicUrl: string;
 }
@@ -39,7 +39,6 @@ const ChatModal: React.FC<ChatModalProps> = ({
 }) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });

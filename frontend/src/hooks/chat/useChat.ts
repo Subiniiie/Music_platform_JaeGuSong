@@ -15,7 +15,7 @@ interface UseChatProps {
 }
 
 interface ChatRoomUser {
-  artistSeq: string;
+  artistSeq: number;
   nickname: string;
   profilePicUrl: string;
 }
@@ -28,7 +28,6 @@ export const useChat = ({
 }: UseChatProps) => {
   const [roomSeq, setRoomSeq] = useState<number | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  console.log(chatMessages);
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [chatRoomUsers, setChatRoomUsers] = useState<ChatRoomUser[]>([]);
@@ -45,7 +44,7 @@ export const useChat = ({
       receiversSeq: [OtherUserSeq],
       senderSeq: userSeq,
     };
-
+    console.log(data);
     try {
       const response = await axios.post(`${API_URL}/api/chats/single`, data, {
         headers: {
@@ -53,7 +52,6 @@ export const useChat = ({
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
       setRoomSeq(response.data);
       setIsChatModalOpen(true);
     } catch (error) {
@@ -85,14 +83,14 @@ export const useChat = ({
 
   // 채팅방 유저 누구있는지 ?
   const handleFetchChatRoomUsers = () => {
+    setChatRoomUsers([]);
     const eventSource = new EventSource(
       `${API_URL}/api/chats/webflux/artistInfo/${roomSeq}?token=${jwtToken}`
     );
 
     eventSource.onmessage = (event) => {
       const user: ChatRoomUser = JSON.parse(event.data);
-      console.log(user);
-      if (user.artistSeq !== String(userSeq)) {
+      if (user.artistSeq !== Number(userSeq)) {
         setChatRoomUsers((prevUsers) => {
           if (
             prevUsers.some(
@@ -121,6 +119,7 @@ export const useChat = ({
     );
     eventSource.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
+      console.log(newMessage);
       setChatMessages((prevMessages) => [...prevMessages, newMessage]);
     };
     eventSource.onerror = (error) => {
@@ -149,9 +148,19 @@ export const useChat = ({
       );
       if (response.status === 200) {
         console.log("채팅방 나가기 성공:", response);
+
+        setRoomSeq(null);
+        setChatMessages([]);
+        setChatRoomUsers([]);
+        setIsChatModalOpen(false);
+
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          eventSourceRef.current = null;
+        }
       }
     } catch (error) {
-      console.log(error);
+      console.error("채팅 나가기 실패:", error);
     }
   };
 

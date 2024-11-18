@@ -31,8 +31,7 @@ const useChatList = (
       });
     };
 
-    eventSource.onerror = (error) => {
-      console.error(error);
+    eventSource.onerror = () => {
       eventSource.close();
     };
 
@@ -45,7 +44,7 @@ const useChatList = (
     };
   }, [API_URL, userSeq, jwtToken, resetKey]);
 
-  return chatList;
+  return { chatList, setChatList };
 };
 
 export default useChatList;

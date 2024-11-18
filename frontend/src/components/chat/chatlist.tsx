@@ -3,6 +3,7 @@ import { Box, Text, Flex, Button, Input, VStack } from "@chakra-ui/react";
 import Modal from "@/components/common/Modal";
 import useChatList from "@/hooks/chat/useChatList";
 import axios from "axios";
+import ChatSearch from "./chatSearch";
 
 interface ChatListResponse {
   roomSeq: number;
@@ -19,7 +20,7 @@ interface ChatMessage {
 }
 
 interface ChatRoomUser {
-  artistSeq: string;
+  artistSeq: number;
   nickname: string;
   profilePicUrl: string;
 }
@@ -29,7 +30,6 @@ const ChatList = () => {
   const [selectedRoom, setSelectedRoom] = useState<ChatListResponse | null>(
     null
   );
-  console.log(selectedRoom);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatRoomUsers, setChatRoomUsers] = useState<ChatRoomUser[]>([]);
@@ -43,9 +43,14 @@ const ChatList = () => {
   const userSeq = authStorage
     ? JSON.parse(authStorage)?.state?.artistSeq
     : null;
-  console.log(userSeq);
   const jwtToken = localStorage.getItem("jwtToken");
-  const chatList = useChatList(API_URL, userSeq, jwtToken, modalOpen);
+  const { chatList, setChatList } = useChatList(
+    API_URL,
+    userSeq,
+    jwtToken,
+    modalOpen
+  );
+
   const handleChatButtonClick = () => {
     setModalOpen(!modalOpen);
     setSelectedRoom(null);
@@ -66,7 +71,6 @@ const ChatList = () => {
   // 메시지 전송
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !selectedRoom) return;
-
     const data: ChatMessage = {
       artistSeq: userSeq!,
       roomSeq: selectedRoom.roomSeq,
@@ -84,6 +88,7 @@ const ChatList = () => {
 
   // 채팅방 누구 있는지 ?
   const handleFetchChatRoomUsers = (roomSeq: number) => {
+    setChatRoomUsers([]);
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
     }
@@ -94,7 +99,7 @@ const ChatList = () => {
 
     eventSource.onmessage = (event) => {
       const user: ChatRoomUser = JSON.parse(event.data);
-      if (user.artistSeq !== String(userSeq)) {
+      if (user.artistSeq !== Number(userSeq)) {
         setChatRoomUsers((prevUsers) => {
           if (
             prevUsers.some(
@@ -124,7 +129,7 @@ const ChatList = () => {
 
     eventSource.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
-      console.log(newMessage);
+      console.log("gdgdg", newMessage);
       setChatMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
@@ -154,7 +159,11 @@ const ChatList = () => {
         setSelectedRoom(null);
         setChatMessages([]);
         setChatRoomUsers([]);
-        eventSourceRef.current?.close();
+        setChatList([]);
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          eventSourceRef.current = null;
+        }
       }
     } catch (error) {
       console.error("채팅방 나가기 실패:", error);
@@ -439,7 +448,7 @@ const ChatList = () => {
         ) : (
           <Box padding="0" width="600px" height="600px" overflowY="auto">
             <Box
-              padding="20px"
+              padding="0 20px 20px 20px"
               backgroundColor="white"
               position="sticky"
               top="0"
@@ -449,7 +458,11 @@ const ChatList = () => {
                 <Text fontSize="24px" fontWeight="bold" color="black">
                   채팅
                 </Text>
-
+                <ChatSearch
+                  onUserSelect={(user) => {
+                    console.log("선택된 유저:", user);
+                  }}
+                />
                 <select
                   value={sortOrder}
                   onChange={(e) =>
