@@ -233,8 +233,7 @@ export default function SessionMain({
 
       {waveformWidth < 100 && (
         <Stack width={`(${100 - waveformWidth})%`}>
-          <Text fontSize={12}>이 공간을 활용해서 드래그 가능하게</Text>
-          <Text>{`(${100 - waveformWidth})%`}</Text>
+          <Text fontSize={12} color="transparent">.</Text>
         </Stack>
       )}
     </Flex>
