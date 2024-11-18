@@ -107,6 +107,7 @@ export default function Session({
       barGap: 0.5,
       cursorWidth: 2.5,
       height: 100,
+      audioRate: 1,
     });
 
     wavesurferRef.current.load(url);
