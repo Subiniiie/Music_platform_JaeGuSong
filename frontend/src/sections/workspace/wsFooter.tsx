@@ -179,7 +179,6 @@ export default function WsFooter({
                 <Box
                   position="absolute"
                   top="0"
-                  // left={`${buttonBoxWidth}px`} // Play 컴포넌트의 가로 길이만큼 이동
                   right="0"
                   bottom="0"
                   background="rgba(0, 0, 0, 0.5)"
