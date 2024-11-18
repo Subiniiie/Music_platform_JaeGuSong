@@ -41,6 +41,7 @@ const useCommunityMain = () => {
           },
         }
       );
+      console.log('게시물 목록', response.data)
       setMyFeedArticleItems([response.data.boards]);
     } catch (error) {
       console.error(error);

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useWsDetailStore } from "@/stores/wsDetailStore";
 import axios from "axios";
 import { Button, Text } from "@chakra-ui/react";
 import {
@@ -21,16 +22,6 @@ interface SessionUploadButtonProps {
   workspaceSeq: number; // workspaceSeq를 props로 추가
 }
 
-// Base64 인코딩 함수
-const encodeFileToBase64 = (file: File) => {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve((reader.result as string).split(",")[1]);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 export default function SessionUploadButton({
   workspaceSeq,
 }: SessionUploadButtonProps) {
@@ -38,15 +29,13 @@ export default function SessionUploadButton({
   const [errors, setErrors] = useState({
     file: "", // 파일 업로드 오류 메시지
   });
+  const triggerSessionBoxReload = useWsDetailStore(
+    (state) => state.triggerSessionBoxReload
+  );
+  
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleCreateSession = async () => {
-    console.log("세션 업로드 api 요청 보내는 handleCreateSession 실행시켜볼게");
-    console.log("files :", files);
-    console.log("files.acceptedFiles :", files.acceptedFiles);
-    console.log("files.acceptedFiles[0] :", files.acceptedFiles[0]);
-    console.log("files.acceptedFiles[0].name :", files.acceptedFiles[0].name);
-
     if (files.length === 0) {
       setErrors({ file: "파일을 업로드해주세요." });
       return;
@@ -64,17 +53,16 @@ export default function SessionUploadButton({
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,
-            // "Content-Type": "application/json",
           },
         }
       );
+
+      triggerSessionBoxReload();
 
       toaster.create({
         description: "세션이 성공적으로 추가되었습니다.",
         type: "success",
       });
-
-      // onWorkspaceCreated(); // 세션 추가 후 목록을 다시 로드
     } catch (error) {
       console.error("Error adding session:", error);
       toaster.create({

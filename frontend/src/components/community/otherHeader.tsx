@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Text, Button } from "@chakra-ui/react";
 import { useLocation } from "react-router-dom";
 import { useChat } from "@/hooks/chat/useChat";
 import ChatModal from "../chat/chat";
+import useFollow from '@/hooks/navbar/useFollow';
 
 const OtherHeader: React.FC = () => {
   const location = useLocation();
@@ -25,6 +26,13 @@ const OtherHeader: React.FC = () => {
     userSeq,
     OtherUserSeq: artistSeq,
   });
+  const { goUnfollow, makeFollow, getFollowed } = useFollow();
+
+  useEffect(() => {
+    console.log('팔로우상태', getFollowed)
+  }, [getFollowed])
+
+  console.log('팔로우에서 다른 사람 커뮤니티', artistSeq, otherNickname, otherProfileImage)
 
   return (
     <Box
@@ -66,8 +74,9 @@ const OtherHeader: React.FC = () => {
               color: "#9000ff",
               border: "solid 2px white",
             }}
+            onClick={getFollowed ? () => goUnfollow(artistSeq) : () => makeFollow()}
           >
-            팔로우
+            { getFollowed ? <Text>언팔로우</Text> : <Text>팔로우</Text> }
           </Button>
           <Button
             onClick={handleCreateChat}

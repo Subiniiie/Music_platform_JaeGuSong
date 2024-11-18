@@ -5,6 +5,7 @@ import axios from "axios";
 import { MakeCrewFormData } from "@/configs/community/makeCrew";
 import useCrewSeqStore from '@/stores/crewSeqStore';
 import useHeaderStore from "@/stores/headerStore";
+import { toaster } from "@/components/ui/toaster"
 
 interface WantCrewJoinUser {
     userSeq: number
@@ -73,6 +74,10 @@ const UseCommunityCrew = () => {
                     }
                 }
             )
+            toaster.create({
+                description: "가입 신청이 완료되었습니다.",
+                type: "info"
+            })
         } catch(error) {
             console.warn(error)
         }
@@ -97,6 +102,10 @@ const UseCommunityCrew = () => {
             setJoinApplyUsers((prev) =>
                 prev.filter((user) => user.seq !== userSeq) // 거절된 사용자를 목록에서 제거
             );
+            toaster.create({
+                description: "가입 신청을 승인했습니다.",
+                type: "info"
+            })
         } catch(error) {
             console.warn(error)
         }
@@ -120,6 +129,10 @@ const UseCommunityCrew = () => {
             setJoinApplyUsers((prev) =>
                 prev.filter((user) => user.seq !== userSeq) // 거절된 사용자를 목록에서 제거
             );
+            toaster.create({
+                description: "가입 신청을 거절습니다.",
+                type: "error"
+            })
         } catch(error) {
             console.warn(error);
         }
@@ -140,6 +153,10 @@ const UseCommunityCrew = () => {
                     },
                 }
             )
+            toaster.create({
+                description: "크루를 탈퇴했습니다.",
+                type: "error"
+            })
             navigate(paths.community.main)
         } catch(error) {
             console.warn(error)

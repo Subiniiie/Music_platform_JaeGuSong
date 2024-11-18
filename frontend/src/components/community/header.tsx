@@ -10,6 +10,9 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const [myNickname, setMyNickname] = useState<string>('');
   const [myProfileImage, setMyProfileImage] = useState<string>('');
+  const [mygenre, setMygenre] = useState<string>('');
+  const [myposition, setMyposition] = useState<string>('');
+  const [myregion, setMyregion] = useState<string>('');
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -27,6 +30,10 @@ const Header: React.FC = () => {
           );
           setMyNickname(response.data.nickname);
           setMyProfileImage(response.data.profileImage);
+          setMygenre(response.data.genre);
+          setMyposition(response.data.position);
+          setMyregion(response.data.region);
+          console.log('내 정보', response.data)
         } catch (error) {
           console.warn('Error during API request:', error);
         }
@@ -56,7 +63,6 @@ const Header: React.FC = () => {
       boxShadow="md" // 그림자 추가
       zIndex={10} // 헤더가 항상 상단에 오도록 설정
     >
-
       <Box height="70px">
         <Box
           display="flex"
@@ -78,27 +84,34 @@ const Header: React.FC = () => {
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </Box>
-          <Box>
-            <Text
-              textStyle="3xl"
-              fontWeight="bold"
-              color="white"
-              marginTop="10px"
-              noOfLines={1} // 한 줄로만 표시
-            >
-              {myNickname}
-            </Text>
-            <Text
-              textStyle="xl"
-              color="whiteAlpha.800"
-              marginTop="5px"
-              noOfLines={1}
-            >
-              님의 피드
-            </Text>
+          <Box display="flex" flexDirection="column">
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Text
+                textStyle="3xl"
+                fontWeight="bold"
+                color="white"
+                marginTop="10px"
+              >
+                {myNickname}
+              </Text>
+              <Text
+                textStyle="xl"
+                color="whiteAlpha.800"
+                marginTop="10px"
+                marginLeft="10px"
+              >
+                님의 피드
+              </Text>
+              </Box>
+              <Box display="flex" flexDirection="row" marginTop="10px">
+                <Text>{mygenre}</Text>
+                <Text marginLeft="10px">{myposition}</Text>
+                <Text marginLeft="10px">{myregion}</Text>
+              </Box>
+            </Box>
           </Box>
         </Box>
-      </Box>
+      
       <Box
         marginTop="20px"
         marginRight="20px"

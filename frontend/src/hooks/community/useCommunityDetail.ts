@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import paths from "@/configs/paths";
 import { useNavigate } from "react-router-dom";
+import { toaster } from "@/components/ui/toaster"
 
 
 const useCommunityDetail = () => {
@@ -21,6 +22,10 @@ const useCommunityDetail = () => {
                         },
                     });
                     setOpenDeleteModal(false)
+                    toaster.create({
+                        description: "게시물이 삭제되었습니다.",
+                        type: "error"
+                    })
                     console.log('바꿔라')
                     navigate(paths.community.myCommunity)
         } catch (error) {
