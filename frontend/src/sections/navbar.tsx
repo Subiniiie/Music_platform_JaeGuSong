@@ -278,7 +278,7 @@ export default function Navbar() {
                         borderRadius: "20px",
                       }}
                     >
-                      <Box padding="4" borderWidth="1px" color="black">
+                      <Box padding="4" color="black">
                         팔로워 목록
                         <FollowerListContainer
                           followerUserList={followerUserList}
@@ -315,7 +315,7 @@ export default function Navbar() {
                         borderRadius: "20px",
                       }}
                     >
-                      <Box padding="4" borderWidth="1px" color="black">
+                      <Box padding="4" color="black">
                         팔로잉 목록
                         <FollowingListContainer
                           followingUserList={followingUserList}
