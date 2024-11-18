@@ -122,15 +122,15 @@ const CommunityDetailView: React.FC = () => {
           overflowY="auto"
           css={{
             "&::-webkit-scrollbar": {
-              width: "8px",
+              width: "10px",
+              height: "8px",
             },
             "&::-webkit-scrollbar-thumb": {
-              background: "#6a4bff", // 보라색 계열
-              borderRadius: "20px",
+              backgroundColor: "rgba(255, 255, 255, 0.4)",
+              borderRadius: "5px",
             },
             "&::-webkit-scrollbar-track": {
-              background: "#02001F",
-              borderRadius: "20px",
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
             },
           }}
         >

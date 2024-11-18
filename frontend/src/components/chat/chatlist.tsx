@@ -458,11 +458,11 @@ const ChatList = () => {
                 <Text fontSize="24px" fontWeight="bold" color="black">
                   채팅
                 </Text>
-                <ChatSearch
+                {/* <ChatSearch
                   onUserSelect={(user) => {
                     console.log("선택된 유저:", user);
                   }}
-                />
+                /> */}
                 <select
                   value={sortOrder}
                   onChange={(e) =>
