@@ -239,23 +239,24 @@ export default function WsHeader({
                     fontWeight="bold"
                     onClick={getWsTree}
                   >
-                    정보
+                    더보기
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent>
                   <PopoverArrow />
-                  <PopoverBody>
+                  <PopoverBody color={"white"}>
                     <PopoverTitle
                       fontWeight="medium"
                       fontSize="16px"
                       marginBottom={3}
+                      color="black"
                     >
                       워크스페이스 정보
                     </PopoverTitle>
                     {Array.isArray(wsTree) && wsTree.length === 0 ? (
-                      <Text>원본 워크스페이스입니다.</Text>
+                      <Text color={"black"}>원본 워크스페이스입니다.</Text>
                     ) : (
-                      <Box px={4}>
+                      <Box color={"black"} px={4}>
                         <Text mb={2}>부모 워크스페이스</Text>
                         {Array.isArray(wsTree) && wsTree.length > 0 ? (
                           wsTree.map((item, index) => (

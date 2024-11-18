@@ -33,7 +33,12 @@ export default function Navbar() {
     handleSearchSubmit,
     goOtherFeed,
   } = useSearch();
-  const { goFollowingFeed, followingUserList, followerUserList, goFollowerFeed } = useFollow();
+  const {
+    goFollowingFeed,
+    followingUserList,
+    followerUserList,
+    goFollowerFeed,
+  } = useFollow();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const artistNickname = useAuthStore((state) => state.artistNickname);
 
@@ -56,9 +61,8 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    goFollowingFeed
+    goFollowingFeed;
   }, [followingUserList]);
-
 
   const items = [
     {
@@ -271,12 +275,14 @@ export default function Navbar() {
                         background: "white",
                         zIndex: 10,
                         height: "300px",
-                        borderRadius: "20px"
+                        borderRadius: "20px",
                       }}
                     >
                       <Box padding="4" borderWidth="1px" color="black">
                         팔로워 목록
-                        <FollowerListContainer followerUserList={followerUserList} />
+                        <FollowerListContainer
+                          followerUserList={followerUserList}
+                        />
                       </Box>
                     </Collapsible.Content>
                   </Collapsible.Root>
@@ -306,12 +312,14 @@ export default function Navbar() {
                         background: "white",
                         zIndex: 10,
                         height: "300px",
-                        borderRadius: "20px"
+                        borderRadius: "20px",
                       }}
                     >
                       <Box padding="4" borderWidth="1px" color="black">
                         팔로잉 목록
-                        <FollowingListContainer followingUserList={followingUserList} />
+                        <FollowingListContainer
+                          followingUserList={followingUserList}
+                        />
                       </Box>
                     </Collapsible.Content>
                   </Collapsible.Root>

@@ -10,6 +10,7 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
   return (
     <Box
       position="fixed"
+      // padding="20px"
       border="2px solid #9000FF"
       borderRadius="8px"
       width="calc(100% - 280px)"

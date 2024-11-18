@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, Button } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import CommunityButton2 from "@/components/community/community-button-2";
 import ArticleList from "@/components/community/artice-list";
@@ -14,7 +14,7 @@ import useHeaderStore from "@/stores/headerStore";
 
 const CommunityMainView: React.FC = () => {
   const { feedState, goMusicMainFeed, goMainFeed } = useCommunityMain();
-  const [ checkBoardSeq, setCheckBoardSeq ] = useState<number>(0);
+  const [checkBoardSeq, setCheckBoardSeq] = useState<number>(0);
 
   const {
     openUserHeader,
@@ -55,9 +55,11 @@ const CommunityMainView: React.FC = () => {
         });
         setCheckSearchUser(false);
         setOpenUserHeader(false);
-        console.log('크루 메인 화면에서 정보', response.data)
-        const boardUserSeq = response.data?.crews.find((item) => item.crewUserState === "BOARD")?.seq;
-        setCheckBoardSeq(boardUserSeq)
+        console.log("크루 메인 화면에서 정보", response.data);
+        const boardUserSeq = response.data?.crews.find(
+          (item) => item.crewUserState === "BOARD"
+        )?.seq;
+        setCheckBoardSeq(boardUserSeq);
       } catch (error) {
         if (error.response && error.response.status === 404) {
           console.log("404 오류 ㄱㅊ 넘어가");
@@ -87,10 +89,9 @@ const CommunityMainView: React.FC = () => {
         checkBoardSeq !== 0 && <CrewHeader checkBoardSeq={checkBoardSeq} />
       )}
       <Container>
-        <Box margin="10px 0" overflow="auto">
+        <Box margin="10px 0" overflow="auto" padding="20px">
           <Box display="flex" alignItems="center">
             <CommunityButton2 title="피드" onClick={goMainFeed} />
-            <Text>|</Text>
             <CommunityButton2 title="음원 피드" onClick={goMusicMainFeed} />
           </Box>
           {feedState ? <ArticleList /> : <ArticleMusicList />}
@@ -98,6 +99,6 @@ const CommunityMainView: React.FC = () => {
       </Container>
     </>
   );
-};  
+};
 
 export default CommunityMainView;

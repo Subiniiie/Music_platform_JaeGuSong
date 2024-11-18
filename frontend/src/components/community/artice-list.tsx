@@ -11,11 +11,12 @@ const ArticleList: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { myFeedArticleItems, getArticleList } = useCommunityMain();
   const [filter, setFilter] = useState<string>("ALL");
-  const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지 상태
-  const itemsPerPage = 8; // 페이지당 표시할 게시물 수
-  const [totalPage, setTotalPage] = useState<number>(1); // 전체 페이지 수
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 8;
+  const [totalPage, setTotalPage] = useState<number>(1);
   let artistSeq: number | null = null;
 
+  // authStorage에서 artistSeq 가져오기
   if (authStorage) {
     try {
       const parsedData = JSON.parse(authStorage);
@@ -23,8 +24,9 @@ const ArticleList: React.FC = () => {
     } catch (error) {
       console.error("Failed to parse auth-storage:", error);
     }
-  };
+  }
 
+  // 게시물 가져오기
   useEffect(() => {
     if (id === undefined) {
       if (artistSeq !== null) {
@@ -35,119 +37,117 @@ const ArticleList: React.FC = () => {
     }
   }, [artistSeq]);
 
-  const goDetail = (boardSeq: number) => {
-    navigate(paths.community.detail(boardSeq));
-  };
-
+  // 페이지네이션 총 페이지 수 계산
   useEffect(() => {
-    // 페이지네이션을 위한 총 페이지 수 계산
     setTotalPage(Math.ceil(filteredArticles.length / itemsPerPage));
   }, [myFeedArticleItems, filter]);
 
-  const filteredArticles = myFeedArticleItems
-    ?.flat()
-    .filter((article) => {
+  const filteredArticles =
+    myFeedArticleItems?.flat().filter((article) => {
       if (filter === "ALL") return true;
       return article.state === filter;
     }) || [];
 
-  // 현재 페이지에 해당하는 게시물만 slice
   const paginatedArticles = filteredArticles.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  const goDetail = (boardSeq: number) => {
+    navigate(paths.community.detail(boardSeq));
+  };
+
+  // 버튼을 "나의 커뮤니티"에서만 보여주기 위한 조건
+  const isMyCommunity = id === undefined && artistSeq !== null;
+
   return (
     <>
       <Box
-        maxHeight="460px"
+        maxHeight="600px"
         overflowY="auto"
         padding="10px"
         marginBottom="20px"
         css={{
           "&::-webkit-scrollbar": {
-            width: "8px",
+            width: "10px",
+            height: "8px",
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "#6a4bff", // 보라색 계열
-            borderRadius: "20px",
+            backgroundColor: "rgba(255, 255, 255, 0.4)",
+            borderRadius: "5px",
           },
           "&::-webkit-scrollbar-track": {
-            background: "#02001F",
-            borderRadius: "20px",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
           },
         }}
       >
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-          marginBottom="20px"
-          padding="10px"
-        >
-          <Text fontSize="xl" fontWeight="bold" color="white">
-            총 피드 {filteredArticles.length}개
-          </Text>
-          <Stack direction="row" spacing={4}>
-            <Button
-              colorScheme={filter === "ALL" ? "blue" : "gray"}
-              onClick={() => setFilter("ALL")}
-              _hover={{
-                backgroundColor: "blue.600", 
-                color: "white", 
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
-              }}
-              fontWeight="bold"
-              borderRadius="full"
-              paddingX="20px"
-              paddingY="8px"
-              backgroundColor={filter === "ALL" ? "#1E90FF" : "gray.500"} // 활성화된 버튼 색상 변경
-              boxShadow="0 4px 8px rgba(0, 0, 0, 0.2)" // 기본 그림자 효과
-              transition="all 0.3s ease-in-out" // 부드러운 전환 효과
-            >
-              전체 보기
-            </Button>
-            <Button
-              colorScheme={filter === "PUBLIC" ? "blue" : "gray"}
-              onClick={() => setFilter("PUBLIC")}
-              _hover={{
-                backgroundColor: "#1E90FF", 
-                color: "white", 
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
-              }}
-              fontWeight="bold"
-              borderRadius="full"
-              paddingX="20px"
-              paddingY="8px"
-              backgroundColor={filter === "PUBLIC" ? "#1E90FF" : "gray.500"} // 활성화된 버튼 색상 변경
-              boxShadow="0 4px 8px rgba(0, 0, 0, 0.2)" // 기본 그림자 효과
-              transition="all 0.3s ease-in-out" // 부드러운 전환 효과
-            >
-              공개
-            </Button>
-            <Button
-              colorScheme={filter === "PRIVATE" ? "red" : "gray"}
-              onClick={() => setFilter("PRIVATE")}
-              _hover={{
-                backgroundColor: "#FF6347", 
-                color: "white", 
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)"
-              }}
-              fontWeight="bold"
-              borderRadius="full"
-              paddingX="20px"
-              paddingY="8px"
-              backgroundColor={filter === "PRIVATE" ? "#FF6347" : "gray.500"} // 활성화된 버튼 색상 변경
-              boxShadow="0 4px 8px rgba(0, 0, 0, 0.2)" // 기본 그림자 효과
-              transition="all 0.3s ease-in-out" // 부드러운 전환 효과
-            >
-              비공개
-            </Button>
-          </Stack>
-        </Flex>
-        <Flex
-          wrap="wrap"
-          justifyContent="center"
-        >
+        {isMyCommunity && (
+          <Flex
+            justifyContent="flex-end"
+            alignItems="center"
+            marginBottom="20px"
+            // padding="10px"
+          >
+            <Stack direction="row" spacing={4}>
+              <Button
+                colorScheme={filter === "ALL" ? "blue" : "gray"}
+                onClick={() => setFilter("ALL")}
+                _hover={{
+                  backgroundColor: "blue.600",
+                  color: "white",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                }}
+                fontWeight="bold"
+                borderRadius="full"
+                paddingX="20px"
+                paddingY="8px"
+                backgroundColor={filter === "ALL" ? "#1E90FF" : "gray.500"}
+                boxShadow="0 4px 8px rgba(0, 0, 0, 0.2)"
+                transition="all 0.3s ease-in-out"
+              >
+                전체 보기
+              </Button>
+              <Button
+                colorScheme={filter === "PUBLIC" ? "blue" : "gray"}
+                onClick={() => setFilter("PUBLIC")}
+                _hover={{
+                  backgroundColor: "#1E90FF",
+                  color: "white",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                }}
+                fontWeight="bold"
+                borderRadius="full"
+                paddingX="20px"
+                paddingY="8px"
+                backgroundColor={filter === "PUBLIC" ? "#1E90FF" : "gray.500"}
+                boxShadow="0 4px 8px rgba(0, 0, 0, 0.2)"
+                transition="all 0.3s ease-in-out"
+              >
+                공개
+              </Button>
+              <Button
+                colorScheme={filter === "PRIVATE" ? "red" : "gray"}
+                onClick={() => setFilter("PRIVATE")}
+                _hover={{
+                  backgroundColor: "#FF6347",
+                  color: "white",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                }}
+                fontWeight="bold"
+                borderRadius="full"
+                paddingX="20px"
+                paddingY="8px"
+                backgroundColor={filter === "PRIVATE" ? "#FF6347" : "gray.500"}
+                boxShadow="0 4px 8px rgba(0, 0, 0, 0.2)"
+                transition="all 0.3s ease-in-out"
+              >
+                비공개
+              </Button>
+            </Stack>
+          </Flex>
+        )}
+
+        <Flex wrap="wrap" justifyContent="center">
           {paginatedArticles.length > 0 ? (
             paginatedArticles.map((myFeedArticleItem, index) => (
               <Box
@@ -155,28 +155,28 @@ const ArticleList: React.FC = () => {
                 cursor="pointer"
                 onClick={() => goDetail(myFeedArticleItem.seq)}
                 borderRadius="15px"
-                background="linear-gradient(145deg, #1a1a2e, #1c1b3f)" // 그라데이션 배경
+                background="linear-gradient(145deg, #1a1a2e, #1c1b3f)"
                 margin="20px 20px"
-                width="45%" // 한 줄에 두 개씩 보이도록 조정
+                width="45%"
                 height="180px"
                 display="flex"
                 flexDirection="row"
                 alignItems="center"
                 padding="10px 20px"
                 transition="transform 0.3s, box-shadow 0.3s ease-in-out"
-                boxShadow="0 10px 20px rgba(0, 0, 0, 0.3)" // 그림자 효과 추가
+                boxShadow="0 10px 20px rgba(0, 0, 0, 0.3)"
                 _hover={{
                   transform: "scale(1.05)",
-                  boxShadow: "0 15px 30px rgba(0, 0, 0, 0.5)", // 호버 시 더 강한 그림자
-                  border: "2px solid #6a4bff", // 보라색 포인트
+                  boxShadow: "0 15px 30px rgba(0, 0, 0, 0.5)",
+                  border: "2px solid #6a4bff",
                 }}
               >
                 <Image
                   src="/assets/musicIcon.png"
                   boxSize="70px"
                   marginRight="20px"
-                  borderRadius="50%" // 원형 이미지
-                  boxShadow="0 4px 8px rgba(0, 0, 0, 0.2)" // 이미지에 그림자 추가
+                  borderRadius="50%"
+                  boxShadow="0 4px 8px rgba(0, 0, 0, 0.2)"
                 />
                 <Box
                   display="flex"
@@ -184,7 +184,7 @@ const ArticleList: React.FC = () => {
                   justifyContent="center"
                   flex="1"
                   paddingLeft="20px"
-                  position="relative" // 상태 바가 항상 보이도록 하기 위해 부모 Box에 추가
+                  position="relative"
                 >
                   <Text fontSize="lg" fontWeight="bold" color="white" mb="5px">
                     {myFeedArticleItem.title}
@@ -193,7 +193,11 @@ const ArticleList: React.FC = () => {
                     position="absolute"
                     top="10px"
                     right="10px"
-                    background={myFeedArticleItem.state === "PUBLIC" ? "#4682B4" : "#FF6347"}
+                    background={
+                      myFeedArticleItem.state === "PUBLIC"
+                        ? "#4682B4"
+                        : "#FF6347"
+                    }
                     color="white"
                     fontSize="xs"
                     fontWeight="medium"
@@ -214,7 +218,6 @@ const ArticleList: React.FC = () => {
         </Flex>
       </Box>
 
-      {/* CommunityPagination 컴포넌트 추가 */}
       <CommunityPagination
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
