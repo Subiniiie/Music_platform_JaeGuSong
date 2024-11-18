@@ -56,10 +56,6 @@ export default function WsDetailView() {
     ? parseInt(workspaceSeq, 10)
     : undefined;
 
-  const handleLeavePage = () => {
-    resetStore();
-  }
-
   useEffect(() => {
     const fetchWorkspaceDetail = async () => {
       try {
@@ -73,11 +69,7 @@ export default function WsDetailView() {
         );
         setSessions(response.data.sounds);
         setWsDetails(response.data);
-        console.log('워크스페이스 디테일 페이지 렌더링 완료');
-        
-        
-        console.log('store 의 sessions :', useWsDetailStore.getState().sessions);
-        console.log('response.data :', response.data);
+
       } catch (error) {
         console.error("Error fetching workspace details:", error);
       }
@@ -85,10 +77,6 @@ export default function WsDetailView() {
 
     if (workspaceSeq) {
       fetchWorkspaceDetail();
-      console.log('store 의 sessions:', sessions)
-      console.log('globalStartPoint :', globalStartPoint)
-      console.log('globalEndPoint :', globalEndPoint)
-      console.log('globalDuration :', globalDuration)
     }
   }, [workspaceSeq, setSessions, shouldReloadSessionBox]);
 
