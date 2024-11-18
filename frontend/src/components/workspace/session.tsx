@@ -16,6 +16,7 @@ import Play from "@/sections/workspace/play";
 import { toaster } from "@/components/ui/toaster";
 import { useWsDetailStore } from "@/stores/wsDetailStore";
 import { Rnd } from "react-rnd";
+import TimePanel from "./timePanel";
 
 interface SessionProps {
   sessionId: string;
@@ -299,7 +300,7 @@ export default function Session({
       border="rgba(255, 255, 255, 0.3) 1.5px solid"
       borderRadius={10}
     >
-      <Flex gap={3}>
+      <Flex gap={3} alignItems="center">
         <Checkbox
           colorPalette="purple"
           checked={storeCheck} // store에서 현재 세션의 체크 상태를 가져옴
@@ -375,7 +376,7 @@ export default function Session({
           </Stack>
         </Stack>
 
-        <Stack width="100%" height="130px" justify="center" pt="10px">
+        <Stack width="100%" height="150px" justify="center" pt="10px">
           <Box
             ref={waveformRef}
             width="100%"
@@ -569,12 +570,30 @@ export default function Session({
           </Flex>
         </Stack>
 
-        <Play
-          isPlaying={isPlaying}
-          onPlayPause={handlePlayPause}
-          onStop={handleStop}
-          mode="individual"
-        />
+        <Stack>
+          <TimePanel
+            sessionId={sessionId}
+            duration={duration} // 세션의 총 길이 전달
+            onStartChange={(startTime) => {
+              setCursor1(startTime); // 커서 이동
+              startPointRef.current = startTime;
+              updateSession(sessionId, { startPoint: startTime }); // store 업데이트
+            }}
+            onEndChange={(endTime) => {
+              setCursor2(endTime); // 커서 이동
+              endPointRef.current = endTime;
+              updateSession(sessionId, { endPoint: endTime }); // store 업데이트
+            }}
+          />
+          <Play
+            isPlaying={isPlaying}
+            onPlayPause={handlePlayPause}
+            onStop={handleStop}
+            mode="individual"
+            playWidth="200px"
+            playHeight="70px"
+          />
+        </Stack>
       </Flex>
     </Card.Root>
   );

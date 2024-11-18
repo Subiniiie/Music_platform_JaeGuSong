@@ -8,6 +8,8 @@ interface PlayProps {
   onPlayPause: (playMode: "all" | "individual") => void;
   onStop: (playMode: "all" | "individual") => void;
   mode: "all" | "individual";
+  playWidth: string;
+  playHeight: string;
 }
 
 export default function Play({
@@ -15,6 +17,8 @@ export default function Play({
   onPlayPause,
   onStop,
   mode,
+  playWidth,
+  playHeight,
 }: PlayProps) {
   const setCheck = useWsDetailStore((state) => state.setCheck);
   const sessions = useWsDetailStore((state) => state.sessions);
@@ -44,8 +48,10 @@ export default function Play({
       border="0.5px solid rgba(255, 255, 255, 0.2)"
       gap="4"
       justifyContent="center"
-      alignItems="start"
+      alignItems="center"
       background="rgba(0, 0, 0, 0.3)"
+      width={playWidth}
+      height={playHeight}
     >
       {mode === "all" && (
         <Flex border="0px solid rgba(255, 255, 255, 0.2)" padding="1">
