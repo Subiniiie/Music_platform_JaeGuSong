@@ -337,4 +337,99 @@ export const useWsDetailStore = create<WsDetailStore>((set, get) => ({
 
   triggerSessionBoxReload: () =>
     set((state) => ({ shouldReloadSessionBox: !state.shouldReloadSessionBox })),
+
+  playSession: (sessionId: string) => {
+    const session = get().sessions[sessionId];
+    if (session && session.player) {
+
+
+      // 기존 "audioprocess" 이벤트 제거
+      session.player.un("audioprocess");
+
+      session.player.on("audioprocess", () => {
+        const currentTime = session.player?.getCurrentTime() || 0;
+
+        if (currentTime > session.endPoint) {
+          session.player.stop();
+          session.player.setTime(session.startPoint);
+          set((state) => ({
+            sessions: {
+                ...state.sessions,
+                [sessionId]: {
+                    ...state.sessions[sessionId],
+                    isPlaying: false,
+                },
+            },
+          }));
+        }
+      });
+
+      session.player.setTime(session.startPoint); // 재생 시작 시 startPoint로 이동
+      session.player.play();
+      set((state) => ({
+        sessions: {
+          ...state.sessions,
+          [sessionId]: {
+            ...state.sessions[sessionId],
+            isPlaying: true,
+          },
+        },
+      }));
+    }
+  },
+
+  pauseSession: (sessionId: string) => {
+    const session = get().sessions[sessionId];
+    if (session && session.player) {
+      session.player.pause();
+      set((state) => ({
+        sessions: {
+          ...state.sessions,
+          [sessionId]: {
+            ...state.sessions[sessionId],
+            isPlaying: false,
+          },
+        },
+      }));
+    }
+  },
+
+  stopSession: (sessionId: string) => {
+    const session = get().sessions[sessionId];
+    if (session && session.player) {
+      session.player.stop();
+      session.player.setTime(session.startPoint)
+      set((state) => ({
+        sessions: {
+          ...state.sessions,
+          [sessionId]: {
+            ...state.sessions[sessionId],
+            isPlaying: false,
+          },
+        },
+      }));
+    }
+  },
+
+  updateStartPoint: (sessionId: string, newStartPoint: number) =>
+    set((state) => ({
+      sessions: {
+        ...state.sessions,
+        [sessionId]: {
+          ...state.sessions[sessionId],
+          startPoint: newStartPoint,
+        },
+      },
+    })),
+    
+  updateEndPoint: (sessionId: string, newEndPoint: number) =>
+    set((state) => ({
+      sessions: {
+        ...state.sessions,
+        [sessionId]: {
+          ...state.sessions[sessionId],
+          endPoint: newEndPoint,
+        },
+      },
+    })),
 }));

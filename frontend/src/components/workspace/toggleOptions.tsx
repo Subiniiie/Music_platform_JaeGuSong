@@ -10,7 +10,7 @@ import {
 export default function ToggleOptions({ onSelectSession }) {
 
   return (
-    <Stack gap="5" width="180px">
+    <Stack gap="5" width="180px" zIndex={1500}>
       <SelectRoot key={"xs"} size={"xs"} collection={frameworks}>
         <SelectTrigger background={"white"} borderRadius={5}>
           <SelectValueText
@@ -20,13 +20,14 @@ export default function ToggleOptions({ onSelectSession }) {
             placeholder="세션을 선택해주세요"
           />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent mt={4.5}>
           {frameworks.items.map((session) => (
             <SelectItem
               fontFamily="MiceGothic"
               fontSize={10}
               item={session}
               key={session.value}
+              color={"white"}
               onClick={() => onSelectSession(session.label)}
             >
               {session.label}

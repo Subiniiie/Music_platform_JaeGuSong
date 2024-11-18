@@ -17,6 +17,7 @@ import { MdPublic, MdPublicOff } from "react-icons/md";
 import { useState } from "react";
 import { useWsDetailStore } from "@/stores/wsDetailStore";
 import axios from "axios";
+import { WsInfoBox } from "../divider/wsInfoBox";
 
 interface WsHeaderProps {
   wsDetails: {
@@ -37,8 +38,8 @@ export default function WsHeader({
 }: WsHeaderProps) {
   const [isPublic, setIsPublic] = useState(wsDetails.state === "PUBLIC");
   const [wsTree, setWsTree] = useState([]);
-  const [originTitle, setOriginTitle] = useState("");
-  const [originSinger, setOriginSinger] = useState("");
+  const [treeTitle, setTreeTitle] = useState("");
+  const [treeSinger, setTreeSinger] = useState("");
 
   const sessions = useWsDetailStore((state) => state.sessions);
   const checkedSessions = useWsDetailStore((state) => state.checkedSessions);
@@ -146,8 +147,8 @@ export default function WsHeader({
         : [];
 
       setWsTree(treeData);
-      setOriginTitle(response.data.originTitle);
-      setOriginSinger(response.data.originSinger);
+      setTreeTitle(response.data.treeTitle);
+      setTreeSinger(response.data.treeSinger);
       console.log(wsTree);
     } catch (error) {
       console.error("Error fetching workspace details:", error);
@@ -158,10 +159,16 @@ export default function WsHeader({
     <Stack>
       <Flex justifyContent="space-between">
         <Stack>
-          <Flex>
+          <Flex justifyContent="center" alignItems="center">
             <Heading fontFamily="MiceGothic" size="xl">
               {wsDetails.name || "제목 없음"}
             </Heading>
+
+            {/* {artistSeq && (
+              <WsInfoBox
+                artistSeq={artistSeq}
+              />
+            )} */}
             <Switch
               ml={3}
               colorPalette="green"
@@ -212,23 +219,7 @@ export default function WsHeader({
               >
                 저장
               </Button>
-              {/* <Button
-                bg="blackAlpha.900" // 검은 배경
-                color="white" // 텍스트 색상
-                border="1.5px solid" // 테두리 두께
-                borderColor="purple.700" // 보라색 테두리
-                borderRadius={13} // 모서리 둥글게
-                _hover={{ bg: "purple.700" }} // 호버 효과
-                _active={{ bg: "purple.800" }} // 클릭 효과
-                paddingX="4"
-                paddingY="2"
-                width="60px"
-                height="40px"
-                fontWeight="bold"
-                onClick={toggleState}
-              >
-                {isPublic ? "비공개" : "공개"}
-              </Button> */}
+
               <PopoverRoot>
                 <PopoverTrigger asChild>
                   <Button
@@ -269,8 +260,8 @@ export default function WsHeader({
                           wsTree.map((item, index) => (
                             <Stack key={index} px={4}>
                               <Text fontSize="13px">{`워크스페이스명 : ${item.workspaceName}`}</Text>
-                              <Text fontSize="13px">{`원곡 : ${originTitle}`}</Text>
-                              <Text fontSize="13px">{`원곡자 : ${originSinger}`}</Text>
+                              <Text fontSize="13px">{`원곡 : ${treeTitle}`}</Text>
+                              <Text fontSize="13px">{`원곡자 : ${treeSinger}`}</Text>
                             </Stack>
                           ))
                         ) : (

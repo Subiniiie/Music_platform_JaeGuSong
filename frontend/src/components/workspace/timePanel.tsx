@@ -1,78 +1,64 @@
 import { Flex, Stack } from "@chakra-ui/react";
 import { Input, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useWsDetailStore } from "@/stores/wsDetailStore";
 
 interface TimePanelProps {
   sessionId: string;
   duration: number;
-  onStartChange: (startTime: number) => void;
-  onEndChange: (endTime: number) => void;
 }
 
 export default function TimePanel({
   sessionId,
   duration,
-  onStartChange,
-  onEndChange,
 }: TimePanelProps) {
-  const [startTime, setStartTime] = useState("00:00");
-  const [endTime, setEndTime] = useState("00:00");
-
-  //   // 시간을 MM:SS 형식으로 변환하는 함수
-  //   const formatToMMSS = (timeInSeconds: number): string => {
-  //     const minutes = Math.floor(timeInSeconds / 60);
-  //     const seconds = timeInSeconds % 60;
-  //     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
-  //       2,
-  //       "0"
-  //     )}`;
-  //   };
+  const startPoint = useWsDetailStore((state) => state.sessions[sessionId]?.startPoint || 0);
+  const endPoint = useWsDetailStore((state) => state.sessions[sessionId]?.endPoint || duration);
+  const updateStartPoint = useWsDetailStore((state) => state.updateStartPoint);
+  const updateEndPoint = useWsDetailStore((state) => state.updateEndPoint);
 
   // 시간을 MM:SS 형식으로 변환하는 함수
   const formatToMMSS = (timeInSeconds: number): string => {
     const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = timeInSeconds % 60;
+    const seconds = Math.floor(timeInSeconds % 60);
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
       2,
       "0"
     )}`;
   };
 
-  //   // 초 단위로 변환하는 함수
-  //   const parseMMSS = (value: string): number | null => {
-  //     const match = value.match(/^(\d{1,2}):([0-5]?\d)$/);
-  //     if (match) {
-  //       const minutes = parseInt(match[1], 10);
-  //       const seconds = parseInt(match[2], 10);
-  //       return minutes * 60 + seconds;
-  //     }
-  //     return null; // 유효하지 않은 형식
-  //   };
+  const [startTime, setStartTime] = useState(formatToMMSS(startPoint));
+  const [endTime, setEndTime] = useState(formatToMMSS(endPoint));
 
-  // 초 단위로 변환하는 함수
   const parseMMSS = (value: string): number | null => {
     const match = value.match(/^(\d{1,2}):([0-5]?\d)$/);
+  
     if (match) {
       const minutes = parseInt(match[1], 10);
       const seconds = parseInt(match[2], 10);
       return minutes * 60 + seconds;
+    } else {
+      console.warn("유효하지 않은 형식입니다:", value);
+      return null;
     }
-    return null; // 유효하지 않은 형식
   };
 
   const formatInput = (value: string): string => {
-    // 숫자만 추출
+    console.log("formatInput 입력값:", value);
     const digits = value.replace(/\D/g, "");
-
+    console.log("추출된 숫자:", digits);
+  
     if (digits.length <= 2) {
-      return digits; // 2자리 이하면 그대로 반환
+      console.log("최종 포맷:", digits);
+      return digits;
     }
-
-    // 뒤에서 두 번째 자리에 ":" 추가
+  
     const minutes = digits.slice(0, -2);
     const seconds = digits.slice(-2);
+    console.log("분:", minutes, "초:", seconds);
     return `${minutes}:${seconds}`;
   };
+  
 
   const handleInputChange = (
     value: string,
@@ -82,29 +68,54 @@ export default function TimePanel({
     setTime(formattedValue);
   };
 
-  const handleBlur = (
-    value: string,
-    setTime: (value: string) => void,
-    onChange: (time: number) => void
-  ) => {
+  useEffect(() => {
+    setStartTime(formatToMMSS(startPoint));
+  }, [startPoint]);
+
+  useEffect(() => {
+    setEndTime(formatToMMSS(endPoint));
+  }, [endPoint]);
+
+  // 시간 입력이 완료되었을 때
+  // const handleBlur = (
+  //   value: string,
+  //   setTime: (value: string) => void,
+  //   onChange: (time: number) => void
+  // ) => {
+  
+  //   const timeInSeconds = parseMMSS(value);
+  
+  //   if (timeInSeconds !== null && timeInSeconds <= duration) {
+  //     setTime(formatToMMSS(timeInSeconds));
+  //     onChange(timeInSeconds); // 부모에게 전달
+  //   } else {
+  //     console.warn("유효하지 않은 값. 기본값으로 초기화.");
+  //     setTime(formatToMMSS(0));
+  //     onChange(0); // 기본값 전달
+  //   }
+  // };
+
+  const handleBlur = (value: string, setTime: (value: string) => void, updatePoint: (id: string, point: number) => void) => {
     const timeInSeconds = parseMMSS(value);
+
     if (timeInSeconds !== null && timeInSeconds <= duration) {
-      setTime(formatToMMSS(timeInSeconds)); // 유효한 입력 값만 포맷 적용
-      onChange(timeInSeconds); // 부모 컴포넌트로 전달
+      setTime(formatToMMSS(timeInSeconds));
+      updatePoint(sessionId, timeInSeconds); // store 업데이트
     } else {
-      setTime(formatToMMSS(0)); // 기본값으로 초기화
-      onChange(0);
+      setTime(formatToMMSS(0));
+      updatePoint(sessionId, 0); // 기본값
     }
   };
+  
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     value: string,
     setTime: (value: string) => void,
-    onChange: (time: number) => void
+    updatePoint: (id: string, point: number) => void,
   ) => {
     if (e.key === "Enter") {
-      handleBlur(value, setTime, onChange); // Enter 키 입력 시 handleBlur 호출
+      handleBlur(value, setTime, updatePoint); // Enter 키 입력 시 handleBlur 호출
     }
   };
 
@@ -127,9 +138,9 @@ export default function TimePanel({
           value={startTime}
           //   onChange={(e) => setStartTime(e.target.value)} // 입력 중에는 자유롭게 값 업데이트
           onChange={(e) => handleInputChange(e.target.value, setStartTime)} // 입력 시 자동 포맷 적용
-          onBlur={() => handleBlur(startTime, setStartTime, onStartChange)} // 포커스 잃을 때 유효성 검사
+          onBlur={() => handleBlur(startTime, setStartTime, updateStartPoint)} // 포커스 잃을 때 유효성 검사
           onKeyDown={(e) =>
-            handleKeyDown(e, startTime, setStartTime, onStartChange)
+            handleKeyDown(e, startTime, setStartTime, updateStartPoint)
           } // Enter 키 입력 시 유효성 검사
           placeholder="00:00"
           width="90px"
@@ -142,8 +153,8 @@ export default function TimePanel({
           value={endTime}
           //   onChange={(e) => setEndTime(e.target.value)} // 입력 중에는 자유롭게 값 업데이트
           onChange={(e) => handleInputChange(e.target.value, setEndTime)} // 입력 시 자동 포맷 적용
-          onBlur={() => handleBlur(endTime, setEndTime, onEndChange)} // 포커스 잃을 때 유효성 검사
-          onKeyDown={(e) => handleKeyDown(e, endTime, setEndTime, onEndChange)} // Enter 키 입력 시 유효성 검사
+          onBlur={() => handleBlur(endTime, setEndTime, updateEndPoint)} // 포커스 잃을 때 유효성 검사
+          onKeyDown={(e) => handleKeyDown(e, endTime, setEndTime, updateEndPoint)} // Enter 키 입력 시 유효성 검사
           placeholder="00:00"
           width="90px"
           borderRadius="15px"
