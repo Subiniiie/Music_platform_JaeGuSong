@@ -14,9 +14,9 @@ import useCommunityDetail from "@/hooks/community/useCommunityDetail";
 import useHeaderStore from "@/stores/headerStore";
 import useReviewStore from "@/stores/review";
 
-
 const CommunityDetailView: React.FC = () => {
-  const { openDeleteModal, setOpenDeleteModal, deleteArticle } = useCommunityDetail();
+  const { openDeleteModal, setOpenDeleteModal, deleteArticle } =
+    useCommunityDetail();
   const [artistSeq, setArtistSeq] = useState<string>("");
   const [nickname, setNickname] = useState<string>("");
   const [profileImage, setProfileImage] = useState<string>("");
@@ -35,7 +35,6 @@ const CommunityDetailView: React.FC = () => {
     otherUserProfileImage,
   } = useHeaderStore((state) => state);
   const { changeReview } = useReviewStore();
-  
 
   const { id } = useParams<{ id: string }>();
   const API_URL = import.meta.env.VITE_API_URL;
@@ -54,9 +53,7 @@ const CommunityDetailView: React.FC = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    
-  }, [openUserHeader])
+  useEffect(() => {}, [openUserHeader]);
 
   const getArticleDetail = async () => {
     const storedToken = localStorage.getItem("jwtToken");
@@ -77,7 +74,7 @@ const CommunityDetailView: React.FC = () => {
       setState(article.state || "");
       setTitle(article.title || "");
 
-      console.log('게시물 상세 데이터', article)
+      console.log("게시물 상세 데이터", article);
 
       const commentSeqs = article.comments.map((comment) => comment.commentSeq);
     } catch (error) {
@@ -105,8 +102,6 @@ const CommunityDetailView: React.FC = () => {
     navigate(paths.community.update(numericId));
   };
 
-
-
   return (
     <Box>
       {openUserHeader ? (
@@ -122,8 +117,8 @@ const CommunityDetailView: React.FC = () => {
         <CrewHeader />
       )}
       <Container>
-        <Box 
-          height="600px" 
+        <Box
+          height="600px"
           overflowY="auto"
           css={{
             "&::-webkit-scrollbar": {
@@ -206,32 +201,32 @@ const CommunityDetailView: React.FC = () => {
         </Box>
       </Container>
       {openDeleteModal && (
-            <Modal
-              isOpen={openDeleteModal}
-              onClose={() => setOpenDeleteModal(false)}
+        <Modal
+          isOpen={openDeleteModal}
+          onClose={() => setOpenDeleteModal(false)}
+        >
+          <Box padding=" 5px 20px">
+            <Text color="black" margin="40px">
+              정말 이 게시물을 삭제하시겠습니까?
+            </Text>
+            <Box
+              margin="10px"
+              display="flex"
+              justifyContent="center"
+              gap="10px"
             >
-              <Box padding=" 5px 20px">
-                <Text color="black" margin="40px">
-                  정말 이 게시물을 삭제하시겠습니까?
-                </Text>
-                <Box
-                  margin="10px"
-                  display="flex"
-                  justifyContent="center"
-                  gap="10px"
-                >
-                  <CommunityButton
-                    title="삭제"
-                    onClick={() => deleteArticle(Number(id))}
-                  />
-                  <CommunityButton
-                    title="취소"
-                    onClick={() => setOpenDeleteModal(false)}
-                  />
-                </Box>
-              </Box>
-            </Modal>
-          )}
+              <CommunityButton
+                title="삭제"
+                onClick={() => deleteArticle(Number(id))}
+              />
+              <CommunityButton
+                title="취소"
+                onClick={() => setOpenDeleteModal(false)}
+              />
+            </Box>
+          </Box>
+        </Modal>
+      )}
     </Box>
   );
 };
