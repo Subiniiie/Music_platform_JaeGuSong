@@ -1,6 +1,7 @@
 import { Box, Stack, Text, Flex } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import SessionCursor from "./sessionCursor";
+import { Rnd } from "react-rnd";
 import WaveSurfer from "wavesurfer.js";
 import { useWsDetailStore } from "@/stores/wsDetailStore";
 import { useSession } from "@/hooks/workspace/useSession";
@@ -27,8 +28,13 @@ export default function SessionMain({
 
   const [cursor1, setCursor1] = useState(initialStartPoint); // 시작 커서 위치
   const [cursor2, setCursor2] = useState(initialEndPoint); // 종료 커서 위치
+  const [cursor3, setCursor3] = useState(globalStartPoint); // 종료 커서 위치
+  const [cursor4, setCursor4] = useState(globalEndPoint); // 종료 커서 위치
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0); // 드래그 오프셋
+  const [playStartPoint, setPlayStartPoint] = useState(initialStartPoint); // 재생용 시작점
+  const [playEndPoint, setPlayEndPoint] = useState(initialEndPoint); // 재생용 종료점
 
   const addSession = useWsDetailStore((state) => state.addSession);
   const storeStartPoint = useWsDetailStore(
@@ -41,6 +47,11 @@ export default function SessionMain({
   const removeSession = useWsDetailStore((state) => state.removeSession);
   const updateStartPoint = useWsDetailStore((state) => state.updateStartPoint);
   const updateEndPoint = useWsDetailStore((state) => state.updateEndPoint);
+  const updateDragOffset = useWsDetailStore((state) => state.updateDragOffset);
+  const recalculateGlobalPoints = useWsDetailStore(
+    (state) => state.recalculateGlobalPoints
+  );
+  const offset = useWsDetailStore((state) => state.offsetArray[sessionId]);
 
   // startPoint, endPoint - 재렌더링 방지
   const startPointRef = useRef(
@@ -50,10 +61,12 @@ export default function SessionMain({
     storeEndPoint !== 0 ? storeEndPoint : initialEndPoint
   );
 
-  const waveformWidth = (globalDuration !== 0) && (duration !== 0) ? (duration / globalDuration) * 100 : 100
+  const waveformWidth =
+    globalDuration !== 0 && duration !== 0
+      ? (duration / globalDuration) * 100
+      : 100;
 
-  const { handleStartCursorDragStop, handleEndCursorDragStop } =
-  useSession({
+  const { handleStartCursorDragStop, handleEndCursorDragStop } = useSession({
     waveformRef,
     wavesurferRef,
     duration,
@@ -131,7 +144,7 @@ export default function SessionMain({
       // currentTime 유효성 검사 및 업데이트
       if (wavesurferRef.current) {
         const currentTime = wavesurferRef.current.getCurrentTime() || 0;
-  
+
         if (currentTime < storeStartPoint) {
           wavesurferRef.current.setTime(storeStartPoint);
           setCurrentTime(storeStartPoint); // currentTime을 startPoint로 업데이트
@@ -139,14 +152,14 @@ export default function SessionMain({
       }
     }
   }, [storeStartPoint]);
-  
+
   useEffect(() => {
     if (storeEndPoint !== undefined) {
       setCursor2(storeEndPoint); // Store 값 변경 시 cursor2 업데이트
       // currentTime 유효성 검사 및 업데이트
       if (wavesurferRef.current) {
         const currentTime = wavesurferRef.current.getCurrentTime() || 0;
-  
+
         if (currentTime > storeEndPoint) {
           wavesurferRef.current.setTime(storeEndPoint);
           setCurrentTime(storeEndPoint); // currentTime을 endPoint로 업데이트
@@ -154,88 +167,139 @@ export default function SessionMain({
       }
     }
   }, [storeEndPoint]);
-  
-  
+
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
+  const handleDragStart = () => {};
+
+  const handleDrag = (e: MouseEvent, data: { deltaX: number }) => {
+    if (!waveformRef.current) return;
+
+    const offset = (data.deltaX / waveformRef.current.clientWidth) * duration;
+    setDragOffset(offset); // 오프셋 업데이트
+  };
+
+  const handleDragStop = (e: MouseEvent, data: { x: number }) => {
+    if (!waveformRef.current) return;
+
+    const offset = (data.x / waveformRef.current.clientWidth) * duration;
+
+    // Store에 offset 저장
+    useWsDetailStore.getState().setOffset(sessionId, offset);
+
+    // 플레이 포인트 재계산
+    useWsDetailStore.getState().recalculateGlobalPoints();
+  };
+
+  useEffect(() => {
+    if (globalStartPoint !== undefined) {
+      setCursor3(globalStartPoint); // Store 값 변경 시 cursor2 업데이트
+    }
+    console.log("Updated globalStartPoint:", globalStartPoint);
+  }, [globalStartPoint]);
+
+  useEffect(() => {
+    if (globalEndPoint !== undefined) {
+      setCursor4(globalEndPoint); // Store 값 변경 시 cursor2 업데이트
+    }
+  }, [globalEndPoint]);
+
   return (
-    <Flex
-      flex={1}
-      align="center"
-    >
+    <Flex flex={1} align="center">
       <Stack
-        // width="100%"
-        width={`${waveformWidth}%`}
-        // flex={1}
-        height="150px"
+        width="100%"
+        height="110px"
         justify="center"
-        pt="10px"
+        position="relative"
         mr="12px"
       >
-        <Stack>
-          <Box
-            ref={waveformRef}
-            // width={`${waveformWidth}%`}
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          width="100%"
+          height="100%"
+          pointerEvents="none" // 드래그 이벤트가 여기에 영향을 주지 않도록 설정
+        >
+          <SessionCursor
+            positionX={
+              waveformRef.current && globalDuration > 0
+                ? ((cursor3 - offset) / globalDuration) *
+                  waveformRef.current.clientWidth
+                : 0
+            }
+            color="grey"
+            isDraggable={false}
+          />
+          <SessionCursor
+            positionX={
+              waveformRef.current && globalDuration > 0
+                ? ((cursor4 - offset) / globalDuration) *
+                  waveformRef.current.clientWidth
+                : 0
+            }
+            color="grey"
+            isDraggable={false}
+          />
+        </Box>
+        <Rnd
+          bounds="parent"
+          enableResizing={false}
+          onDragStart={handleDragStart}
+          onDrag={handleDrag}
+          onDragStop={handleDragStop}
+          size={{ width: `${waveformWidth}%`, height: "100%" }}
+          axis="x" // 드래그를 가로(X축)로만 제한
+          style={{
+            position: "relative", // Rnd 내부 위치를 부모 요소 기준으로 설정
+            backgroundColor: "transparent",
+            cursor: "move",
+            justify: "center",
+          }}
+        >
+          <Stack
             width="100%"
-            height="100px"
-            position="relative"
+            onClick={() => console.log("둘째 Stack", waveformWidth)}
           >
-            <SessionCursor
-              positionX={
-                waveformRef.current && duration > 0
-                  ? (cursor1 / duration) * waveformRef.current.clientWidth
-                  : 0
-              }
-              color="green"
-              onDragStop={handleStartCursorDragStop}
-              isDraggable={true}
-            />
-            <SessionCursor
-              positionX={
-                waveformRef.current && duration > 0
-                  ? (cursor2 / duration) * waveformRef.current.clientWidth
-                  : 0
-              }
-              color="red"
-              onDragStop={handleEndCursorDragStop}
-              isDraggable={true}
-            />
-            <SessionCursor
-              positionX={
-                waveformRef.current && duration > 0
-                  ? (globalStartPoint / duration) * waveformRef.current.clientWidth
-                  : 0
-              }
-              color="grey"
-              isDraggable={false}
-            />
-            <SessionCursor
-              positionX={
-                waveformRef.current && duration > 0
-                  ? (globalEndPoint / duration) * waveformRef.current.clientWidth
-                  : 0
-              }
-              color="grey"
-              isDraggable={false}
-            />
-          </Box>
+            <Box
+              ref={waveformRef}
+              width="100%"
+              height="100px"
+              position="relative"
+            >
+              <SessionCursor
+                positionX={
+                  waveformRef.current && duration > 0
+                    ? (cursor1 / duration) * waveformRef.current.clientWidth
+                    : 0
+                }
+                color="green"
+                onDragStop={handleStartCursorDragStop}
+                isDraggable={true}
+              />
+              <SessionCursor
+                positionX={
+                  waveformRef.current && duration > 0
+                    ? (cursor2 / duration) * waveformRef.current.clientWidth
+                    : 0
+                }
+                color="red"
+                onDragStop={handleEndCursorDragStop}
+                isDraggable={true}
+              />
+            </Box>
 
-          <Flex justifyContent="space-between" width="100%">
-            <Text fontSize={10}>{formatTime(currentTime)}</Text>
-            <Text fontSize={10}>{formatTime(duration)}</Text>
-          </Flex>
-        </Stack>
+            <Flex justifyContent="space-between" width="100%">
+              <Text fontSize={10}>{formatTime(currentTime)}</Text>
+              <Text fontSize={10}>{formatTime(duration)}</Text>
+            </Flex>
+          </Stack>
+        </Rnd>
       </Stack>
-
-      {waveformWidth < 100 && (
-        <Stack width={`(${100 - waveformWidth})%`}>
-          <Text fontSize={12} color="transparent">.</Text>
-        </Stack>
-      )}
     </Flex>
-  )
+  );
 }

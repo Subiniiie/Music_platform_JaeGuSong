@@ -145,7 +145,7 @@ export default function TimePanel({
       height="80px"
     >
       <Stack height="60px" justifyContent="center">
-        <Text fontSize="12px">시작 지점</Text>
+        <Text fontSize="12px" pl={2}>시작 지점</Text>
         <Input
           value={startTime}
           //   onChange={(e) => setStartTime(e.target.value)} // 입력 중에는 자유롭게 값 업데이트
@@ -160,7 +160,7 @@ export default function TimePanel({
         />
       </Stack>
       <Stack height="60px" justifyContent="center">
-        <Text fontSize="12px">종료 지점</Text>
+        <Text fontSize="12px" pl={2}>종료 지점</Text>
         <Input
           value={endTime}
           //   onChange={(e) => setEndTime(e.target.value)} // 입력 중에는 자유롭게 값 업데이트
