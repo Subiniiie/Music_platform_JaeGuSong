@@ -234,6 +234,7 @@ export default function SessionMain({
             }
             color="grey"
             isDraggable={false}
+            cursor="not-allowed"
           />
           <SessionCursor
             positionX={
@@ -244,6 +245,7 @@ export default function SessionMain({
             }
             color="grey"
             isDraggable={false}
+            cursor="not-allowed"
           />
         </Box>
         <Rnd
@@ -257,9 +259,10 @@ export default function SessionMain({
           style={{
             position: "relative", // Rnd 내부 위치를 부모 요소 기준으로 설정
             backgroundColor: "transparent",
-            cursor: "move",
+            cursor: waveformWidth < 100 ? "move" : "default",
             justify: "center",
           }}
+          disableDragging={waveformWidth === 100} // 조건부로 드래그 비활성화
         >
           <Stack
             width="100%"
